@@ -149,7 +149,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="167,000"
+                    android:text="144,000"
                     android:textSize="18sp"
                     android:padding="8dp"
                     android:textAlignment="viewEnd"
@@ -176,7 +176,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="167,000"
+                    android:text="52,000"
                     android:textSize="18sp"
                     android:padding="8dp"
                     android:textAlignment="viewEnd"
@@ -203,7 +203,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="167,000"
+                    android:text="45,000"
                     android:textSize="18sp"
                     android:padding="8dp"
                     android:textAlignment="viewEnd"
@@ -230,7 +230,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="167,000"
+                    android:text="70,000"
                     android:textSize="18sp"
                     android:padding="8dp"
                     android:textAlignment="viewEnd"
@@ -257,7 +257,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="80,000"
+                    android:text="95,000"
                     android:textSize="18sp"
                     android:padding="8dp"
                     android:textAlignment="viewEnd"
@@ -284,7 +284,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="80,000"
+                    android:text="22,000"
                     android:textSize="18sp"
                     android:padding="8dp"
                     android:textAlignment="viewEnd"
