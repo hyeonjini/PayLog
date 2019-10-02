@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
@@ -42,7 +43,7 @@ public class ListGroupFragment extends Fragment implements GroupListRecyclerAdap
 
         List<PurchaseGroup> groupList = new ArrayList<>();
         RecyclerView recyclerView = rootView.findViewById(R.id.group_list_recycler_view);
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         adapter = new GroupListRecyclerAdapter(groupList);
         //리스너 등록

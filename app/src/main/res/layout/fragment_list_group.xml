@@ -16,11 +16,14 @@
         android:id="@+id/add_group_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/white_icon_add_24dp"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="20dp"
+        android:layout_alignParentBottom="true"
         android:layout_marginRight="20dp"
-        app:fabSize="normal"/>
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/mainColor"
+        android:src="@drawable/white_icon_add_24dp"
+        app:borderWidth="0dp"
+        app:fabSize="normal"
+        app:rippleColor="@color/mainColor" />
 
 </RelativeLayout>

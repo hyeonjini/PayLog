@@ -1,40 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:layout_width="130dp"
-    android:layout_height="130dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginBottom="8dp"
-    android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="8dp">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="24dp"
+    android:layout_marginStart="24dp"
+    android:layout_marginEnd="24dp"
+    app:cardElevation="2dp"
+    app:cardCornerRadius="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#A3CCEB"
-        android:orientation="vertical">
-
+        android:orientation="horizontal">
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/list_item_text"
-                android:layout_width="match_parent"
-                android:layout_height="90dp"
-                android:background="#A3CCEB"
-                android:padding="15dp"
-                android:textColor="#ffffff"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:text="아이콘" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="8dp"
             android:layout_height="match_parent"
-            android:background="#ffffff"/>
+            android:background="@color/mainColor"></LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="14dp"
+                    android:src="@drawable/color_icon_check_24dp" />
+                <TextView
+                    android:id="@+id/list_item_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:background="#ffffff"
+                    android:padding="8dp"
+                    android:text="그룹 이름"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:layout_marginTop="8dp"
+                    android:textColor="#000000" />
+            </LinearLayout>
+            <!--budget, used-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="4dp">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="14dp"
+                    android:src="@drawable/green_icon_circle_14dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="예산"
+                    android:layout_marginStart="8dp"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/group_item_budget"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:layout_weight="2"
+                    android:gravity="end"
+                    android:padding="4dp"
+                    android:text="10,000"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="4dp">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="14dp"
+                    android:src="@drawable/red_icon_circle_14dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="8dp"
+                    android:text="지출"
+                    android:gravity="center_vertical"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/group_item_used"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:layout_weight="2"
+                    android:gravity="end"
+                    android:padding="4dp"
+                    android:text="10,000"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
     </LinearLayout>
+
+
 
 </androidx.cardview.widget.CardView>
