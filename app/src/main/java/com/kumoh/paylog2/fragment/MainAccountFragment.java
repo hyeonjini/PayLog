@@ -15,10 +15,9 @@ import com.kumoh.paylog2.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MainGroupFragment extends Fragment {
+public class MainAccountFragment extends Fragment {
 
-
-    public MainGroupFragment() {
+    public MainAccountFragment() {
         // Required empty public constructor
     }
 
@@ -26,7 +25,6 @@ public class MainGroupFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         return inflater.inflate(R.layout.fragment_main_group, container, false);
     }
 

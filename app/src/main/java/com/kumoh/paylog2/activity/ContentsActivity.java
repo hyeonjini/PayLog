@@ -20,7 +20,7 @@ public class ContentsActivity extends AppCompatActivity {
         String selectedGroupId = intent.getStringExtra("selectedGroupId");
 
         //뷰 바인딩
-        groupName = (TextView) findViewById(R.id.content_group_name);
+        groupName = (TextView) findViewById(R.id.content_account_name);
         groupName.setText("선택된 그룹 id : "+ selectedGroupId);
 
     }

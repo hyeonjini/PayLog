@@ -6,10 +6,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,20 +17,20 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.kumoh.paylog2.R;
 import com.kumoh.paylog2.activity.ContentsActivity;
-import com.kumoh.paylog2.adapter.GroupListRecyclerAdapter;
+import com.kumoh.paylog2.adapter.AccountListRecyclerAdapter;
+import com.kumoh.paylog2.db.Account;
+import com.kumoh.paylog2.db.AccountDao;
 import com.kumoh.paylog2.db.LocalDatabase;
-import com.kumoh.paylog2.db.PurchaseGroup;
-import com.kumoh.paylog2.db.PurchaseGroupDao;
-import com.kumoh.paylog2.dialog.NewGroupAddDialog;
+import com.kumoh.paylog2.dialog.AddAccountDialog;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListGroupFragment extends Fragment implements GroupListRecyclerAdapter.GroupListRecyclerOnClickListener {
+public class AccountListFragment extends Fragment implements AccountListRecyclerAdapter.AccountListRecyclerOnClickListener {
 
     private LocalDatabase db;
-    private GroupListRecyclerAdapter adapter;
-    public ListGroupFragment() {
+    private AccountListRecyclerAdapter adapter;
+    public AccountListFragment() {
         // Required empty public constructor
     }
     @Override
@@ -41,36 +39,35 @@ public class ListGroupFragment extends Fragment implements GroupListRecyclerAdap
 
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_list_group, container, false);
 
-        List<PurchaseGroup> groupList = new ArrayList<>();
-        RecyclerView recyclerView = rootView.findViewById(R.id.group_list_recycler_view);
+        List<Account> accountList = new ArrayList<>();
+        RecyclerView recyclerView = rootView.findViewById(R.id.account_list_recycler_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new GroupListRecyclerAdapter(groupList);
+        adapter = new AccountListRecyclerAdapter(accountList);
         //리스너 등록
         adapter.setOnClickListener(this);
 
         recyclerView.setAdapter(adapter);
         //db 연결
         db = LocalDatabase.getInstance(getContext());
-        db.purchaseGroupDao().getAll().observe(this, list->{
+        db.accountDao().getAll().observe(this, list->{
             System.out.println(list.size()+"개");
             adapter.setData(list);
         });
 
         //FloatingActionButton 설정
-        FloatingActionButton groupAddFab = (FloatingActionButton) rootView.findViewById(R.id.add_group_fab);
+        FloatingActionButton groupAddFab = (FloatingActionButton) rootView.findViewById(R.id.add_account_fab);
         groupAddFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 switch (view.getId()){
-                    case R.id.add_group_fab:
-                        NewGroupAddDialog dialog = new NewGroupAddDialog(getContext());
-                        dialog.setListener(new NewGroupAddDialog.NewGroupAddDialogListener() {
+                    case R.id.add_account_fab:
+                        AddAccountDialog dialog = new AddAccountDialog(getContext());
+                        dialog.setListener(new AddAccountDialog.AddAccountDialogListener() {
                             @Override
-                            public void onAddButtonClicked(String groupName, String contents) {
-                                new InsertGroupAsyncTask(db.purchaseGroupDao()).execute(new PurchaseGroup(groupName,contents));
+                            public void onAddButtonClicked(int budget,String AccountName, String subscribe, boolean isMain) {
+                                new InsertAccountAsyncTask(db.accountDao()).execute(new Account(budget,AccountName,subscribe, false));
                             }
-
                             @Override
                             public void onCancelButtonClicked() {
 
@@ -84,15 +81,15 @@ public class ListGroupFragment extends Fragment implements GroupListRecyclerAdap
         return rootView;
     }
     //DB 접근 비동기 처리
-    private static class InsertGroupAsyncTask extends AsyncTask<PurchaseGroup, Void, Void>{
+    private static class InsertAccountAsyncTask extends AsyncTask<Account, Void, Void>{
 
-        private PurchaseGroupDao dao;
-        public InsertGroupAsyncTask(PurchaseGroupDao dao){
+        private AccountDao dao;
+        public InsertAccountAsyncTask(AccountDao dao){
             this.dao = dao;
         }
         @Override
-        protected Void doInBackground(PurchaseGroup... purchaseGroups) {
-            dao.insertPurchaseGroup(purchaseGroups[0]);
+        protected Void doInBackground(Account... accounts) {
+            dao.insertAccount(accounts[0]);
 
             return null;
         }
@@ -102,12 +99,12 @@ public class ListGroupFragment extends Fragment implements GroupListRecyclerAdap
     //짧게 터치
     @Override
     public void onItemClicked(int position){
-        PurchaseGroup group = null;
-        group = adapter.getItem(position);
+        Account account = null;
+        account = adapter.getItem(position);
 
-        Toast.makeText(getContext(), "그룹id : "+group.getId(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "그룹id : "+account.getAccountId(), Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getActivity(), ContentsActivity.class);
-        intent.putExtra("selectedGroupId",Integer.toString(group.getId()));
+        intent.putExtra("selectedGroupId",Integer.toString(account.getAccountId()));
         startActivity(intent);
     }
 

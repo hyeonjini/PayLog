@@ -11,14 +11,14 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="그룹 이름"
+            android:text="이름"
             android:textAlignment="textStart"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="그룹 이름을 입력하세요"
-            android:id="@+id/add_group_text"/>
+            android:id="@+id/add_account_name"/>
     </LinearLayout>
 
     <!-- 그룹 내용-->
@@ -29,14 +29,14 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="그룹 내용"
+            android:text="설명"
             android:textAlignment="textStart"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="그룹 내용을 입력하세요"
-            android:id="@+id/add_group_contents"/>
+            android:hint="내용을 입력하세요"
+            android:id="@+id/add_account_subscribe"/>
     </LinearLayout>
     <!-- 추가, 취소버튼-->
     <LinearLayout
@@ -48,12 +48,12 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:text="추가"
-            android:id="@+id/group_add_button"/>
+            android:id="@+id/account_add_button"/>
         <Button
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:text="취소"
-            android:id="@+id/group_add_cancel"/>
+            android:id="@+id/account_add_cancel"/>
     </LinearLayout>
 </LinearLayout>

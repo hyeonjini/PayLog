@@ -64,7 +64,7 @@
                     android:textSize="14sp"/>
 
                 <TextView
-                    android:id="@+id/group_item_budget"
+                    android:id="@+id/account_item_budget"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="12dp"
@@ -93,7 +93,7 @@
                     android:textSize="14sp"/>
 
                 <TextView
-                    android:id="@+id/group_item_used"
+                    android:id="@+id/account_item_used"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="12dp"

@@ -17,9 +17,9 @@ import com.google.android.material.tabs.TabItem;
 import com.google.android.material.tabs.TabLayout;
 import com.kumoh.paylog2.R;
 import com.kumoh.paylog2.adapter.MainFragmentAdapter;
+import com.kumoh.paylog2.db.Account;
+import com.kumoh.paylog2.db.AccountDao;
 import com.kumoh.paylog2.db.LocalDatabase;
-import com.kumoh.paylog2.db.PurchaseGroup;
-import com.kumoh.paylog2.db.PurchaseGroupDao;
 
 import java.util.List;
 
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
         db = LocalDatabase.getInstance(this);
         //만약 데이터가 아무것도 없으면 default  group 추가
-        new CreateDefaultGroupAsyncTask(db.purchaseGroupDao()).execute();
+        new CreateDefaultAccountAsyncTask(db.accountDao()).execute();
 
         ViewPager pager = findViewById(R.id.main_view_pager);
         MainFragmentAdapter adapter = new MainFragmentAdapter(getSupportFragmentManager(), 0);
@@ -81,29 +81,28 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-    private static class InsertGroupAsyncTask extends AsyncTask<PurchaseGroup, Void, Void>{
+    private static class InsertAccountAsyncTask extends AsyncTask<Account, Void, Void>{
 
-        private PurchaseGroupDao dao;
-        public InsertGroupAsyncTask(PurchaseGroupDao dao){
+        private AccountDao dao;
+        public InsertAccountAsyncTask(AccountDao dao){
             this.dao = dao;
         }
         @Override
-        protected Void doInBackground(PurchaseGroup... purchaseGroups) {
-            dao.insertPurchaseGroup(purchaseGroups[0]);
+        protected Void doInBackground(Account... accounts) {
+            dao.insertAccount(accounts[0]);
 
             return null;
         }
     }
-    private static class CreateDefaultGroupAsyncTask extends AsyncTask<Void, Void, Void>{
-        PurchaseGroupDao dao ;
-        public CreateDefaultGroupAsyncTask(PurchaseGroupDao dao){
+    private static class CreateDefaultAccountAsyncTask extends AsyncTask<Void, Void, Void>{
+        AccountDao dao ;
+        public CreateDefaultAccountAsyncTask(AccountDao dao){
             this.dao = dao;
         }
         @Override
         protected Void doInBackground(Void... voids) {
             if(dao.getRowCount() == 0){
-                System.out.println("그룹 0개");
-                dao.insertPurchaseGroup(new PurchaseGroup("디폴트 그룹", "디폴트 그룹"));
+                dao.insertAccount(new Account(0,"디폴트그룹","기본 생성",true));
             }
             return null;
         }

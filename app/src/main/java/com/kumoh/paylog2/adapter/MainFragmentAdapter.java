@@ -6,9 +6,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import com.kumoh.paylog2.db.PurchaseGroup;
-import com.kumoh.paylog2.fragment.ListGroupFragment;
-import com.kumoh.paylog2.fragment.MainGroupFragment;
+import com.kumoh.paylog2.db.Account;
+import com.kumoh.paylog2.fragment.AccountListFragment;
+import com.kumoh.paylog2.fragment.MainAccountFragment;
 
 import java.util.ArrayList;
 
@@ -18,8 +18,8 @@ public class MainFragmentAdapter extends FragmentStatePagerAdapter {
     public MainFragmentAdapter(@NonNull FragmentManager fm, int behavior) {
         super(fm, behavior);
         fragmentList = new ArrayList<>();
-        fragmentList.add(new MainGroupFragment());
-        fragmentList.add(new ListGroupFragment());
+        fragmentList.add(new MainAccountFragment());
+        fragmentList.add(new AccountListFragment());
     }
 
     @NonNull

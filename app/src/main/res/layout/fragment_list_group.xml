@@ -4,16 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragment.ListGroupFragment">
+    tools:context=".fragment.AccountListFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/group_list_recycler_view"
+        android:id="@+id/account_list_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:listitem="@layout/item_group_list" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_group_fab"
+        android:id="@+id/add_account_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
