@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".fragment.MainAccountFragment">
+    tools:context=".fragment.main.MainAccountFragment">
 
     <androidx.cardview.widget.CardView
         android:layout_marginStart="8dp"
@@ -32,7 +32,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
 
-                    android:text="그룹 이름"
+                    android:text="Main Account"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
                     android:textSize="24sp" />
                 <ImageView

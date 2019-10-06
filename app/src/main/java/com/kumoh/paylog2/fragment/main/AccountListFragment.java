@@ -1,4 +1,4 @@
-package com.kumoh.paylog2.fragment;
+package com.kumoh.paylog2.fragment.main;
 
 
 import android.content.Intent;
@@ -51,7 +51,6 @@ public class AccountListFragment extends Fragment implements AccountListRecycler
         //db 연결
         db = LocalDatabase.getInstance(getContext());
         db.accountDao().getAll().observe(this, list->{
-            System.out.println(list.size()+"개");
             adapter.setData(list);
         });
 

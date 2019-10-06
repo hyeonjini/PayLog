@@ -4,13 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragment.AccountListFragment">
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/account_list_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:listitem="@layout/item_group_list" />
+    tools:context=".fragment.main.AccountListFragment">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_account_fab"
@@ -25,5 +19,13 @@
         app:borderWidth="0dp"
         app:fabSize="normal"
         app:rippleColor="@color/mainColor" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/account_list_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/item_group_list" />
+
+
 
 </RelativeLayout>
