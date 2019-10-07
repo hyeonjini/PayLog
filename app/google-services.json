@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "885590182059",
+    "firebase_url": "https://projectpaylog.firebaseio.com",
+    "project_id": "projectpaylog",
+    "storage_bucket": "projectpaylog.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:885590182059:android:c072a701d7e8aac5c70fee",
+        "android_client_info": {
+          "package_name": "com.kumoh.paylog2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "885590182059-b83rtod251b6ig3kdmps1ukdaet33ho5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPs2n8NJVdgBq_iYYV7JytP02wUdIUpNk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "885590182059-b83rtod251b6ig3kdmps1ukdaet33ho5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
