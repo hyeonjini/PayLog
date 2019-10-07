@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_data_up"
+        android:icon="@drawable/main_icon_upload_24dp"
+        android:title="데이터 내보내기" />
+    <item
+        android:id="@+id/nav_data_down"
+        android:icon="@drawable/main_icon_download_24dp"
+        android:title="데이터 가져오기" />
+    <item
+        android:id="@+id/nav_document"
+        android:icon="@drawable/main_icon_document_24dp"
+        android:title="문서관리" />
+    <item
+        android:id="@+id/nav_info"
+        android:icon="@drawable/main_icon_info_24dp"
+        android:title="정보" />
+    <item
+        android:id="@+id/nav_service"
+        android:icon="@drawable/main_icon_service_24dp"
+        android:title="고객센터" />
+</menu>

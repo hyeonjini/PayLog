@@ -1,41 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
-    tools:context=".activity.MainActivity">
-    <androidx.appcompat.widget.Toolbar
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:id="@+id/tool_bar_main"/>
+    android:id="@+id/main_drawer"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <include
+        layout="@layout/app_bar_main"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="4.3">
-            <androidx.viewpager.widget.ViewPager
-                android:id="@+id/main_view_pager"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </androidx.viewpager.widget.ViewPager>
-    </LinearLayout>
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/main_nav"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/header_main_nav"
+        app:menu="@menu/item_main_nav"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:background="#ffffff"
-        android:layout_height="wrap_content">
-        <com.google.android.material.tabs.TabLayout
-            app:tabIndicatorColor="@color/mainColor"
-            android:id="@+id/tab_layout"
-            app:tabIndicatorGravity="top"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </com.google.android.material.tabs.TabLayout>
-    </LinearLayout>
-
-
-</LinearLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

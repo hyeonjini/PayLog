@@ -1,19 +1,19 @@
 package com.kumoh.paylog2.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.LiveData;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.ViewPager;
 
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.WindowManager;
 
-import com.google.android.material.tabs.TabItem;
 import com.google.android.material.tabs.TabLayout;
 import com.kumoh.paylog2.R;
 import com.kumoh.paylog2.adapter.MainFragmentAdapter;
@@ -21,11 +21,10 @@ import com.kumoh.paylog2.db.Account;
 import com.kumoh.paylog2.db.AccountDao;
 import com.kumoh.paylog2.db.LocalDatabase;
 
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
 
     private LocalDatabase db;
+    private DrawerLayout drawerLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.white_icon_menu_24dp);
+
+        //Navigation 설정
+        drawerLayout = findViewById(R.id.main_drawer);
         //DB 초기화
 
         db = LocalDatabase.getInstance(this);
@@ -106,5 +108,13 @@ public class MainActivity extends AppCompatActivity {
             }
             return null;
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == android.R.id.home){
+            drawerLayout.openDrawer(GravityCompat.START);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
