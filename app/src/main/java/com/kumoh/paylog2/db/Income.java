@@ -11,13 +11,15 @@ public class Income {
     private int amount;
     private String date;
     private String category;
+    private String subscribe;
 
-    public Income(int accountId, int incomeId, int amount, String date, String category) {
+    public Income(int accountId, int incomeId, int amount, String date, String category, String subscribe) {
         this.accountId = accountId;
         this.incomeId = incomeId;
         this.amount = amount;
         this.date = date;
         this.category = category;
+        this.subscribe = subscribe;
     }
 
     public int getAccountId() {
@@ -59,4 +61,8 @@ public class Income {
     public void setCategory(String category) {
         this.category = category;
     }
+
+    public String getSubscribe(){ return subscribe; }
+
+    public void setSubscribe(String subscribe){ this.subscribe = subscribe; }
 }

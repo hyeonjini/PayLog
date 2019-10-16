@@ -22,4 +22,6 @@ interface SpendingDao {
     @Query("SELECT SUM(accountId) FROM Spending WHERE accountId = :accountId")
     LiveData<Integer> getAmountByAccountId(int accountId); //해당 그룹의 총 지출액
 
+    @Query("SELECT count(spendingId) FROM Spending WHERE accountId = :accountId")
+    int getSpendingIdCountByAccountId(int accountId);// 그룹 아이디로 spending count 구하기
 }

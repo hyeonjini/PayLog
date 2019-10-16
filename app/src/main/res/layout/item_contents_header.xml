@@ -18,17 +18,6 @@
             android:text="Day"
             android:textSize="24sp"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_marginTop="8dp"
-        android:padding="4dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/contents_list_recycler_view"
-            tools:listitem="@layout/item_contents_list_item"/>
-    </LinearLayout>
 
+    </LinearLayout>
 </LinearLayout>
