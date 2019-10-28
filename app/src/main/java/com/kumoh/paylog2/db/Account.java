@@ -12,9 +12,9 @@ public class Account {
     private int budget;
     private String name;
     private String subscribe;
-    private boolean isMain;
+    private int isMain;
 
-    public Account(int budget, String name, String subscribe, boolean isMain) {
+    public Account(int budget, String name, String subscribe, int isMain) {
         this.budget = budget;
         this.name = name;
         this.subscribe = subscribe;
@@ -52,11 +52,11 @@ public class Account {
         this.subscribe = subscribe;
     }
 
-    public boolean isMain() {
+    public int getIsMain() {
         return isMain;
     }
 
-    public void setMain(boolean main) {
-        isMain = main;
+    public void setIsMain(int isMain) {
+        this.isMain = isMain;
     }
 }

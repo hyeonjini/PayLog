@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             if(dao.getRowCount() == 0){
-                dao.insertAccount(new Account(0,"디폴트그룹","기본 생성",true));
+                dao.insertAccount(new Account(0,"디폴트그룹","기본 생성",1));
             }
             return null;
         }

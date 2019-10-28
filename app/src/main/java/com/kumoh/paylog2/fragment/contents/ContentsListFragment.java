@@ -35,10 +35,7 @@ public class ContentsListFragment extends Fragment {
 
         recyclerView.setAdapter(adapter);
 
-        db = LocalDatabase.getInstance(getContext());
-        db.accountDao().getListItem(accountId).observe(this, listItemDtos -> {
-            adapter.setData(listItemDtos);
-        });
+
 
 
         return rootView;

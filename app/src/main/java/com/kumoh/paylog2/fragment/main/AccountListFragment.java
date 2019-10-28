@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -42,6 +43,7 @@ public class AccountListFragment extends Fragment implements AccountListRecycler
         List<Account> accountList = new ArrayList<>();
         RecyclerView recyclerView = rootView.findViewById(R.id.account_list_recycler_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        //RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(),2);
         recyclerView.setLayoutManager(layoutManager);
         adapter = new AccountListRecyclerAdapter(accountList);
         //리스너 등록
@@ -65,7 +67,7 @@ public class AccountListFragment extends Fragment implements AccountListRecycler
                         dialog.setListener(new AddAccountDialog.AddAccountDialogListener() {
                             @Override
                             public void onAddButtonClicked(int budget,String AccountName, String subscribe, boolean isMain) {
-                                new InsertAccountAsyncTask(db.accountDao()).execute(new Account(budget,AccountName,subscribe, false));
+                                new InsertAccountAsyncTask(db.accountDao()).execute(new Account(budget,AccountName,subscribe, 0));
                             }
                             @Override
                             public void onCancelButtonClicked() {

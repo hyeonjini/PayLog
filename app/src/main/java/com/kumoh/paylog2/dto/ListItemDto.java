@@ -1,18 +1,25 @@
 package com.kumoh.paylog2.dto;
 
-import java.sql.Date;
-
 public class ListItemDto {
+    String date;
     int amount;
     String subscribe;
     String type;
 
-    public ListItemDto(int amount, String subscribe, String type) {
+    public ListItemDto(String date, int amount, String subscribe, String type) {
+        this.date = date;
         this.amount = amount;
         this.subscribe = subscribe;
         this.type = type;
     }
 
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
 
     public int getAmount() {
         return amount;

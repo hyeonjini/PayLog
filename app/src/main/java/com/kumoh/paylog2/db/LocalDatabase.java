@@ -8,11 +8,11 @@ import androidx.room.RoomDatabase;
 
 import com.kumoh.paylog2.dto.ListItemDto;
 
-@Database(version = 1 , entities = {Account.class, Spending.class, Income.class})
+@Database(version = 1 , entities = {Account.class, History.class, Category.class})
 public abstract class LocalDatabase extends RoomDatabase {
+
     public abstract AccountDao accountDao();
-    public abstract SpendingDao spendingDao();
-    public abstract IncomeDao incomeDao();
+    public abstract HistoryDao historyDao();
 
     private static LocalDatabase instance;
 
