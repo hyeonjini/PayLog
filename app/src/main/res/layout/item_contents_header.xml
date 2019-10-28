@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:padding="8dp"
                 android:text="2019-10-29"
-                android:textSize="18sp"
+                android:textSize="14sp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
             <TextView
                 android:layout_width="0dp"
@@ -40,7 +40,7 @@
                 android:text="0"
                 android:textAlignment="center"
                 android:textColor="#ee2560"
-                android:textSize="18sp"
+                android:textSize="14sp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
             <TextView
                 android:layout_width="0dp"
@@ -57,7 +57,7 @@
                 android:text="0"
                 android:textColor="#60c5ba"
                 android:textAlignment="center"
-                android:textSize="18sp"
+                android:textSize="14sp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
             <LinearLayout
                 android:layout_width="4dp"

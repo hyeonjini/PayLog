@@ -28,7 +28,7 @@
                 android:layout_height="match_parent"
                 android:text="지출/수입 제목"
                 android:id="@+id/item_contents_list_income_description"
-                android:textSize="18sp"
+                android:textSize="14sp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
 
         </LinearLayout>
@@ -37,11 +37,11 @@
             android:layout_weight="1"
             android:layout_height="match_parent">
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="29,000"
                 android:id="@+id/item_contents_list_income_income"
-                android:textSize="18sp"
+                android:textSize="14sp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
         </LinearLayout>
     </LinearLayout>

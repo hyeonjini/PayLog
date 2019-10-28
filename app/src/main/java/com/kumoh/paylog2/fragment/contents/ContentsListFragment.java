@@ -44,8 +44,10 @@ public class ContentsListFragment extends Fragment {
             for(History h : list){
                 System.out.println("날짜 :"+h.getDate() + "내역"+h.getDescription()+ "금액:" + h.getAmount());
             }
-            makeListHeader(list);
-            adapter.setData(listItem);
+            if(list.size() >0) {
+                makeListHeader(list);
+                adapter.setData(listItem);
+            }
             //notify만 하면끝
         });
 
