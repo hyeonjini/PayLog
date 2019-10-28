@@ -41,6 +41,7 @@ public class AddAccountDialog extends Dialog implements View.OnClickListener{
 
         accountName = (EditText) findViewById(R.id.add_account_name);
         subscribe = (EditText) findViewById(R.id.add_account_subscribe);
+        budget = (EditText) findViewById(R.id.add_account_budget);
         addButton = (Button)findViewById(R.id.account_add_button);
         cancelButton = (Button)findViewById(R.id.account_add_cancel);
 
@@ -52,7 +53,7 @@ public class AddAccountDialog extends Dialog implements View.OnClickListener{
     public void onClick(View v){
         switch (v.getId()){
             case R.id.account_add_button:
-                int budget = 0;
+                int budget = Integer.parseInt(this.budget.getText().toString());
                 boolean isMain = false;
                 String accountName = this.accountName.getText().toString();
                 String subscribe = this.subscribe.getText().toString();

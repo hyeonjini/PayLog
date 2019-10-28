@@ -23,6 +23,7 @@ import com.kumoh.paylog2.db.Account;
 import com.kumoh.paylog2.db.AccountDao;
 import com.kumoh.paylog2.db.LocalDatabase;
 import com.kumoh.paylog2.dialog.AddAccountDialog;
+import com.kumoh.paylog2.dto.AccountInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,7 @@ public class AccountListFragment extends Fragment implements AccountListRecycler
 
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_list_group, container, false);
 
-        List<Account> accountList = new ArrayList<>();
+        List<AccountInfo> accountList = new ArrayList<>();
         RecyclerView recyclerView = rootView.findViewById(R.id.account_list_recycler_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         //RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(),2);
@@ -52,7 +53,7 @@ public class AccountListFragment extends Fragment implements AccountListRecycler
         recyclerView.setAdapter(adapter);
         //db 연결
         db = LocalDatabase.getInstance(getContext());
-        db.accountDao().getAll().observe(this, list->{
+        db.accountDao().getAccountInfoList().observe(this, list->{
             adapter.setData(list);
         });
 
@@ -100,7 +101,7 @@ public class AccountListFragment extends Fragment implements AccountListRecycler
     //짧게 터치
     @Override
     public void onItemClicked(int position){
-        Account account = null;
+        AccountInfo account = null;
         account = adapter.getItem(position);
 
         Toast.makeText(getContext(), "그룹id : "+account.getAccountId(), Toast.LENGTH_SHORT).show();

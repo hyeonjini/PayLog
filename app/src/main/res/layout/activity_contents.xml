@@ -43,5 +43,33 @@
         app:borderWidth="0dp"
         app:fabSize="normal"
         app:rippleColor="@color/mainColor" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_contents_fab_spending"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="100dp"
+        android:backgroundTint="#ee2560"
+        android:src="@drawable/white_icon_add_24dp"
+        android:visibility="invisible"
+        app:borderWidth="0dp"
+        app:fabSize="normal"
+        app:rippleColor="@color/mainColor" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_contents_fab_income"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="180dp"
+        android:backgroundTint="#60c5ba"
+        android:src="@drawable/white_icon_add_24dp"
+        android:visibility="invisible"
+        app:borderWidth="0dp"
+        app:fabSize="normal"
+        app:rippleColor="@color/mainColor" />
 
 </RelativeLayout>

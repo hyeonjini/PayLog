@@ -12,13 +12,13 @@ public class History {
     private int accountId;
     @PrimaryKey(autoGenerate = true)
     private int historyId;
-    private String kind;
+    private int kind;
     private String date;
     private int categoryId;
     private String description;
     private int amount;
 
-    public History(int accountId, String kind, String date, int categoryId, String description, int amount) {
+    public History(int accountId, int kind, String date, int categoryId, String description, int amount) {
         this.accountId = accountId;
         this.kind = kind;
         this.date = date;
@@ -44,11 +44,11 @@ public class History {
         this.historyId = historyId;
     }
 
-    public String getKind() {
+    public int getKind() {
         return kind;
     }
 
-    public void setKind(String kind) {
+    public void setKind(int kind) {
         this.kind = kind;
     }
 

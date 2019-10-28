@@ -10,15 +10,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kumoh.paylog2.R;
 import com.kumoh.paylog2.db.Account;
+import com.kumoh.paylog2.dto.AccountInfo;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class AccountListRecyclerAdapter extends RecyclerView.Adapter<AccountListRecyclerAdapter.AccountListViewHolder>{
 
     private AccountListRecyclerOnClickListener clickListener;
     private AccountListRecyclerLongClickListener longClickListener;
-    private List<Account> data;
-    public AccountListRecyclerAdapter(List<Account> data){
+    private List<AccountInfo> data;
+    public AccountListRecyclerAdapter(List<AccountInfo> data){
         this.data = data;
     }
     @NonNull
@@ -31,10 +33,12 @@ public class AccountListRecyclerAdapter extends RecyclerView.Adapter<AccountList
 
     @Override
     public void onBindViewHolder(@NonNull AccountListViewHolder holder, int position) {
-        Account account = data.get(position);
+        DecimalFormat dc = new DecimalFormat("###,###,###,###");
+        AccountInfo account = data.get(position);
         holder.accountName.setText(account.getName());
-        holder.budget.setText(Integer.toString(account.getBudget()));
-
+        holder.budget.setText(dc.format(account.getBudget()));
+        holder.income.setText(dc.format(account.getIncome()));
+        holder.used.setText(dc.format(account.getSpending()));
         //클릭 이벤트 (짧게터치)
         if(clickListener != null){
             final int pos = position;
@@ -68,17 +72,21 @@ public class AccountListRecyclerAdapter extends RecyclerView.Adapter<AccountList
 
         TextView accountName;
         TextView budget;
+        TextView used;
+        TextView income;
         public AccountListViewHolder(@NonNull View itemView) {
             super(itemView);
-            accountName = itemView.findViewById(R.id.list_item_text);
-            budget = itemView.findViewById(R.id.account_item_budget);
+            accountName = itemView.findViewById(R.id.account_list_item_name);
+            budget = itemView.findViewById(R.id.account_list_item_budget);
+            used = itemView.findViewById(R.id.account_list_item_used);
+            income = itemView.findViewById(R.id.account_list_item_income);
         }
     }
-    public Account getItem(int position){
+    public AccountInfo getItem(int position){
         return data.get(position);
     }
     //데이터가 새로 들어옴
-    public void setData(List<Account> accounts){
+    public void setData(List<AccountInfo> accounts){
        data = accounts;
         notifyDataSetChanged();
     }

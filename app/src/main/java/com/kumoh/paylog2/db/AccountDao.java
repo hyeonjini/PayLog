@@ -8,7 +8,6 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.kumoh.paylog2.dto.AccountInfo;
-import com.kumoh.paylog2.dto.ListItemDto;
 
 import java.util.List;
 
@@ -27,11 +26,11 @@ public interface AccountDao {
     @Query("SELECT COUNT(accountId) FROM Account")
     int getRowCount();
     //Account 정보 획득
-    @Query("SELECT t1.accountId, t1.name, t1.isMain, t1.budget, t1.spending, t2.income FROM (SELECT a.accountId, a.name, a.isMain, a.budget, t.spending FROM account as a JOIN (SELECT accountId , sum(amount) as spending FROM history where kind = -1 group by accountId)as t ON a.accountId = t.accountId)as t1 JOIN (SELECT accountId, sum(amount) as income FROM history where kind = 1 group by accountId) as t2 on t1.accountId = t2.accountId")
+    @Query("SELECT t1.accountId, t1.name, t1.isMain, t1.budget, t1.spending , t2.income  FROM (SELECT a.accountId, a.name, a.isMain, a.budget, t.spending FROM account as a left outer JOIN (SELECT accountId , sum(amount) as spending FROM history where kind = -1 group by accountId)as t ON a.accountId = t.accountId)as t1 left outer JOIN (SELECT accountId, sum(amount) as income FROM history where kind = 1 group by accountId) as t2 on t1.accountId = t2.accountId")
     LiveData<List<AccountInfo>> getAccountInfoList();
 
     //MainAccount 찾기
-    @Query("SELECT t1.accountId, t1.name, t1.isMain, t1.budget, t1.spending, t2.income FROM (SELECT a.accountId, a.name, a.isMain, a.budget, t.spending FROM account as a JOIN (SELECT accountId , sum(amount) as spending FROM history where kind = -1 group by accountId)as t ON a.accountId = t.accountId)as t1 JOIN (SELECT accountId, sum(amount) as income FROM history where kind = 1 group by accountId) as t2 on t1.accountId = t2.accountId WHERE t1.isMain =1")
+    @Query("SELECT t1.accountId, t1.name, t1.isMain, t1.budget, t1.spending, t2.income FROM (SELECT a.accountId, a.name, a.isMain, a.budget, t.spending FROM account as a left outer JOIN (SELECT accountId , sum(amount) as spending FROM history where kind = -1 group by accountId)as t ON a.accountId = t.accountId)as t1 left outer JOIN (SELECT accountId, sum(amount) as income FROM history where kind = 1 group by accountId) as t2 on t1.accountId = t2.accountId WHERE t1.isMain =1")
     LiveData<AccountInfo> getMainAccountInfo();
 
 }

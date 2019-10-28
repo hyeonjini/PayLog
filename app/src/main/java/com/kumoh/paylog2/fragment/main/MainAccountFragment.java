@@ -38,15 +38,15 @@ public class MainAccountFragment extends Fragment {
 
         db = LocalDatabase.getInstance(getContext());
         db.accountDao().getMainAccountInfo().observe(this, accountInfo -> {
-          //  System.out.println(accountInfo.getName());
-           // setMainAccountInfo(accountInfo.getName(), accountInfo.getBudget(), accountInfo.getSpending(), accountInfo.getIncome());
+            System.out.println("여기이이이"+accountInfo.getName() + accountInfo.getIncome() + accountInfo.getSpending());
+            setMainAccountInfo(accountInfo.getName(), accountInfo.getBudget(), accountInfo.getSpending(), accountInfo.getIncome());
         });
 
         return rootView;
     }
 
     public void setMainAccountInfo(String name, int budget, int spending, int income){
-        DecimalFormat dc = new DecimalFormat("###,###,###,####");
+        DecimalFormat dc = new DecimalFormat("###,###,###,###");
         this.accountName.setText(name);
         this.budget.setText(dc.format(budget));
         this.spending.setText(dc.format(spending));

@@ -9,7 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kumoh.paylog2.R;
-import com.kumoh.paylog2.dto.ListItemDto;
+import com.kumoh.paylog2.dto.ContentsListBody;
+import com.kumoh.paylog2.dto.ContentsListItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,63 +18,96 @@ import java.util.List;
 public class ContentsListRecyclerAdapter
         extends RecyclerView.Adapter {
 
-    private List<ListItemDto> data;
+    private List<ContentsListItem> data;
 
-    private static final int VIEW_TYPE_HEADER = 1;
-    private static final int VIEW_TYPE_ITEM = 0;
+    private static final int VIEW_TYPE_HEADER = 0;
+    final static int SPENDING_VIEW = -1;
+    final static int INCOME_VIEW = 1;
 
-    public ContentsListRecyclerAdapter(ArrayList<ListItemDto> data){
+    public ContentsListRecyclerAdapter(ArrayList<ContentsListItem> data){
         this.data = data;
     }
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-        View view = null;
-        final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        view = inflater.inflate(R.layout.item_contents_list_item,parent, false);
-        return new ContentsListRecyclerAdapterItemViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == VIEW_TYPE_HEADER) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_contents_header, parent, false);
+            return new ContentsListRecyclerAdapterHeaderViewHolder(v);
+        } else if (viewType == SPENDING_VIEW){
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_contents_list_spending , parent, false);
 
+            return new ContentsListRecyclerAdapterSpendingViewHolder(v);
+        }else if(viewType == INCOME_VIEW){
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_contents_list_income , parent, false);
+            return new ContentsListRecyclerAdapterIncomeViewHolder(v);
+        }
+        return null;
+    }
+    @Override
+    public int getItemViewType(int position) {
+        if (data.get(position).getViewType() == 0) {
+            return VIEW_TYPE_HEADER;
+        } else if (data.get(position).getViewType() == 1){
+            return INCOME_VIEW;
+        } else if(data.get(position).getViewType() == -1){
+            return SPENDING_VIEW;
+        }
+        return 0;
     }
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
-        ListItemDto item = data.get(position);
-        ((ContentsListRecyclerAdapterItemViewHolder) holder).category.setText(item.getType());
-        ((ContentsListRecyclerAdapterItemViewHolder) holder).subscribe.setText(item.getSubscribe());
-        ((ContentsListRecyclerAdapterItemViewHolder) holder).amount.setText(Integer.toString(item.getAmount()));
-        /*switch (holder.getItemViewType()) {
-            case VIEW_TYPE_HEADER:
-                ((ContentsListRecyclerAdapterHeaderViewHolder) holder).day.setText("");
-                break;
-            case VIEW_TYPE_ITEM:
-                ((ContentsListRecyclerAdapterItemViewHolder) holder).category.setText("");
-                break;
-        }*/
+        ContentsListItem item = data.get(position);
+        if (holder instanceof ContentsListRecyclerAdapterHeaderViewHolder){
+            ((ContentsListRecyclerAdapterHeaderViewHolder) holder).date.setText(item.getDate());
+            ((ContentsListRecyclerAdapterHeaderViewHolder) holder).income.setText(Integer.toString(item.getIncome()));
+            ((ContentsListRecyclerAdapterHeaderViewHolder) holder).spending.setText(Integer.toString(item.getSepnding()));
+        }
+        else if (holder instanceof ContentsListRecyclerAdapterSpendingViewHolder){
+            ((ContentsListRecyclerAdapterSpendingViewHolder) holder).category.setText(Integer.toString(((ContentsListBody) item).getCategoryId()));
+            ((ContentsListRecyclerAdapterSpendingViewHolder) holder).spending.setText(Integer.toString(((ContentsListBody) item).getAmount()));
+            ((ContentsListRecyclerAdapterSpendingViewHolder) holder).description.setText(((ContentsListBody) item).getDescription());
+        }
+        else if (holder instanceof ContentsListRecyclerAdapterIncomeViewHolder){
+            ((ContentsListRecyclerAdapterIncomeViewHolder) holder).category.setText(Integer.toString(((ContentsListBody) item).getCategoryId()));
+            ((ContentsListRecyclerAdapterIncomeViewHolder) holder).income.setText(Integer.toString(((ContentsListBody) item).getAmount()));
+            ((ContentsListRecyclerAdapterIncomeViewHolder) holder).description.setText(((ContentsListBody) item).getDescription());
+        }
     }
     @Override
     public int getItemCount() {
         return data.size();
     }
-    public static class ContentsListRecyclerAdapterItemViewHolder extends RecyclerView.ViewHolder{
-        TextView category;
-        TextView subscribe;
-        TextView amount;
-        public ContentsListRecyclerAdapterItemViewHolder(@NonNull View itemView) {
-            super(itemView);
-            category = itemView.findViewById(R.id.item_contents_list_item_type);
-            subscribe = itemView.findViewById(R.id.item_contents_list_item_subscribe);
-            amount = itemView.findViewById(R.id.item_contents_list_item_amount);
-        }
-    }
-    public static class ContentsListRecyclerAdapterHeaderViewHolder extends RecyclerView.ViewHolder{
-        TextView day;
-        public ContentsListRecyclerAdapterHeaderViewHolder(@NonNull View itemView){
-            super(itemView);
-            day = itemView.findViewById(R.id.item_contents_list_day);
-        }
-    }
 
-    public void setData(List<ListItemDto> newData){
+    public static class ContentsListRecyclerAdapterHeaderViewHolder extends RecyclerView.ViewHolder{
+        TextView date;
+        TextView income;
+        TextView spending;
+        public ContentsListRecyclerAdapterHeaderViewHolder(@NonNull View itemView) {
+            super(itemView);
+            date = itemView.findViewById(R.id.item_contents_list_date);
+            income =itemView.findViewById(R.id.item_contents_list_income);
+            spending =itemView.findViewById(R.id.item_contents_list_spending);
+        }
+    }
+    public static class ContentsListRecyclerAdapterSpendingViewHolder extends RecyclerView.ViewHolder{
+        TextView category, description, spending;
+        public ContentsListRecyclerAdapterSpendingViewHolder(@NonNull View itemView){
+            super(itemView);
+            category = itemView.findViewById(R.id.item_contents_list_item_category);
+            description = itemView.findViewById(R.id.item_contents_list_item_description);
+            spending = itemView.findViewById(R.id.item_contents_list_item_spending);
+        }
+    }
+    public static class ContentsListRecyclerAdapterIncomeViewHolder extends RecyclerView.ViewHolder{
+        TextView category, description, income;
+        public ContentsListRecyclerAdapterIncomeViewHolder(@NonNull View itemView){
+            super(itemView);
+            category = itemView.findViewById(R.id.item_contents_list_income_category);
+            description = itemView.findViewById(R.id.item_contents_list_income_description);
+            income = itemView.findViewById(R.id.item_contents_list_income_income);
+        }
+    }
+    public void setData(List<ContentsListItem> newData){
         this.data = newData;
         notifyDataSetChanged();
     }

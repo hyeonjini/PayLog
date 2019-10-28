@@ -16,4 +16,6 @@ public interface HistoryDao {
     void insertHistory(History history);
     //@Query("SELECT categoryId, sum(amount) as amount FROM History WHERE kind = -1 GROUP BY categoryId LIMIT 6") //Spend by category Top 6
     //LiveData<List<SpendByCategory>> getSpendingOfCategory();
+    @Query("SELECT * FROM History WHERE accountId = :accountId order by date desc")
+    LiveData<List<History>> getAllByAccountId(int accountId);
 }
