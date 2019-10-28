@@ -15,10 +15,11 @@ import java.util.ArrayList;
 public class ContentsFragmentAdapter extends FragmentStatePagerAdapter {
 
     ArrayList<Fragment> fragments;
-    public ContentsFragmentAdapter(@NonNull FragmentManager fm, int behavior) {
+    public ContentsFragmentAdapter(@NonNull FragmentManager fm, int behavior, int accountId) {
         super(fm, behavior);
+
         fragments = new ArrayList<Fragment>();
-        fragments.add(new ContentsListFragment());
+        fragments.add(new ContentsListFragment(accountId));
         fragments.add(new ContentsMonthFragment());
         fragments.add(new ContentsCalendarFragment());
         fragments.add(new ContentsStatisticsFragment());

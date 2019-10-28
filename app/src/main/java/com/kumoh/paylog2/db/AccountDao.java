@@ -7,6 +7,8 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import com.kumoh.paylog2.dto.ListItemDto;
+
 import java.util.List;
 
 @Dao
@@ -23,4 +25,8 @@ public interface AccountDao {
     LiveData<List<Account>> getAll();
     @Query("SELECT COUNT(accountId) FROM Account")
     int getRowCount();
+
+    //ListItem 얻기
+    @Query("SELECT date, amount, place as subscribe, 'spending'type from spending where accountId =:accountId union all select date, amount, subscribe, 'income'type from income where accountId= :accountId order by date desc")
+    LiveData<List<ListItemDto>> getListItem(int accountId);
 }

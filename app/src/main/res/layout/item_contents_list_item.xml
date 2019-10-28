@@ -16,7 +16,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="category"
-                android:id="@+id/item_contents_list_item_category"
+                android:id="@+id/item_contents_list_item_type"
                 android:textSize="18sp"/>
         </LinearLayout>
         <LinearLayout
@@ -27,7 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="지출/수입 제목"
-                android:id="@+id/item_contents_list_item_title"
+                android:id="@+id/item_contents_list_item_subscribe"
                 android:textSize="18sp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
 

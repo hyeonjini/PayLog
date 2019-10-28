@@ -9,47 +9,46 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kumoh.paylog2.R;
-import com.kumoh.paylog2.db.Spending;
-import com.kumoh.paylog2.dto.ContentsListHeader;
+import com.kumoh.paylog2.dto.ListItemDto;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ContentsListRecyclerAdapter
         extends RecyclerView.Adapter {
 
-    private ArrayList<Spending> data;
-    private ArrayList<ContentsListHeader> header;
+    private List<ListItemDto> data;
 
     private static final int VIEW_TYPE_HEADER = 1;
     private static final int VIEW_TYPE_ITEM = 0;
 
-    public ContentsListRecyclerAdapter(ArrayList<Spending> data, ArrayList<ContentsListHeader> header){
+    public ContentsListRecyclerAdapter(ArrayList<ListItemDto> data){
         this.data = data;
-        this.header = header;
     }
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
         View view = null;
         final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        if(viewType == VIEW_TYPE_HEADER){
-            view = inflater.inflate(R.layout.item_contents_header, parent, false);
-            return new ContentsListRecyclerAdapterHeaderViewHolder(view);
-        }else if (viewType == VIEW_TYPE_ITEM) {
-            view = inflater.inflate(R.layout.item_contents_list_item, parent, false);
-            return new ContentsListRecyclerAdapterItemViewHolder(view);
-        } throw new RuntimeException("좆됨");
+        view = inflater.inflate(R.layout.item_contents_list_item,parent, false);
+        return new ContentsListRecyclerAdapterItemViewHolder(view);
+
     }
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        switch (holder.getItemViewType()) {
+
+        ListItemDto item = data.get(position);
+        ((ContentsListRecyclerAdapterItemViewHolder) holder).category.setText(item.getType());
+        ((ContentsListRecyclerAdapterItemViewHolder) holder).subscribe.setText(item.getSubscribe());
+        ((ContentsListRecyclerAdapterItemViewHolder) holder).amount.setText(Integer.toString(item.getAmount()));
+        /*switch (holder.getItemViewType()) {
             case VIEW_TYPE_HEADER:
                 ((ContentsListRecyclerAdapterHeaderViewHolder) holder).day.setText("");
                 break;
             case VIEW_TYPE_ITEM:
                 ((ContentsListRecyclerAdapterItemViewHolder) holder).category.setText("");
                 break;
-        }
+        }*/
     }
     @Override
     public int getItemCount() {
@@ -57,9 +56,13 @@ public class ContentsListRecyclerAdapter
     }
     public static class ContentsListRecyclerAdapterItemViewHolder extends RecyclerView.ViewHolder{
         TextView category;
+        TextView subscribe;
+        TextView amount;
         public ContentsListRecyclerAdapterItemViewHolder(@NonNull View itemView) {
             super(itemView);
-            category = itemView.findViewById(R.id.item_contents_list_item_category);
+            category = itemView.findViewById(R.id.item_contents_list_item_type);
+            subscribe = itemView.findViewById(R.id.item_contents_list_item_subscribe);
+            amount = itemView.findViewById(R.id.item_contents_list_item_amount);
         }
     }
     public static class ContentsListRecyclerAdapterHeaderViewHolder extends RecyclerView.ViewHolder{
@@ -68,5 +71,10 @@ public class ContentsListRecyclerAdapter
             super(itemView);
             day = itemView.findViewById(R.id.item_contents_list_day);
         }
+    }
+
+    public void setData(List<ListItemDto> newData){
+        this.data = newData;
+        notifyDataSetChanged();
     }
 }

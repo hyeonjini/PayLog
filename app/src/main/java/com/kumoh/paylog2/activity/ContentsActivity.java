@@ -40,8 +40,8 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
 
         //Viewpager + tabLayout
         ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager_contents);
-        ContentsFragmentAdapter adapater = new ContentsFragmentAdapter(getSupportFragmentManager(), 0);
-        viewPager.setAdapter(adapater);
+        ContentsFragmentAdapter adapter = new ContentsFragmentAdapter(getSupportFragmentManager(), 0, Integer.parseInt(selectedGroupId));
+        viewPager.setAdapter(adapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout_contents);
         tabLayout.addTab(tabLayout.newTab().setText("항목"));
