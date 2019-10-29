@@ -52,7 +52,7 @@ public class AddSpendingHistoryDialog extends Dialog implements View.OnClickList
         pickerCallBack = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                dateSelectButton.setText(year+"-"+month+"-"+day);
+                dateSelectButton.setText(year+"-"+(month+1)+"-"+day);
             }
         };
     }
@@ -61,7 +61,7 @@ public class AddSpendingHistoryDialog extends Dialog implements View.OnClickList
     public void onClick(View v){
         switch (v.getId()){
             case R.id.add_spending_select_date_button:
-                DatePickerDialog dpd = new DatePickerDialog(getContext(), pickerCallBack, 2019,10,01);
+                DatePickerDialog dpd = new DatePickerDialog(getContext(), pickerCallBack, 2019,9,01);
                 dpd.show();
                 break;
             case R.id.add_spending_select_category_button:

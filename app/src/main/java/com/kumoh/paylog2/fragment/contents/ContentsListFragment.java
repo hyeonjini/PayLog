@@ -41,9 +41,6 @@ public class ContentsListFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         db = LocalDatabase.getInstance(getContext());
         db.historyDao().getAllByAccountId(this.accountId).observe(this, list->{
-            for(History h : list){
-                System.out.println("날짜 :"+h.getDate() + "내역"+h.getDescription()+ "금액:" + h.getAmount());
-            }
             if(list.size() >0) {
                 makeListHeader(list);
                 adapter.setData(listItem);

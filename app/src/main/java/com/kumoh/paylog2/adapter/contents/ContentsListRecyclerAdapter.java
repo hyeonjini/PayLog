@@ -12,6 +12,7 @@ import com.kumoh.paylog2.R;
 import com.kumoh.paylog2.dto.ContentsListBody;
 import com.kumoh.paylog2.dto.ContentsListItem;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,12 +20,13 @@ public class ContentsListRecyclerAdapter
         extends RecyclerView.Adapter {
 
     private List<ContentsListItem> data;
-
+    private DecimalFormat dc = new DecimalFormat("###,###,###,###,###");
     private static final int VIEW_TYPE_HEADER = 0;
     final static int SPENDING_VIEW = -1;
     final static int INCOME_VIEW = 1;
 
     public ContentsListRecyclerAdapter(ArrayList<ContentsListItem> data){
+
         this.data = data;
     }
     @NonNull
@@ -59,17 +61,23 @@ public class ContentsListRecyclerAdapter
         ContentsListItem item = data.get(position);
         if (holder instanceof ContentsListRecyclerAdapterHeaderViewHolder){
             ((ContentsListRecyclerAdapterHeaderViewHolder) holder).date.setText(item.getDate());
-            ((ContentsListRecyclerAdapterHeaderViewHolder) holder).income.setText(Integer.toString(item.getIncome()));
-            ((ContentsListRecyclerAdapterHeaderViewHolder) holder).spending.setText(Integer.toString(item.getSepnding()));
+            //((ContentsListRecyclerAdapterHeaderViewHolder) holder).income.setText(Integer.toString(item.getIncome()));
+            ((ContentsListRecyclerAdapterHeaderViewHolder) holder).income.setText(dc.format(item.getIncome()));
+            //((ContentsListRecyclerAdapterHeaderViewHolder) holder).spending.setText(Integer.toString(item.getSepnding()));
+            ((ContentsListRecyclerAdapterHeaderViewHolder) holder).spending.setText(dc.format(item.getSepnding()));
         }
         else if (holder instanceof ContentsListRecyclerAdapterSpendingViewHolder){
-            ((ContentsListRecyclerAdapterSpendingViewHolder) holder).category.setText(Integer.toString(((ContentsListBody) item).getCategoryId()));
-            ((ContentsListRecyclerAdapterSpendingViewHolder) holder).spending.setText(Integer.toString(((ContentsListBody) item).getAmount()));
+
+            //((ContentsListRecyclerAdapterSpendingViewHolder) holder).category.setText(Integer.toString(((ContentsListBody) item).getCategoryId()));
+            ((ContentsListRecyclerAdapterSpendingViewHolder) holder).category.setText("지출");
+            //((ContentsListRecyclerAdapterSpendingViewHolder) holder).spending.setText(Integer.toString(((ContentsListBody) item).getAmount()));
+            ((ContentsListRecyclerAdapterSpendingViewHolder) holder).spending.setText(dc.format(((ContentsListBody) item).getAmount()));
             ((ContentsListRecyclerAdapterSpendingViewHolder) holder).description.setText(((ContentsListBody) item).getDescription());
         }
         else if (holder instanceof ContentsListRecyclerAdapterIncomeViewHolder){
             ((ContentsListRecyclerAdapterIncomeViewHolder) holder).category.setText(Integer.toString(((ContentsListBody) item).getCategoryId()));
-            ((ContentsListRecyclerAdapterIncomeViewHolder) holder).income.setText(Integer.toString(((ContentsListBody) item).getAmount()));
+            //((ContentsListRecyclerAdapterIncomeViewHolder) holder).income.setText(Integer.toString(((ContentsListBody) item).getAmount()));
+            ((ContentsListRecyclerAdapterIncomeViewHolder) holder).income.setText(dc.format(((ContentsListBody) item).getAmount()));
             ((ContentsListRecyclerAdapterIncomeViewHolder) holder).description.setText(((ContentsListBody) item).getDescription());
         }
     }
