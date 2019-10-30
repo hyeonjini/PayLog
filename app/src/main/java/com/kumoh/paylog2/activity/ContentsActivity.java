@@ -170,6 +170,21 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
         }
         @Override
         protected Void doInBackground(History... histories) {
+            //날짜 보정
+            String date = histories[0].getDate();
+            String split[] = date.split("-");
+            String year = split[0];
+            String month = split[1];
+            String day = split[2];
+            if(month.length() == 1){
+                month = "0"+month;
+            }
+            if(day.length() == 1){
+                day = "0"+day;
+            }
+            date = year+"-"+month+"-"+day;
+            histories[0].setDate(date);
+
             dao.insertHistory(histories[0]);
             return null;
         }

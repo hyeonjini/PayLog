@@ -7,13 +7,13 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 
-@Database(version = 1 , entities = {Account.class, History.class, Category.class})
+@Database(version = 1, entities = {Account.class, History.class, Category.class})
 public abstract class LocalDatabase extends RoomDatabase {
 
     public abstract AccountDao accountDao();
     public abstract HistoryDao historyDao();
 
-    private static LocalDatabase instance;
+    private static LocalDatabase instance = null;
 
     public static LocalDatabase getInstance(Context context){
         if(instance == null){
