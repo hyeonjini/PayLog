@@ -6,6 +6,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -22,6 +24,7 @@ import com.kumoh.paylog2.adapter.contents.ContentsFragmentAdapter;
 import com.kumoh.paylog2.db.History;
 import com.kumoh.paylog2.db.HistoryDao;
 import com.kumoh.paylog2.db.LocalDatabase;
+import com.kumoh.paylog2.dialog.AddIncomeHistoryDialog;
 import com.kumoh.paylog2.dialog.AddSpendingHistoryDialog;
 
 public class ContentsActivity extends AppCompatActivity implements View.OnClickListener
@@ -58,6 +61,23 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
         tabLayout.addTab(tabLayout.newTab().setText("통계"));
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
         //FloatingActionButton
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
@@ -96,19 +116,29 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.add_contents_fab_spending:
                 anim();
-                AddSpendingHistoryDialog dialog = new AddSpendingHistoryDialog(this);
+                AddSpendingHistoryDialog addSpendingHistoryDialog = new AddSpendingHistoryDialog(this);
 
-                dialog.setAddSpendingHistoryDialogListener(new AddSpendingHistoryDialog.AddSpendingHistoryDialogListener() {
+                addSpendingHistoryDialog.setAddSpendingHistoryDialogListener(new AddSpendingHistoryDialog.AddSpendingHistoryDialogListener() {
                     @Override
                     public void onAddButtonClicked(int kind, String date, int category, String description, int amount) {
                         History spending = new History(selectedAccountId,-1,date,category,description,amount);
                         new InsertHistory(db.historyDao()).execute(spending);
                     }
                 });
-                dialog.show();
+                addSpendingHistoryDialog.show();
                 break;
             case R.id.add_contents_fab_income:
                 anim();
+                AddIncomeHistoryDialog addIncomeHistoryDialog = new AddIncomeHistoryDialog(this);
+
+                addIncomeHistoryDialog.setAddIncomeHistoryDialogListener(new AddIncomeHistoryDialog.AddIncomeHistoryDialogListener() {
+                    @Override
+                    public void onAddButtonClicked(int kind, String date, int category, String description, int amount) {
+                        History income = new History(selectedAccountId,1,date,category,description,amount);
+                        new InsertHistory(db.historyDao()).execute(income);
+                    }
+                });
+                addIncomeHistoryDialog.show();
                 break;
         }
     }

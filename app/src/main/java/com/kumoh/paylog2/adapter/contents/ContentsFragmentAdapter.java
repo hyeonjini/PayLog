@@ -20,7 +20,7 @@ public class ContentsFragmentAdapter extends FragmentStatePagerAdapter {
 
         fragments = new ArrayList<Fragment>();
         fragments.add(new ContentsListFragment(accountId));
-        fragments.add(new ContentsMonthFragment());
+        fragments.add(new ContentsMonthFragment(accountId));
         fragments.add(new ContentsCalendarFragment());
         fragments.add(new ContentsStatisticsFragment());
     }

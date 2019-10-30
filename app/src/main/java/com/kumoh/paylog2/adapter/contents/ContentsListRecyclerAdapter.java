@@ -75,7 +75,8 @@ public class ContentsListRecyclerAdapter
             ((ContentsListRecyclerAdapterSpendingViewHolder) holder).description.setText(((ContentsListBody) item).getDescription());
         }
         else if (holder instanceof ContentsListRecyclerAdapterIncomeViewHolder){
-            ((ContentsListRecyclerAdapterIncomeViewHolder) holder).category.setText(Integer.toString(((ContentsListBody) item).getCategoryId()));
+            //((ContentsListRecyclerAdapterIncomeViewHolder) holder).category.setText(Integer.toString(((ContentsListBody) item).getCategoryId()));
+            ((ContentsListRecyclerAdapterIncomeViewHolder) holder).category.setText("수입");
             //((ContentsListRecyclerAdapterIncomeViewHolder) holder).income.setText(Integer.toString(((ContentsListBody) item).getAmount()));
             ((ContentsListRecyclerAdapterIncomeViewHolder) holder).income.setText(dc.format(((ContentsListBody) item).getAmount()));
             ((ContentsListRecyclerAdapterIncomeViewHolder) holder).description.setText(((ContentsListBody) item).getDescription());

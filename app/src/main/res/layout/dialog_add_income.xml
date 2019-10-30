@@ -27,7 +27,7 @@
             android:layout_height="match_parent"
             android:text="날짜 선택"
             android:background="#ffffff"
-            android:id="@+id/add_spending_select_date_button"/>
+            android:id="@+id/add_income_select_date_button"/>
     </LinearLayout>
     <LinearLayout
         android:background="#ffffff"
@@ -49,7 +49,7 @@
             android:layout_height="match_parent"
             android:text="분류 선택"
             android:background="#ffffff"
-            android:id="@+id/add_spending_select_category_button"/>
+            android:id="@+id/add_income_select_category_button"/>
     </LinearLayout>
     <LinearLayout
         android:background="#ffffff"
@@ -68,7 +68,7 @@
             android:textSize="18sp"/>
 
         <EditText
-            android:id="@+id/add_spending_amount_text"
+            android:id="@+id/add_income_amount_text"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1.5"
@@ -99,7 +99,7 @@
             android:layout_height="match_parent"
             android:hint="내용입력"
             android:background="#ffffff"
-            android:id="@+id/add_spending_description_text"/>
+            android:id="@+id/add_income_description_text"/>
     </LinearLayout>
     <LinearLayout
         android:background="#ffffff"
@@ -114,9 +114,9 @@
             android:layout_weight="1"
             android:text="추가"
             android:textSize="20sp"
-            android:background="#ee2560"
+            android:background="#60c5ba"
             android:textColor="#ffffff"
-            android:id="@+id/add_spending_ok_button"/>
+            android:id="@+id/add_income_ok_button"/>
         <Button
             android:layout_margin="3dp"
             android:layout_width="0dp"
@@ -124,9 +124,9 @@
             android:layout_weight="1"
             android:text="취소"
             android:textSize="20sp"
-            android:background="#ee2560"
+            android:background="#60c5ba"
             android:textColor="#ffffff"
-            android:id="@+id/add_spending_cancel_button"/>
+            android:id="@+id/add_income_cancel_button"/>
 
     </LinearLayout>
 </LinearLayout>
