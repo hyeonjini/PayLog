@@ -46,11 +46,11 @@ public class ContentsStatisticsFragment extends Fragment {
 
         list = new ArrayList<ContentsCategoryItem>();
         list.add(new ContentsCategoryItem(320000,"식비"));
-        list.add(new ContentsCategoryItem(200000,"생활비"));
-        list.add(new ContentsCategoryItem(100000,"쇼핑"));
+        list.add(new ContentsCategoryItem(200000,"생활"));
+        list.add(new ContentsCategoryItem(100000,"옷"));
         list.add(new ContentsCategoryItem(65000,"통신비"));
-        list.add(new ContentsCategoryItem(56000,"교통비"));
-        list.add(new ContentsCategoryItem(30000,"문화"));
+        list.add(new ContentsCategoryItem(56000,"교통"));
+        list.add(new ContentsCategoryItem(30000,"문화/여가"));
 
 
         setPieChart(list);

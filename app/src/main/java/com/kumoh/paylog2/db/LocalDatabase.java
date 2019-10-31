@@ -31,9 +31,10 @@ public abstract class LocalDatabase extends RoomDatabase {
     private static LocalDatabase buildDatabase(final Context context){
         return Room.databaseBuilder(context,
                 LocalDatabase.class,
-                "my-database").addCallback(new Callback(){
+                "my-database")
+                .addCallback(new Callback(){
                     @Override
-            public void onCreate(@NonNull SupportSQLiteDatabase db){
+                    public void onCreate(@NonNull SupportSQLiteDatabase db){
                         super.onCreate(db);
                         Executors.newSingleThreadExecutor().execute(new Runnable() {
                             @Override
@@ -42,6 +43,7 @@ public abstract class LocalDatabase extends RoomDatabase {
                             }
                         });
                     }
-        }
+                })
+                .build();
     }
 }

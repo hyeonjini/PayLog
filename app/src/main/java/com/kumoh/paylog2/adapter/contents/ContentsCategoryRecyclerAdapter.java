@@ -83,15 +83,15 @@ public class ContentsCategoryRecyclerAdapter
         switch (category){
             case "식비":
                 return R.drawable.black_icon_fork_14dp;
-            case "생활비":
+            case "생활":
                 return R.drawable.black_icon_broom_14dp;
-            case "교통비":
+            case "교통":
                 return R.drawable.black_icon_bus_14dp;
             case "통신비":
                 return R.drawable.black_icon_phone_14dp;
-            case "문화":
+            case "문화/여가":
                 return R.drawable.black_icon_culture_24dp;
-            case "쇼핑":
+            case "옷":
                 return R.drawable.black_icon_shirt_14dp;
             default:
                 return 0;
