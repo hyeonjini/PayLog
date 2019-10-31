@@ -45,5 +45,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:19.0.0'
     // GooglePlayService
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    // MPAndroidChart
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0-alpha'
 }
 apply plugin: "com.google.gms.google-services"
