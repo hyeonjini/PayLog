@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,10 +21,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.kumoh.paylog2.R;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
     // 구글로그인 result 상수
     private static final int RC_SIGN_IN = 900;
@@ -42,9 +44,6 @@ public class LoginActivity extends AppCompatActivity {
         // Firebase 인증 객체 선언
         firebaseAuth = FirebaseAuth.getInstance();
 
-        buttonGoogle = findViewById(R.id.btn_googleSignIn);
-        setGooglePlusButtonText(buttonGoogle,getString(R.string.google_login_text));
-
         // Google 로그인을 앱에 통합
         // GoogleSignInOptionsb 개체를 구성할 때 requestIdToken을 호출
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -54,13 +53,9 @@ public class LoginActivity extends AppCompatActivity {
 
         googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
 
-        buttonGoogle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent signInIntent = googleSignInClient.getSignInIntent();
-                startActivityForResult(signInIntent, RC_SIGN_IN);
-            }
-        });
+        // 구글 로그인 버튼 설정
+        setGooglePlusButtonText(findViewById(R.id.btn_googleSignIn),getString(R.string.google_login_text));
+        findViewById(R.id.btn_googleSignIn).setOnClickListener(this);
     }
 
     @Override
@@ -83,7 +78,6 @@ public class LoginActivity extends AppCompatActivity {
     // 사용자가 정상적으로 로그인한 후에 GoogleSignInAccount 개체에서 ID 토큰을 가져와서
     // Firebase 사용자 인증 정보로 교환하고 Firebase 사용자 인증 정보를 사용해 Firebase에 인증합니다.
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -91,10 +85,9 @@ public class LoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // 로그인 성공
-                            Toast.makeText(LoginActivity.this, R.string.success_login, Toast.LENGTH_SHORT).show();
+                            FirebaseUser user = firebaseAuth.getCurrentUser();
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
-
                             finish();
                         } else {
                             // 로그인 실패
@@ -117,5 +110,17 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
         }
+    }
+
+    private void signIn(){
+        Intent signInIntent = googleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    @Override
+    public void onClick(View v){
+        int i = v.getId();
+        if(i == R.id.btn_googleSignIn)
+            signIn();
     }
 }

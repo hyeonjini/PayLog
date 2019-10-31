@@ -5,12 +5,18 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.LinearLayout;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -21,60 +27,102 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.kumoh.paylog2.R;
+import com.kumoh.paylog2.adapter.contents.ContentsCategoryRecyclerAdapter;
+import com.kumoh.paylog2.dto.ContentsCategoryItem;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class ContentsStatisticsFragment extends Fragment {
     ViewGroup rootView;
+    private List<ContentsCategoryItem> list;
+    private ContentsCategoryRecyclerAdapter adapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = (ViewGroup) inflater.inflate(R.layout.fragment_contents_statistics, container, false);
-        setPieChart();
-        setLineChart();
+
+        list = new ArrayList<ContentsCategoryItem>();
+        list.add(new ContentsCategoryItem(320000,"식비"));
+        list.add(new ContentsCategoryItem(200000,"생활비"));
+        list.add(new ContentsCategoryItem(100000,"쇼핑"));
+        list.add(new ContentsCategoryItem(65000,"통신비"));
+        list.add(new ContentsCategoryItem(56000,"교통비"));
+        list.add(new ContentsCategoryItem(30000,"문화"));
+
+
+        setPieChart(list);
+        setCategoryView(list);
+        //setLineChart();
+
         return rootView;
     }
 
-    private void setPieChart(){
+    // 파이 차트 생성 함수
+    private void setPieChart(List<ContentsCategoryItem> list){
         PieChart pieChart = rootView.findViewById(R.id.category_chart);
 
         pieChart.setUsePercentValues(true); // true로 하면 percent, false로 하면 rawData
         pieChart.setTouchEnabled(true); // 차트 터치 활성화
         pieChart.setDragDecelerationEnabled(false); // 차트 회전 비활성화
-        pieChart.getLegend().setEnabled(false); // 범례 비활성화
         pieChart.getDescription().setEnabled(false); // 설명 비활성화
+        pieChart.setHoleRadius(0); // 차트 out->in 채울 비율
+        pieChart.setTransparentCircleRadius(0); // 차트 중앙 원 비율
+        pieChart.getLegend().setEnabled(false); // 범례 비활성화
+        pieChart.setExtraOffsets(0,13,0,13);
 
         // 그래프로 그릴 데이터의 값 저장
         ArrayList<PieEntry> entries=new ArrayList<>();
-        entries.add(new PieEntry(250000,"식비"));
-        entries.add(new PieEntry(200000,"생활"));
-        entries.add(new PieEntry(65000,"통신"));
-        entries.add(new PieEntry(56000,"교통"));
-        entries.add(new PieEntry(30000,"기타"));
+        int index = 0;
+        int etcSum = 0;
+        for(ContentsCategoryItem item : list) {
+            if(index < 4) // 4번째 항목까지 별개 항목으로 취급
+                entries.add(new PieEntry(item.getValue(), item.getCategory()));
+            else // 5번째 항목부터 "그 외" 분류에 추가
+                etcSum += item.getValue();
+            index++;
+        }
+        entries.add(new PieEntry(etcSum, "그 외"));
 
-        // 그래프 중앙 텍스트 지정
-        String mostL = entries.get(0).getLabel();
-        int mostV = (int)entries.get(0).getValue();
-        pieChart.setCenterText(mostL + "\n\n" + mostV + "원");
-        pieChart.setCenterTextSize(15);
-
-        // 범례 설정
-        PieDataSet dataSet = new PieDataSet(entries,"Category");
-        dataSet.setSliceSpace(3f);
-        dataSet.setSelectionShift(5f);
-        dataSet.setColors(ColorTemplate.LIBERTY_COLORS);
+        // dataSet 설정
+        PieDataSet dataSet = new PieDataSet(entries,"");
+        dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE); // dataSet의 value 값  차트 밖에 표기
+        dataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE); // dataSet의 category 값 차트 밖에 표기
+        dataSet.setValueLinePart1OffsetPercentage(100.f); // 차트 중앙으로부터 시작선 위치 지정(%)
+        dataSet.setValueLinePart1Length(1.2f); // 선 앞부분 설정
+        dataSet.setValueLinePart2Length(.2f); // 선 뒷부분 설정
+        dataSet.setSelectionShift(2f); // 선택된 카테고리 돌출 비율
+        dataSet.setColors(ColorTemplate.LIBERTY_COLORS); // 차트 색상 그룹 설정
 
         PieData data = new PieData((dataSet));
-        data.setValueFormatter(new PercentFormatter());
-        data.setValueTextSize(10f);
-        data.setValueTextColor(Color.BLACK); //원그래프 안에 수치를 표시하는 text의 색
+        data.setValueTextColor(Color.BLACK); // 수치 표기 text 색
+        data.setValueFormatter(new PercentFormatter()); // 수치 표기 text 포맷 설정
+        data.setValueTextSize(10f); // 수치 표기 text 크기
+
+        pieChart.setEntryLabelColor(R.color.colorBlack); // 카테고리 표기 text 색
 
         pieChart.setData(data);
         pieChart.invalidate();
     }
 
+    // 카테고리 별 목록 리사이클러뷰 생성 함수
+    private void setCategoryView(List<ContentsCategoryItem> list){
+        RecyclerView recyclerView = rootView.findViewById(R.id.category_items);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        adapter = new ContentsCategoryRecyclerAdapter(list);
+        recyclerView.setAdapter(adapter);
+
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration
+                (recyclerView.getContext(), linearLayoutManager.getOrientation());
+        recyclerView.addItemDecoration(dividerItemDecoration);
+    }
+
+    /*
+    // 꺾은선 차트 생성 함수
     private void setLineChart(){
         LineChart lineChart = rootView.findViewById(R.id.day_chart);
         lineChart.setTouchEnabled(false); // 차트 터치 비활성화
@@ -103,11 +151,10 @@ public class ContentsStatisticsFragment extends Fragment {
         xAxis.setDrawGridLines(false);
 
         dataset.setColors(ColorTemplate.COLORFUL_COLORS); //
-        /*dataset.setDrawCubic(true); //선 둥글게 만들기
-        dataset.setDrawFilled(true); //그래프 밑부분 색칠*/
 
         lineChart.setData(data);
         lineChart.animateY(1000);
         lineChart.invalidate();
     }
+    */
 }

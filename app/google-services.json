@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "885590182059-5kq39ipcbcq6qkpvvop6sioipufgj0d4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kumoh.paylog2",
+            "certificate_hash": "d9ed212916e10fe849227b72636a8f4c39256a12"
+          }
+        },
+        {
           "client_id": "885590182059-b83rtod251b6ig3kdmps1ukdaet33ho5.apps.googleusercontent.com",
           "client_type": 3
         }

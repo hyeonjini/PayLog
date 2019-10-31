@@ -1,29 +1,12 @@
 package com.kumoh.paylog2.dto;
 
+// 통계 화면의 데이터 추출을 위한 DTO
 public class ContentsCategoryItem {
-    float percent;
-    String category;
     int value;
+    String category;
 
-    public ContentsCategoryItem(float percent, String category, int value){
-        this.percent = percent;
-        this.category = category;
+    public ContentsCategoryItem(int value, String category){
         this.value = value;
-    }
-
-    public float getPercent() {
-        return percent;
-    }
-
-    public void setPercent(float percent) {
-        this.percent = percent;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
         this.category = category;
     }
 
@@ -33,5 +16,13 @@ public class ContentsCategoryItem {
 
     public void setValue(int value) {
         this.value = value;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }
