@@ -7,13 +7,16 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.widget.Toast;
 
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.kumoh.paylog2.R;
 import com.kumoh.paylog2.adapter.MainFragmentAdapter;
@@ -21,10 +24,12 @@ import com.kumoh.paylog2.db.Account;
 import com.kumoh.paylog2.db.AccountDao;
 import com.kumoh.paylog2.db.LocalDatabase;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private LocalDatabase db;
     private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,8 +47,11 @@ public class MainActivity extends AppCompatActivity {
 
         //Navigation 설정
         drawerLayout = findViewById(R.id.main_drawer);
-        //DB 초기화
 
+        navigationView = findViewById(R.id.main_nav);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        //DB 초기화
         db = LocalDatabase.getInstance(this);
         //만약 데이터가 아무것도 없으면 default  group 추가
         new CreateDefaultAccountAsyncTask(db.accountDao()).execute();
@@ -58,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.white_icon_home_24px));
         tabLayout.getTabAt(tabLayout.getSelectedTabPosition()).getIcon().setColorFilter(Color.parseColor("#2b90d9"), PorterDuff.Mode.SRC_IN);
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.white_icon_list_24px));
-
 
         //pager 리스너
         pager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -114,7 +121,29 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == android.R.id.home){
             drawerLayout.openDrawer(GravityCompat.START);
+            Toast.makeText(getApplicationContext(), "저기", Toast.LENGTH_SHORT).show();
         }
+
+        if(item.getItemId() == R.id.nav_document) {
+            Toast.makeText(getApplicationContext(), "여기", Toast.LENGTH_SHORT).show();
+        }
+
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        switch(item.getItemId()) {
+            case R.id.nav_document:
+                Intent intent = new Intent(getApplicationContext(), FileActivity.class);
+                startActivity(intent);
+                break;
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_drawer);
+        drawer.closeDrawer(GravityCompat.START);
+
+        return true;
     }
 }
