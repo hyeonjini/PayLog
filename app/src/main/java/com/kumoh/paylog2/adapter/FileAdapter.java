@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
 
-    private ArrayList<File> mData = null ;
+    private ArrayList<File> mData = null;
     private Context context;
 
     // 아이템 뷰를 저장하는 뷰홀더 클래스.

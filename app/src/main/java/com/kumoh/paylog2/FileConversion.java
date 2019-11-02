@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FileConversion {
@@ -47,8 +48,9 @@ public class FileConversion {
 
         // title 초기화
         titleMap.put(0, "날짜");
-        titleMap.put(1, "가격");
-
+        titleMap.put(1, "유형");
+        titleMap.put(2, "내용");
+        titleMap.put(3, "가격");
     }
 
     // PayLog Logo 삽입
@@ -92,18 +94,32 @@ public class FileConversion {
     }
 
     // 데이터 입력
-    private void typeContexts(ArrayList<History> mItems) {
+    private void typeContexts(List<History> mItems) {
         int startRow = CONTEXT_START_ROW;
         for (int i = 0; i < mItems.size(); i++) {
             // (시작지점 + i) 번째 행
             row = sheet.createRow(startRow + i);
 
-            // (i, 0)위치의 셀에 mItems 의 이름 입력
+            // (i, 0)위치의 셀에 mItems 의 날짜 입력
             cell = row.createCell(0);
             cell.setCellValue(mItems.get(i).getDate());
 
-            // (i, 1)위치의 셀에 mItems 의 나이 입력
+            // (i, 1)위치의 셀에 mItems 의 유형(지출, 수입) 입력
             cell = row.createCell(1);
+
+            String kind;
+            int IKind = mItems.get(i).getKind();
+            if(IKind == 1) kind = "수입";
+            else if(IKind == -1) kind = "지출";
+            else kind = "알 수 없는 종류";
+            cell.setCellValue(kind);
+
+            // (i, 0)위치의 셀에 mItems 의 내용 입력
+            cell = row.createCell(2);
+            cell.setCellValue(mItems.get(i).getDescription());
+
+            // (i, 3)위치의 셀에 mItems 의 가격 입력
+            cell = row.createCell(3);
             cell.setCellValue(mItems.get(i).getAmount());
         }
     }
@@ -133,7 +149,7 @@ public class FileConversion {
         return file;
     }
 
-    public File saveExcelFile(Context context, ArrayList<History> mItems, String fileName) {
+    public File saveExcelFile(Context context, List<History> mItems, String fileName) {
         inputLogo();
         typeTitles();
         typeContexts(mItems);

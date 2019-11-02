@@ -25,4 +25,7 @@ public interface HistoryDao {
     @Query("select t1.m as date , t1.spending, t2.income from(select substr(date,0,8)as m , sum(amount) as spending from history where accountId = :accountId and kind = 1 group by m) as t1 join (Select substr(date,0,8)as m , sum(amount) as income from history where accountId= :accountId and kind = -1 group by m) as t2 on t1.m = t2.m")
     LiveData<List<ContentsMonthItem>> getAllByMonthAndAccountId(int accountId);
 
+    // 해당 accountId의 fromDate 부터 toDate 까지의 history
+    @Query("SELECT * FROM History WHERE accountId = :accountId and date > :fromDate and date < :toDate order by date desc")
+    List<History> getAllFromToByAccountId(int accountId, String fromDate, String toDate);
 }
