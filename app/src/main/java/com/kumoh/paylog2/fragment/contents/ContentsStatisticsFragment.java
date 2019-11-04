@@ -5,52 +5,41 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.LinearLayout;
 
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.kumoh.paylog2.R;
-import com.kumoh.paylog2.adapter.contents.ContentsCategoryRecyclerAdapter;
-import com.kumoh.paylog2.dto.ContentsCategoryItem;
+import com.kumoh.paylog2.adapter.contents.ContentsStatisticsRecyclerAdapter;
+import com.kumoh.paylog2.dto.ContentsStatisticsCategoryItem;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class ContentsStatisticsFragment extends Fragment {
     ViewGroup rootView;
-    private List<ContentsCategoryItem> list;
-    private ContentsCategoryRecyclerAdapter adapter;
+    private List<ContentsStatisticsCategoryItem> list;
+    private ContentsStatisticsRecyclerAdapter adapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = (ViewGroup) inflater.inflate(R.layout.fragment_contents_statistics, container, false);
 
-        list = new ArrayList<ContentsCategoryItem>();
-        list.add(new ContentsCategoryItem(320000,"식비"));
-        list.add(new ContentsCategoryItem(200000,"생활"));
-        list.add(new ContentsCategoryItem(100000,"옷"));
-        list.add(new ContentsCategoryItem(65000,"통신비"));
-        list.add(new ContentsCategoryItem(56000,"교통"));
-        list.add(new ContentsCategoryItem(30000,"문화/여가"));
+        list = new ArrayList<ContentsStatisticsCategoryItem>();
+        list.add(new ContentsStatisticsCategoryItem(320000,"식비"));
+        list.add(new ContentsStatisticsCategoryItem(200000,"생활"));
+        list.add(new ContentsStatisticsCategoryItem(100000,"옷"));
+        list.add(new ContentsStatisticsCategoryItem(65000,"통신비"));
+        list.add(new ContentsStatisticsCategoryItem(56000,"교통"));
+        list.add(new ContentsStatisticsCategoryItem(30000,"문화/여가"));
 
 
         setPieChart(list);
@@ -61,7 +50,7 @@ public class ContentsStatisticsFragment extends Fragment {
     }
 
     // 파이 차트 생성 함수
-    private void setPieChart(List<ContentsCategoryItem> list){
+    private void setPieChart(List<ContentsStatisticsCategoryItem> list){
         PieChart pieChart = rootView.findViewById(R.id.category_chart);
 
         pieChart.setUsePercentValues(true); // true로 하면 percent, false로 하면 rawData
@@ -77,7 +66,7 @@ public class ContentsStatisticsFragment extends Fragment {
         ArrayList<PieEntry> entries=new ArrayList<>();
         int index = 0;
         int etcSum = 0;
-        for(ContentsCategoryItem item : list) {
+        for(ContentsStatisticsCategoryItem item : list) {
             if(index < 4) // 4번째 항목까지 별개 항목으로 취급
                 entries.add(new PieEntry(item.getValue(), item.getCategory()));
             else // 5번째 항목부터 "그 외" 분류에 추가
@@ -108,12 +97,12 @@ public class ContentsStatisticsFragment extends Fragment {
     }
 
     // 카테고리 별 목록 리사이클러뷰 생성 함수
-    private void setCategoryView(List<ContentsCategoryItem> list){
+    private void setCategoryView(List<ContentsStatisticsCategoryItem> list){
         RecyclerView recyclerView = rootView.findViewById(R.id.category_items);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        adapter = new ContentsCategoryRecyclerAdapter(list);
+        adapter = new ContentsStatisticsRecyclerAdapter(list);
         recyclerView.setAdapter(adapter);
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration

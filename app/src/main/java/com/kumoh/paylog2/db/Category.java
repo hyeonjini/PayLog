@@ -52,18 +52,17 @@ public class Category {
                 new Category("술/유흥",1),
                 new Category("생활",1),
                 new Category("문화/여가",1),
-                new Category("옷",1),
-                new Category("미용",1),
+                new Category("패션/쇼핑",1),
                 new Category("교통",1),
                 new Category("자동차",1),
                 new Category("주거",1),
                 new Category("통신비",1),
-                new Category("건강",1),
+                new Category("의료/건강",1),
                 new Category("금융",1),
                 new Category("여행",1),
                 new Category("교육",1),
                 new Category("자녀",1),
-                new Category("경조사",1)
+                new Category("경조사/선물",1)
         };
     }
 }

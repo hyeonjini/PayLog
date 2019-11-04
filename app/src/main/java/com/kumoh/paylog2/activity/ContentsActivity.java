@@ -3,6 +3,7 @@ package com.kumoh.paylog2.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -26,6 +28,10 @@ import com.kumoh.paylog2.db.HistoryDao;
 import com.kumoh.paylog2.db.LocalDatabase;
 import com.kumoh.paylog2.dialog.AddIncomeHistoryDialog;
 import com.kumoh.paylog2.dialog.AddSpendingHistoryDialog;
+import com.kumoh.paylog2.dto.ContentsCategoryItem;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ContentsActivity extends AppCompatActivity implements View.OnClickListener
 ,ViewPager.OnPageChangeListener{
@@ -116,7 +122,8 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.add_contents_fab_spending:
                 anim();
-                AddSpendingHistoryDialog addSpendingHistoryDialog = new AddSpendingHistoryDialog(this);
+                List<ContentsCategoryItem> lists = initCategories();
+                AddSpendingHistoryDialog addSpendingHistoryDialog = new AddSpendingHistoryDialog(this, lists);
 
                 addSpendingHistoryDialog.setAddSpendingHistoryDialogListener(new AddSpendingHistoryDialog.AddSpendingHistoryDialogListener() {
                     @Override
@@ -162,6 +169,16 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
+    private List<ContentsCategoryItem> initCategories(){
+        List<ContentsCategoryItem> categories = new ArrayList<>();
+        db.categoryDao().getSpendingCategories().observe(this, list->{
+            for(int pos = 0; pos < list.size(); pos++){
+                categories.add(new ContentsCategoryItem(list.get(pos).getCategoryId(), list.get(pos).getName(), list.get(pos).getKind()));
+                Log.i(pos+"번째", list.get(pos).getName());
+            }
+        });
+        return categories;
+    }
 
     private static class InsertHistory extends AsyncTask<History, Void, Void>{
         HistoryDao dao;

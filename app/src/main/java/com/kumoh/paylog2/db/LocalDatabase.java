@@ -1,6 +1,7 @@
 package com.kumoh.paylog2.db;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.room.Database;
@@ -22,16 +23,15 @@ public abstract class LocalDatabase extends RoomDatabase {
 
     public static LocalDatabase getInstance(Context context){
         if(instance == null){
-            instance = Room.databaseBuilder(context.getApplicationContext(), LocalDatabase.class, "paylog-db")
-                    .build();
+            instance = buildDatabase(context);
         }
         return instance;
     }
 
     private static LocalDatabase buildDatabase(final Context context){
-        return Room.databaseBuilder(context,
+        return Room.databaseBuilder(context.getApplicationContext(),
                 LocalDatabase.class,
-                "my-database")
+                "paylog-db")
                 .addCallback(new Callback(){
                     @Override
                     public void onCreate(@NonNull SupportSQLiteDatabase db){
@@ -39,6 +39,7 @@ public abstract class LocalDatabase extends RoomDatabase {
                         Executors.newSingleThreadExecutor().execute(new Runnable() {
                             @Override
                             public void run() {
+                                Log.i("AddDeaultCategory","now");
                                 getInstance(context).categoryDao().insertAll(Category.populateData());
                             }
                         });

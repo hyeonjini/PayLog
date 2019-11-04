@@ -4,25 +4,32 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.kumoh.paylog2.R;
+import com.kumoh.paylog2.dto.ContentsCategoryItem;
+
+import java.util.List;
 
 public class AddSpendingHistoryDialog extends Dialog implements View.OnClickListener{
     Button dateSelectButton, categorySelectButton;
     EditText amount, description;
     Button addButton, cancelButton;
     DatePickerDialog.OnDateSetListener pickerCallBack;
+    ContentsCategoryItem categoryItem;
+    List<ContentsCategoryItem> lists;
     AddSpendingHistoryDialogListener addSpendingHistoryDialogListener;
-    public AddSpendingHistoryDialog(@NonNull Context context){ super(context);}
+    public AddSpendingHistoryDialog(@NonNull Context context, List<ContentsCategoryItem> lists){
+        super(context);
+        this.lists = lists;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -65,10 +72,20 @@ public class AddSpendingHistoryDialog extends Dialog implements View.OnClickList
                 dpd.show();
                 break;
             case R.id.add_spending_select_category_button:
+                CategorySelectDialog csd = new CategorySelectDialog(getContext(), lists);
+                csd.setAddSpendingHistoryDialogListener(new CategorySelectDialog.CategorySelectDialogListener() {
+                    @Override
+                    public void onCategorySelected(ContentsCategoryItem item) {
+                        categoryItem = csd.getSelectedItem();
+                        categorySelectButton.setText(categoryItem.getCategory());
+                    }
+                });
+                csd.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                csd.show();
                 break;
             case R.id.add_spending_ok_button:
-                addSpendingHistoryDialogListener.onAddButtonClicked(-1,dateSelectButton.getText().toString(),
-                        1,description.getText().toString(),Integer.parseInt(amount.getText().toString())*-1);
+                addSpendingHistoryDialogListener.onAddButtonClicked(categoryItem.getKind(),dateSelectButton.getText().toString(),
+                        categoryItem.getId(),description.getText().toString(),Integer.parseInt(amount.getText().toString())*-1);
                 dismiss();
                 break;
             case R.id.add_spending_cancel_button:

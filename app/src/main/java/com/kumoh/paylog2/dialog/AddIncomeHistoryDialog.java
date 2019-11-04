@@ -59,6 +59,7 @@ public class AddIncomeHistoryDialog extends Dialog implements View.OnClickListen
                 dpd.show();
                 break;
             case R.id.add_income_select_category_button:
+                //CategorySelectDialog csd = new CategorySelectDialog(getContext());
                 break;
             case R.id.add_income_ok_button:
                 addIncomeHistoryDialogListener.onAddButtonClicked(1,dateSelectButton.getText().toString(),

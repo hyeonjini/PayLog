@@ -204,7 +204,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginStart="12dp"
                     android:padding="8dp"
-                    android:src="@drawable/black_icon_bus_14dp"/>
+                    android:src="@drawable/black_icon_bus_24dp"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
