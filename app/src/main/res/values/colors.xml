@@ -5,4 +5,6 @@
     <color name="colorAccent">#D81B60</color>
     <color name="mainColor">#2b90d9</color>
     <color name="colorBlack">#111111</color>
+    <!-- 투명도가 추가된 mainColor -->
+    <color name="fab_mainColor">#BF2b90d9</color>
 </resources>

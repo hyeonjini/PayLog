@@ -1,16 +1,26 @@
 package com.kumoh.paylog2.activity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.viewpager.widget.ViewPager;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,8 +39,13 @@ import com.kumoh.paylog2.db.LocalDatabase;
 import com.kumoh.paylog2.dialog.AddIncomeHistoryDialog;
 import com.kumoh.paylog2.dialog.AddSpendingHistoryDialog;
 import com.kumoh.paylog2.dto.ContentsCategoryItem;
+import com.theartofdev.edmodo.cropper.CropImage;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ContentsActivity extends AppCompatActivity implements View.OnClickListener
@@ -38,8 +53,16 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
     private Animation fab_open, fab_close;
     private LocalDatabase db;
     private int selectedAccountId;
-    private FloatingActionButton fab, spendingFab, incomeFab;
+    private FloatingActionButton fab, spendingFab, incomeFab, imageFab;
     private Boolean isFabOpen = false;
+
+    // 사진이 저장될 경로
+    private String mCurrentPhotoPath;
+    // 원본 사진을 앱 폴더에 저장해 두다가 crop 을 마치면 삭제함
+    private File originalFile;
+
+    final static int REQUEST_TAKE_PHOTO = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,13 +111,16 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
         //FloatingActionButton
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
+
         spendingFab = (FloatingActionButton) findViewById(R.id.add_contents_fab_spending);
         incomeFab = (FloatingActionButton) findViewById(R.id.add_contents_fab_income);
         fab = (FloatingActionButton) findViewById(R.id.add_contents_fab);
-        fab.setOnClickListener(this);
+        imageFab = (FloatingActionButton) findViewById(R.id.capture_image_fab);
+
         spendingFab.setOnClickListener(this);
         incomeFab.setOnClickListener(this);
-
+        fab.setOnClickListener(this);
+        imageFab.setOnClickListener(this);
     }
 
     @Override
@@ -117,8 +143,6 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
         switch (view.getId()){
             case R.id.add_contents_fab:
                 anim();
-
-                Toast.makeText(this, "Receipt Activity 실행", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.add_contents_fab_spending:
                 anim();
@@ -147,6 +171,61 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
                 });
                 addIncomeHistoryDialog.show();
                 break;
+            case R.id.capture_image_fab:
+                // 6.0 마쉬멜로우 이상일 경우에는 권한 체크 후 권한 요청
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                            && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED ) {
+                        //Log.d(TAG, "권한 설정 완료");
+                    } else {
+                        //Log.d(TAG, "권한 설정 요청");
+                        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                    }
+                }
+                dispatchTakePictureIntent();
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        try {
+            switch(requestCode) {
+                case REQUEST_TAKE_PHOTO:
+                    if(resultCode == RESULT_OK) {
+                        // 저장된 경로의 이미지 파일
+                        File originalFile = new File(mCurrentPhotoPath);
+
+                        // start cropping activity for pre-acquired image saved on the device
+                        CropImage.activity(Uri.fromFile(originalFile))
+                                .start(this);
+                    }
+
+                case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
+                {
+                    CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                    if(result != null) {
+                        if (resultCode == RESULT_OK) {
+                            Uri resultUri = result.getUri();
+                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), resultUri);
+
+                             /*----------------------------------------
+                            //
+                            // 이 부분에서 서버로 보내면 될듯
+                            //
+                             -----------------------------------------*/
+
+                        } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                            Exception error = result.getError();
+                        }
+                        originalFile.delete();
+                    }
+                }
+            }
+        } catch(Exception error) {
+            error.printStackTrace();
         }
     }
 
@@ -206,14 +285,63 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
             return null;
         }
     }
+
+    // 이미지를 저장시킬 파일 형식(파일이름, 확장자, 저장경로)을 만든다.
+    private File createImageFile() throws IOException {
+        // 이미지 파일 이름 만드는 과정
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        // 이미지 저장경로
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        // 이미지 저장 형식 지정
+        File image = File.createTempFile(
+                imageFileName,       /* prefix */
+                ".jpg",       /* suffix */
+                storageDir           /* directory */
+        );
+
+        // 사진을 저장한 경로를 저장해둔다. (나중에 저장된 사진을 불러들여 crop 과정을 거치기 위함)
+        mCurrentPhotoPath = image.getAbsolutePath();
+
+        return image;
+    }
+
+    // 카메라 촬영
+    private void dispatchTakePictureIntent() {
+        // 카메라 촬영 하는 Intent 생성
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // 촬영한 사진을 저장할 파일 형식(파일이름, 확장자, 저장경로)
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.kumoh.paylog2.fileprovider",
+                        photoFile);
+                // 사진을 저장할 양식 등록
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                // 카메라 촬영 시작
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }
+    }
+
     public void anim() {
         if (isFabOpen) {
+            fab.setImageDrawable(getResources().getDrawable(R.drawable.white_icon_edit_24dp));
             spendingFab.startAnimation(fab_close);
             incomeFab.startAnimation(fab_close);
             spendingFab.setClickable(false);
             incomeFab.setClickable(false);
             isFabOpen = false;
         } else {
+            fab.setImageDrawable(getResources().getDrawable(R.drawable.white_icon_close_24dp));
             spendingFab.startAnimation(fab_open);
             incomeFab.startAnimation(fab_open);
             spendingFab.setClickable(true);

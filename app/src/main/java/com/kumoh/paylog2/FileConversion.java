@@ -46,6 +46,9 @@ public class FileConversion {
         workbook = new HSSFWorkbook();
         sheet = workbook.createSheet();
 
+        // 셀 너비 초기화
+        sheet.setColumnWidth(0, (10 * 500));
+
         // title 초기화
         titleMap.put(0, "날짜");
         titleMap.put(1, "유형");
@@ -60,13 +63,13 @@ public class FileConversion {
 
         workbook.getNumCellStyles();
 
-//        CellStyle cellStyle = workbook.getCellStyleAt(7);
-//
-//        cellStyle.setAlignment(HorizontalAlignment.CENTER);
-//        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        CellStyle cellStyle = workbook.createCellStyle();
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
         cell = row.createCell(0);
         cell.setCellValue("PayLog");
+        cell.setCellStyle(cellStyle);
 
         //셀 병합
         sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 10)); //열시작, 열종료, 행시작, 행종료 (자바배열과 같이 0부터 시작)

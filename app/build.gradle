@@ -52,5 +52,7 @@ dependencies {
     // MPAndroidChart
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0-alpha'
     implementation files('libs/poi-4.1.0.jar')
+    // image cropper library
+    api 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
 }
 apply plugin: "com.google.gms.google-services"

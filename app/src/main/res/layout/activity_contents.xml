@@ -37,9 +37,9 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="100dp"
         android:backgroundTint="@color/mainColor"
-        android:src="@drawable/white_icon_add_24dp"
+        android:src="@drawable/white_icon_edit_24dp"
         app:borderWidth="0dp"
         app:fabSize="normal"
         app:rippleColor="@color/mainColor" />
@@ -50,7 +50,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="100dp"
+        android:layout_marginBottom="180dp"
         android:backgroundTint="#ee2560"
         android:src="@drawable/white_icon_add_24dp"
         android:visibility="invisible"
@@ -64,12 +64,25 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="180dp"
+        android:layout_marginBottom="260dp"
         android:backgroundTint="#60c5ba"
         android:src="@drawable/white_icon_add_24dp"
         android:visibility="invisible"
         app:borderWidth="0dp"
         app:fabSize="normal"
         app:rippleColor="@color/mainColor" />
-
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/capture_image_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/mainColor"
+        android:src="@drawable/white_icon_camera_24dp"
+        app:borderWidth="0dp"
+        app:fabSize="normal"
+        app:rippleColor="@color/mainColor"
+        />
 </RelativeLayout>
