@@ -32,6 +32,7 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.kumoh.paylog2.R;
+import com.kumoh.paylog2.RequestHttpURLConnection;
 import com.kumoh.paylog2.adapter.contents.ContentsFragmentAdapter;
 import com.kumoh.paylog2.db.History;
 import com.kumoh.paylog2.db.HistoryDao;
@@ -364,4 +365,6 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
             isFabOpen = true;
         }
     }
+
+//    private static class
 }
