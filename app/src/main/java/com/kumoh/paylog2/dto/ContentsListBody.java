@@ -22,10 +22,10 @@ public class ContentsListBody implements ContentsListItem{
 
     @Override
     public int getViewType() {
-        if (kind == SPENDING_VIEW)
+        if (kind == 1 || kind ==3)
             return SPENDING_VIEW;
         else
-        return 1;
+        return INCOME_VIEW;
     }
 
     @Override

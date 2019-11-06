@@ -64,9 +64,9 @@ public class ContentsMonthFragment extends Fragment {
         listItem.add(new ContentsMonthItem(newData.get(0).getDate().substring(0,7),0,0));
         for (int i = 0 ; i < newData.size()-1; i ++){
 
-            if(newData.get(i).getKind() == -1){
+            if(newData.get(i).getKind() == 1 || newData.get(i).getKind() == 3){
                 spending += newData.get(i).getAmount();
-            }else if(newData.get(i).getKind() ==1){
+            }else if(newData.get(i).getKind() == 0 || newData.get(i).getKind() == 2){
                 income += newData.get(i).getAmount();
             }
 
@@ -79,9 +79,9 @@ public class ContentsMonthFragment extends Fragment {
             }
         }
         int last = newData.size()-1;
-        if(newData.get(last).getKind() == -1){
+        if(newData.get(last).getKind() == 1 || newData.get(last).getKind() == 3){
             spending += newData.get(last).getAmount();
-        }else if(newData.get(last).getKind() ==1){
+        }else if(newData.get(last).getKind() == 0 || newData.get(last).getKind() == 2){
             income += newData.get(last).getAmount();
         }
         listItem.get(flag).setIncome(income);

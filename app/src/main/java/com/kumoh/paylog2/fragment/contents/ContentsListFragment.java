@@ -11,8 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kumoh.paylog2.R;
 import com.kumoh.paylog2.adapter.contents.ContentsListRecyclerAdapter;
+import com.kumoh.paylog2.db.Category;
 import com.kumoh.paylog2.db.History;
 import com.kumoh.paylog2.db.LocalDatabase;
+import com.kumoh.paylog2.dto.ContentsCategoryItem;
 import com.kumoh.paylog2.dto.ContentsListBody;
 import com.kumoh.paylog2.dto.ContentsListHeader;
 import com.kumoh.paylog2.dto.ContentsListItem;
@@ -25,6 +27,7 @@ public class ContentsListFragment extends Fragment {
     private int accountId;
     private ContentsListRecyclerAdapter adapter;
     private ArrayList<ContentsListItem> listItem;
+    private ArrayList<ContentsCategoryItem> categoryItems;
 
     public ContentsListFragment(int accountId){
         this.accountId = accountId;
@@ -36,7 +39,7 @@ public class ContentsListFragment extends Fragment {
         RecyclerView recyclerView = rootView.findViewById(R.id.contents_list_item_recycler_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new ContentsListRecyclerAdapter(new ArrayList<ContentsListItem>());
+        adapter = new ContentsListRecyclerAdapter(new ArrayList<ContentsListItem>(), new ArrayList<ContentsCategoryItem>());
 
         recyclerView.setAdapter(adapter);
         db = LocalDatabase.getInstance(getContext());
@@ -46,6 +49,12 @@ public class ContentsListFragment extends Fragment {
                 adapter.setData(listItem);
             }
             //notify만 하면끝
+        });
+        db.categoryDao().getEveryCategories().observe(this, list->{
+            if(list.size() > 0){
+                makeCategoryList(list);
+                adapter.setCategoryItems(categoryItems);
+            }
         });
 
         return rootView;
@@ -80,11 +89,11 @@ public class ContentsListFragment extends Fragment {
         listItem.add(new ContentsListHeader(newData.get(0).getDate()));
         for (int i = 0 ; i < newData.size()-1; i ++){
 
-            if(newData.get(i).getKind() == -1){
+            if(newData.get(i).getKind() == 1 || newData.get(i).getKind() == 3){
                 listItem.add(new ContentsListBody(newData.get(i).getKind(),newData.get(i).getDate(), newData.get(i).getCategoryId(),
                         newData.get(i).getDescription(), newData.get(i).getAmount(), newData.get(i).getHistoryId()));
                 spending += newData.get(i).getAmount();
-            }else if(newData.get(i).getKind() ==1){
+            }else if(newData.get(i).getKind() == 0 || newData.get(i).getKind() == 2){
                 listItem.add(new ContentsListBody(newData.get(i).getKind(),newData.get(i).getDate(), newData.get(i).getCategoryId(),
                         newData.get(i).getDescription(), newData.get(i).getAmount(), newData.get(i).getHistoryId()));
                 income += newData.get(i).getAmount();
@@ -99,17 +108,25 @@ public class ContentsListFragment extends Fragment {
             }
         }
         int last = newData.size()-1;
-        if(newData.get(last).getKind() == -1){
+        if(newData.get(last).getKind() == 1 || newData.get(last).getKind() == 3){
             listItem.add(new ContentsListBody(newData.get(last).getKind(),newData.get(last).getDate(), newData.get(last).getCategoryId(),
                     newData.get(last).getDescription(), newData.get(last).getAmount(), newData.get(last).getHistoryId()));
             spending += newData.get(last).getAmount();
-        }else if(newData.get(last).getKind() ==1){
+        }else if(newData.get(last).getKind() == 0 || newData.get(last).getKind() == 2){
             listItem.add(new ContentsListBody(newData.get(last).getKind(),newData.get(last).getDate(), newData.get(last).getCategoryId(),
                     newData.get(last).getDescription(), newData.get(last).getAmount(), newData.get(last).getHistoryId()));
             income += newData.get(last).getAmount();
         }
         listItem.get(flag).setIncome(income);
         listItem.get(flag).setSpending(spending);
+    }
+
+    private void makeCategoryList(List<Category> data){
+        categoryItems = new ArrayList<>();
+
+        for(Category category : data){
+            categoryItems.add(new ContentsCategoryItem(category.getCategoryId(), category.getName(), category.getKind()));
+        }
     }
 }
 

@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kumoh.paylog2.R;
+import com.kumoh.paylog2.dto.ContentsCategoryItem;
 import com.kumoh.paylog2.dto.ContentsListBody;
 import com.kumoh.paylog2.dto.ContentsListItem;
 
@@ -20,20 +21,22 @@ public class ContentsListRecyclerAdapter
         extends RecyclerView.Adapter {
 
     private List<ContentsListItem> data;
+    private List<ContentsCategoryItem> categoryItems;
     private DecimalFormat dc = new DecimalFormat("###,###,###,###,###");
     private static final int VIEW_TYPE_HEADER = 0;
     final static int SPENDING_VIEW = -1;
     final static int INCOME_VIEW = 1;
 
-    public ContentsListRecyclerAdapter(ArrayList<ContentsListItem> data){
-
+    public ContentsListRecyclerAdapter(ArrayList<ContentsListItem> data, ArrayList<ContentsCategoryItem> categoryItems){
         this.data = data;
+        this.categoryItems = categoryItems;
     }
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_HEADER) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_contents_header, parent, false);
+
             return new ContentsListRecyclerAdapterHeaderViewHolder(v);
         } else if (viewType == SPENDING_VIEW){
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_contents_list_spending , parent, false);
@@ -41,6 +44,7 @@ public class ContentsListRecyclerAdapter
             return new ContentsListRecyclerAdapterSpendingViewHolder(v);
         }else if(viewType == INCOME_VIEW){
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_contents_list_income , parent, false);
+
             return new ContentsListRecyclerAdapterIncomeViewHolder(v);
         }
         return null;
@@ -68,15 +72,15 @@ public class ContentsListRecyclerAdapter
         }
         else if (holder instanceof ContentsListRecyclerAdapterSpendingViewHolder){
 
-            //((ContentsListRecyclerAdapterSpendingViewHolder) holder).category.setText(Integer.toString(((ContentsListBody) item).getCategoryId()));
-            ((ContentsListRecyclerAdapterSpendingViewHolder) holder).category.setText("지출");
+            ((ContentsListRecyclerAdapterSpendingViewHolder) holder).category.setText(getCategoryById(((ContentsListBody) item).getCategoryId()));
+            //((ContentsListRecyclerAdapterSpendingViewHolder) holder).category.setText("지출");
             //((ContentsListRecyclerAdapterSpendingViewHolder) holder).spending.setText(Integer.toString(((ContentsListBody) item).getAmount()));
             ((ContentsListRecyclerAdapterSpendingViewHolder) holder).spending.setText(dc.format(((ContentsListBody) item).getAmount()));
             ((ContentsListRecyclerAdapterSpendingViewHolder) holder).description.setText(((ContentsListBody) item).getDescription());
         }
         else if (holder instanceof ContentsListRecyclerAdapterIncomeViewHolder){
-            //((ContentsListRecyclerAdapterIncomeViewHolder) holder).category.setText(Integer.toString(((ContentsListBody) item).getCategoryId()));
-            ((ContentsListRecyclerAdapterIncomeViewHolder) holder).category.setText("수입");
+            ((ContentsListRecyclerAdapterIncomeViewHolder) holder).category.setText(getCategoryById(((ContentsListBody) item).getCategoryId()));
+            //((ContentsListRecyclerAdapterIncomeViewHolder) holder).category.setText("수입");
             //((ContentsListRecyclerAdapterIncomeViewHolder) holder).income.setText(Integer.toString(((ContentsListBody) item).getAmount()));
             ((ContentsListRecyclerAdapterIncomeViewHolder) holder).income.setText(dc.format(((ContentsListBody) item).getAmount()));
             ((ContentsListRecyclerAdapterIncomeViewHolder) holder).description.setText(((ContentsListBody) item).getDescription());
@@ -119,5 +123,19 @@ public class ContentsListRecyclerAdapter
     public void setData(List<ContentsListItem> newData){
         this.data = newData;
         notifyDataSetChanged();
+    }
+
+    public void setCategoryItems(List<ContentsCategoryItem> categoryItems){
+        this.categoryItems = categoryItems;
+        notifyDataSetChanged();
+    }
+
+    private String getCategoryById(int id){
+        for(ContentsCategoryItem c : categoryItems){
+            if(c.getId() == id){
+                return c.getCategory();
+            }
+        }
+        return "미분류";
     }
 }

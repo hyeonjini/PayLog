@@ -4,7 +4,6 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -16,6 +15,7 @@ import androidx.annotation.NonNull;
 import com.kumoh.paylog2.R;
 import com.kumoh.paylog2.dto.ContentsCategoryItem;
 
+import java.util.Calendar;
 import java.util.List;
 
 public class AddSpendingHistoryDialog extends Dialog implements View.OnClickListener{
@@ -26,6 +26,7 @@ public class AddSpendingHistoryDialog extends Dialog implements View.OnClickList
     ContentsCategoryItem categoryItem;
     List<ContentsCategoryItem> lists;
     AddSpendingHistoryDialogListener addSpendingHistoryDialogListener;
+
     public AddSpendingHistoryDialog(@NonNull Context context, List<ContentsCategoryItem> lists){
         super(context);
         this.lists = lists;
@@ -68,20 +69,22 @@ public class AddSpendingHistoryDialog extends Dialog implements View.OnClickList
     public void onClick(View v){
         switch (v.getId()){
             case R.id.add_spending_select_date_button:
-                DatePickerDialog dpd = new DatePickerDialog(getContext(), pickerCallBack, 2019,9,01);
+                Calendar c = Calendar.getInstance();
+                int mYear = c.get(Calendar.YEAR); int mMonth = c.get(Calendar.MONTH); int mDay = c.get(Calendar.DAY_OF_MONTH);
+                DatePickerDialog dpd = new DatePickerDialog(getContext(), pickerCallBack, mYear,mMonth,mDay);
                 dpd.show();
                 break;
             case R.id.add_spending_select_category_button:
-                CategorySelectDialog csd = new CategorySelectDialog(getContext(), lists);
-                csd.setAddSpendingHistoryDialogListener(new CategorySelectDialog.CategorySelectDialogListener() {
+                SelectSpendingCategoryDialog ssd = new SelectSpendingCategoryDialog(getContext(), lists);
+                ssd.setAddSpendingHistoryDialogListener(new SelectSpendingCategoryDialog.CategorySelectDialogListener() {
                     @Override
                     public void onCategorySelected(ContentsCategoryItem item) {
-                        categoryItem = csd.getSelectedItem();
+                        categoryItem = ssd.getSelectedItem();
                         categorySelectButton.setText(categoryItem.getCategory());
                     }
                 });
-                csd.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-                csd.show();
+                ssd.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                ssd.show();
                 break;
             case R.id.add_spending_ok_button:
                 addSpendingHistoryDialogListener.onAddButtonClicked(categoryItem.getKind(),dateSelectButton.getText().toString(),

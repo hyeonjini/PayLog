@@ -11,14 +11,24 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 
 import com.kumoh.paylog2.R;
+import com.kumoh.paylog2.dto.ContentsCategoryItem;
+
+import java.util.Calendar;
+import java.util.List;
 
 public class AddIncomeHistoryDialog extends Dialog implements View.OnClickListener {
     Button dateSelectButton, categorySelectButton;
     EditText amount, description;
     Button addButton, cancelButton;
     DatePickerDialog.OnDateSetListener pickerCallBack;
-    public AddIncomeHistoryDialogListener addIncomeHistoryDialogListener;
-    public AddIncomeHistoryDialog(Context context){super(context);}
+    ContentsCategoryItem categoryItem;
+    List<ContentsCategoryItem> lists;
+    AddIncomeHistoryDialogListener addIncomeHistoryDialogListener;
+
+    public AddIncomeHistoryDialog(Context context, List<ContentsCategoryItem> lists){
+        super(context);
+        this.lists = lists;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -55,15 +65,26 @@ public class AddIncomeHistoryDialog extends Dialog implements View.OnClickListen
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.add_income_select_date_button:
-                DatePickerDialog dpd = new DatePickerDialog(getContext(), pickerCallBack, 2019,9,01);
+                Calendar c = Calendar.getInstance();
+                int mYear = c.get(Calendar.YEAR); int mMonth = c.get(Calendar.MONTH); int mDay = c.get(Calendar.DAY_OF_MONTH);
+                DatePickerDialog dpd = new DatePickerDialog(getContext(), pickerCallBack, mYear,mMonth,mDay);
                 dpd.show();
                 break;
             case R.id.add_income_select_category_button:
-                //CategorySelectDialog csd = new CategorySelectDialog(getContext());
+                SelectIncomeCategoryDialog sid = new SelectIncomeCategoryDialog(getContext(), lists);
+                sid.setAddIncomeHistoryDialogListener(new SelectIncomeCategoryDialog.CategorySelectDialogListener() {
+                    @Override
+                    public void onCategorySelected(ContentsCategoryItem item) {
+                        categoryItem = sid.getSelectedItem();
+                        categorySelectButton.setText(categoryItem.getCategory());
+                    }
+                });
+                sid.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                sid.show();
                 break;
             case R.id.add_income_ok_button:
-                addIncomeHistoryDialogListener.onAddButtonClicked(1,dateSelectButton.getText().toString(),
-                        1,description.getText().toString(),Integer.parseInt(amount.getText().toString()));
+                addIncomeHistoryDialogListener.onAddButtonClicked(categoryItem.getKind(),dateSelectButton.getText().toString(),
+                        categoryItem.getId(),description.getText().toString(),Integer.parseInt(amount.getText().toString()));
                 dismiss();
                 break;
             case R.id.add_income_cancel_button:

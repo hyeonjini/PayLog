@@ -26,8 +26,14 @@ import java.util.List;
 
 public class ContentsStatisticsFragment extends Fragment {
     ViewGroup rootView;
+    private int accountId;
     private List<ContentsStatisticsCategoryItem> list;
     private ContentsStatisticsRecyclerAdapter adapter;
+
+    public ContentsStatisticsFragment(int accountId){
+        this.accountId = accountId;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -90,7 +96,7 @@ public class ContentsStatisticsFragment extends Fragment {
         data.setValueFormatter(new PercentFormatter()); // 수치 표기 text 포맷 설정
         data.setValueTextSize(10f); // 수치 표기 text 크기
 
-        pieChart.setEntryLabelColor(R.color.colorBlack); // 카테고리 표기 text 색
+        pieChart.setEntryLabelColor(R.color.textBlack); // 카테고리 표기 text 색
 
         pieChart.setData(data);
         pieChart.invalidate();

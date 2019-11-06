@@ -1,4 +1,4 @@
-package com.kumoh.paylog2.adapter.contents;
+package com.kumoh.paylog2.adapter.contents.category;
 
 import android.net.Uri;
 import android.util.Log;
@@ -17,13 +17,13 @@ import com.kumoh.paylog2.dto.ContentsCategoryItem;
 
 import java.util.List;
 
-public class ContentsCategoryDialogAdapter
-        extends RecyclerView.Adapter<ContentsCategoryDialogAdapter.CategorySubViewHolder> {
+public class ContentsSpendingCategoryAdapter
+        extends RecyclerView.Adapter<ContentsSpendingCategoryAdapter.CategorySubViewHolder> {
 
     private List<ContentsCategoryItem> list;
     private OnCategoryClickListener listener;
 
-    public ContentsCategoryDialogAdapter(List<ContentsCategoryItem> list){
+    public ContentsSpendingCategoryAdapter(List<ContentsCategoryItem> list){
         this.list = list;
     }
 
@@ -33,8 +33,8 @@ public class ContentsCategoryDialogAdapter
 
         public CategorySubViewHolder(View view){
             super(view);
-            imageView = view.findViewById(R.id.category_img);
-            textView = view.findViewById(R.id.category_text);
+            imageView = view.findViewById(R.id.category_spending_img);
+            textView = view.findViewById(R.id.category_spending_text);
 
             view.setOnClickListener(new View.OnClickListener(){
                 @Override
@@ -53,7 +53,7 @@ public class ContentsCategoryDialogAdapter
     @Override
     public CategorySubViewHolder onCreateViewHolder(ViewGroup viewGroup, int i){
         View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.item_contents_category, null);
+                .inflate(R.layout.item_contents_category_spending, null);
 
         CategorySubViewHolder viewHolder = new CategorySubViewHolder(view);
 

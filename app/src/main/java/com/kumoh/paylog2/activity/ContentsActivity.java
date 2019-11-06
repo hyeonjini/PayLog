@@ -56,6 +56,9 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
     private FloatingActionButton fab, spendingFab, incomeFab, imageFab;
     private Boolean isFabOpen = false;
 
+    // 기본 카테고리 리스트
+    List<ContentsCategoryItem> spendingLists;
+    List<ContentsCategoryItem> incomeLists;
     // 사진이 저장될 경로
     private String mCurrentPhotoPath;
     // 원본 사진을 앱 폴더에 저장해 두다가 crop 을 마치면 삭제함
@@ -73,6 +76,9 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.main_icon_arrow_back_24dp);
+
+        // 카테고리 초기화
+        initCategories();
 
         //데이터 수신
         Intent intent = getIntent();
@@ -146,13 +152,12 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.add_contents_fab_spending:
                 anim();
-                List<ContentsCategoryItem> lists = initCategories();
-                AddSpendingHistoryDialog addSpendingHistoryDialog = new AddSpendingHistoryDialog(this, lists);
+                AddSpendingHistoryDialog addSpendingHistoryDialog = new AddSpendingHistoryDialog(this, spendingLists);
 
                 addSpendingHistoryDialog.setAddSpendingHistoryDialogListener(new AddSpendingHistoryDialog.AddSpendingHistoryDialogListener() {
                     @Override
                     public void onAddButtonClicked(int kind, String date, int category, String description, int amount) {
-                        History spending = new History(selectedAccountId,-1,date,category,description,amount);
+                        History spending = new History(selectedAccountId,kind,date,category,description,amount);
                         new InsertHistory(db.historyDao()).execute(spending);
                     }
                 });
@@ -160,12 +165,12 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.add_contents_fab_income:
                 anim();
-                AddIncomeHistoryDialog addIncomeHistoryDialog = new AddIncomeHistoryDialog(this);
+                AddIncomeHistoryDialog addIncomeHistoryDialog = new AddIncomeHistoryDialog(this, incomeLists);
 
                 addIncomeHistoryDialog.setAddIncomeHistoryDialogListener(new AddIncomeHistoryDialog.AddIncomeHistoryDialogListener() {
                     @Override
                     public void onAddButtonClicked(int kind, String date, int category, String description, int amount) {
-                        History income = new History(selectedAccountId,1,date,category,description,amount);
+                        History income = new History(selectedAccountId,kind,date,category,description,amount);
                         new InsertHistory(db.historyDao()).execute(income);
                     }
                 });
@@ -248,15 +253,25 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-    private List<ContentsCategoryItem> initCategories(){
-        List<ContentsCategoryItem> categories = new ArrayList<>();
+    // 카테고리 초기화
+    private void initCategories(){
+        List<ContentsCategoryItem> spendingCategories = new ArrayList<>();
+        List<ContentsCategoryItem> incomeCategories = new ArrayList<>();
+
         db.categoryDao().getSpendingCategories().observe(this, list->{
             for(int pos = 0; pos < list.size(); pos++){
-                categories.add(new ContentsCategoryItem(list.get(pos).getCategoryId(), list.get(pos).getName(), list.get(pos).getKind()));
-                Log.i(pos+"번째", list.get(pos).getName());
+                spendingCategories.add(new ContentsCategoryItem(list.get(pos).getCategoryId(), list.get(pos).getName(), list.get(pos).getKind()));
             }
         });
-        return categories;
+
+        db.categoryDao().getIncomeCategories().observe(this, list->{
+            for(int pos = 0; pos < list.size(); pos++){
+                incomeCategories.add(new ContentsCategoryItem(list.get(pos).getCategoryId(), list.get(pos).getName(), list.get(pos).getKind()));
+            }
+        });
+
+        spendingLists =  spendingCategories;
+        incomeLists = incomeCategories;
     }
 
     private static class InsertHistory extends AsyncTask<History, Void, Void>{

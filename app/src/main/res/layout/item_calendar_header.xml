@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cal_header"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/calendarHeader">
+
+        <View
+            android:id="@+id/cal_day_view"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/fab40_mainColor" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/calendarHeader">
+
+                <TextView
+                    android:id="@+id/cal_header_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="3dp"
+                    android:textSize="10sp" />
+                <TextView
+                    android:id="@+id/cal_header_income"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="3dp"
+                    android:textSize="10sp" />
+                <TextView
+                    android:id="@+id/cal_header_spending"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="3dp"
+                    android:textSize="10sp" />
+
+        </LinearLayout>
+
+</LinearLayout>

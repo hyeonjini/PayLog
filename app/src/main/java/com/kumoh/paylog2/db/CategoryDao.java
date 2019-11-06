@@ -11,8 +11,8 @@ import java.util.List;
 
 @Dao
 public interface CategoryDao {
-    @Query("SELECT * FROM Category WHERE categoryId = :id")
-    Category getCategoryById(int id);
+    @Query("SELECT * FROM Category")
+    LiveData<List<Category>> getEveryCategories();
 
     @Query("SELECT * FROM Category WHERE kind = 0 OR kind = 2")
     LiveData<List<Category>> getIncomeCategories();
@@ -20,6 +20,8 @@ public interface CategoryDao {
     @Query("SELECT * FROM Category WHERE kind = 1 OR kind = 3")
     LiveData<List<Category>> getSpendingCategories();
 
+    @Query("SELECT * FROM Category WHERE categoryId = :id")
+    Category getCategoryById(int id);
     @Insert
     void insertAll(Category... categories);
 

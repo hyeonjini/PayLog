@@ -6,24 +6,24 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.kumoh.paylog2.R;
-import com.kumoh.paylog2.adapter.contents.ContentsCategoryDialogAdapter;
+import com.kumoh.paylog2.adapter.contents.category.ContentsIncomeCategoryAdapter;
 import com.kumoh.paylog2.dto.ContentsCategoryItem;
 
 import java.util.List;
 
-//카테고리 선택 다이얼로그
-public class CategorySelectDialog extends Dialog{
+// 수입 카테고리 선택 다이얼로그
+public class SelectIncomeCategoryDialog extends Dialog {
 
-    private ContentsCategoryDialogAdapter adapter;
+    private ContentsIncomeCategoryAdapter adapter;
     private ContentsCategoryItem item;
     private List<ContentsCategoryItem> lists;
     private CategorySelectDialogListener categorySelectDialogListener;
 
-    public CategorySelectDialog(@NonNull Context context, List<ContentsCategoryItem> lists) {
+    public SelectIncomeCategoryDialog(@NonNull Context context, List<ContentsCategoryItem> lists) {
         super(context);
         this.lists = lists;
     }
@@ -31,19 +31,19 @@ public class CategorySelectDialog extends Dialog{
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_category_select);
+        setContentView(R.layout.dialog_category_income);
 
-        RecyclerView recyclerView = findViewById(R.id.recycler_category_vertical);
-        adapter = new ContentsCategoryDialogAdapter(lists);
-        StaggeredGridLayoutManager manager =
-                new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
+        RecyclerView recyclerView = findViewById(R.id.recycler_income_category);
+        adapter = new ContentsIncomeCategoryAdapter(lists);
+        LinearLayoutManager manager
+                = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(adapter);
 
         adapter.setOnCategoryClickListener(
-                new ContentsCategoryDialogAdapter.OnCategoryClickListener() {
+                new ContentsIncomeCategoryAdapter.OnCategoryClickListener() {
                     @Override
                     public void onCategoryClick(View v, int pos) {
                         item = adapter.getAdapterItem(pos);
@@ -61,7 +61,7 @@ public class CategorySelectDialog extends Dialog{
         void onCategorySelected(ContentsCategoryItem item);
     }
 
-    public void setAddSpendingHistoryDialogListener(CategorySelectDialogListener categorySelectDialogListener){
+    public void setAddIncomeHistoryDialogListener(CategorySelectDialogListener categorySelectDialogListener){
         this.categorySelectDialogListener = categorySelectDialogListener;
     }
 }
