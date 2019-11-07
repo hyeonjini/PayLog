@@ -42,6 +42,8 @@ import com.kumoh.paylog2.dialog.AddSpendingHistoryDialog;
 import com.kumoh.paylog2.dto.ContentsCategoryItem;
 import com.theartofdev.edmodo.cropper.CropImage;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -199,16 +201,18 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
 
         try {
             switch(requestCode) {
-                case REQUEST_TAKE_PHOTO:
-                    if(resultCode == RESULT_OK) {
+                case REQUEST_TAKE_PHOTO: {
+                    if (resultCode == RESULT_OK) {
                         // 저장된 경로의 이미지 파일
                         File originalFile = new File(mCurrentPhotoPath);
 
                         // start cropping activity for pre-acquired image saved on the device
                         CropImage.activity(Uri.fromFile(originalFile))
                                 .start(this);
-                    }
 
+                    }
+                    break;
+                }
                 case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
                 {
                     CropImage.ActivityResult result = CropImage.getActivityResult(data);
@@ -217,6 +221,7 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
                             Uri resultUri = result.getUri();
                             Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), resultUri);
 
+                            new SendImageAsyncTask().execute(bitmap);
                              /*----------------------------------------
                             //
                             // 이 부분에서 서버로 보내면 될듯
@@ -224,10 +229,12 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
                              -----------------------------------------*/
 
                         } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                            Exception error = result.getError();
+                            //Exception error = resultUri.getError();
                         }
+                        originalFile = new File(mCurrentPhotoPath);
                         originalFile.delete();
                     }
+                    break;
                 }
             }
         } catch(Exception error) {
@@ -366,5 +373,26 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-//    private static class
+    private static class SendImageAsyncTask extends AsyncTask<Bitmap, Void, Void> {
+        RequestHttpURLConnection conn;
+
+        @Override
+        protected void onPreExecute() {
+            conn = new RequestHttpURLConnection();
+        }
+
+        @Override
+        protected Void doInBackground(Bitmap... bitmaps) {
+            JSONObject jObj = conn.requestImageProcessing("http://202.31.138.206:3000/image", bitmaps[0]);
+
+            // Gson 이용해서 객체에 담기
+            // 담은 객체 roomDB에 저장
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+        }
+    }
 }
