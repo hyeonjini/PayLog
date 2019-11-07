@@ -2,10 +2,15 @@ package com.kumoh.paylog2.activity;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -15,45 +20,39 @@ import com.kumoh.paylog2.adapter.FileAdapter;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
-public class FileActivity extends AppCompatActivity {
-
-    private FileAdapter adapter;
+public class FileActivity extends AppCompatActivity
+        implements View.OnClickListener, FileAdapter.FileListRecyclerOnClickListener, FileAdapter.FileListRecyclerLongClickListener{
 
     private RecyclerView recyclerView;
-    private Button convert_btn;
+    private FileAdapter adapter;
+    List<File> fileList = new ArrayList<>();
+
+    private Button fileConvertButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file);
 
-        convert_btn = findViewById(R.id.file_convert_btn);
-
-        ArrayList<File> mList = new ArrayList<>();
+        fileConvertButton = findViewById(R.id.file_convert_btn);
 
         // 리사이클러뷰에 LayoutManager 객체 지정.
         recyclerView = findViewById(R.id.file_recyclerview) ;
         recyclerView.setLayoutManager(new LinearLayoutManager(this)) ;
 
-        // 리사이클러뷰에 Adapter 객체 지정.
-        adapter = new FileAdapter(mList);
-        recyclerView.setAdapter(adapter);
-
+        // 어댑터에 리스트 객체 등록
+        adapter = new FileAdapter(fileList);
         adapter.setData(getFileList());
 
-//        getFileList().observe(this, list -> {
-//            adapter.setData(list);
-//        });
+        // 리사이클러뷰에 어댑터 객체 지정.
+        recyclerView.setAdapter(adapter);
 
-        convert_btn.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // TODO : click event
-                Intent intent = new Intent(getApplicationContext(), FileSaveActivity.class);
-                startActivityForResult(intent, 3000);
-            }
-        });
+        // 리스너 등록
+        adapter.setOnClickListener(this);
+        adapter.setLongClickListener(this);
+        fileConvertButton.setOnClickListener(this);
     }
 
     @Override
@@ -63,8 +62,6 @@ public class FileActivity extends AppCompatActivity {
                 // MainActivity 에서 요청할 때 보낸 요청 코드 (3000)
                 case 3000:
                     adapter.setData(getFileList());
-                    adapter.notifyDataSetChanged();
-                    //showFileList();
                     break;
             }
         }
@@ -96,5 +93,95 @@ public class FileActivity extends AppCompatActivity {
 //        lList.setValue(list);
 
         return list;
+    }
+
+    // 엑셀 파일 열기
+    private void fileOpen(File item) {
+        Uri uri;
+        // API 24 이상 일경우
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            uri = FileProvider.getUriForFile(this, this.getPackageName() + ".fileprovider", item);
+        }
+
+        // API 24 미만 일경우
+        else {
+            uri = Uri.fromFile(item);
+        }
+
+        Intent shareIntent = new Intent(Intent.ACTION_VIEW);
+        shareIntent.setDataAndType(uri, "application/vnd.ms-excel");
+        shareIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        startActivity(shareIntent);
+
+
+        //Uri path = Uri.fromFile(item);
+
+
+        // 파일 공유하기
+//                        Uri uri = FileProvider.getUriForFile(context, "com.bignerdranch.android.test.fileprovider", item);
+//
+//                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+//                        shareIntent.setType("application/excel");
+//                        shareIntent.putExtra(Intent.EXTRA_STREAM,uri);
+//
+//                        Intent intent = Intent.createChooser(shareIntent, "엑셀 내보내기");
+//
+//                        context.startActivity(intent);
+
+        //출처: https://liveonthekeyboard.tistory.com/entry/안드로이드-엑셀-파일-생성-내보내기 [키위남]
+    }
+
+    // 삭제 Dialog
+    private void fileDeleteDialog(final File file){
+        AlertDialog.Builder alt_bld = new AlertDialog.Builder(this);
+        alt_bld.setMessage("해당 파일을 삭제하시겠습니까?").setCancelable(
+                false).setPositiveButton("Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        file.delete();
+                        adapter.removeItem(file);
+                    }
+                }).setNegativeButton("No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // Action for 'NO' Button
+                        dialog.cancel();
+                    }
+    });
+        AlertDialog alert = alt_bld.create();
+        // Title for AlertDialog
+        alert.setTitle("파일 삭제");
+
+        alert.show();
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()) {
+            case R.id.file_convert_btn:
+                Intent intent = new Intent(getApplicationContext(), FileSaveActivity.class);
+                startActivityForResult(intent, 3000);
+                break;
+        }
+    }
+
+    // Recycler View item click
+    @Override
+    public void onItemClicked(int position) {
+        if (position != RecyclerView.NO_POSITION) {
+            File item = adapter.getItem(position);
+
+            fileOpen(item);
+        }
+    }
+
+    // Recycler View item longClick
+    @Override
+    public void onItemLongClicked(int position) {
+        // 오랫동안 눌렀을 때 이벤트가 발생됨
+        File file = adapter.getItem(position);
+
+        fileDeleteDialog(file);
     }
 }

@@ -121,11 +121,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == android.R.id.home){
             drawerLayout.openDrawer(GravityCompat.START);
-            Toast.makeText(getApplicationContext(), "저기", Toast.LENGTH_SHORT).show();
-        }
-
-        if(item.getItemId() == R.id.nav_document) {
-            Toast.makeText(getApplicationContext(), "여기", Toast.LENGTH_SHORT).show();
         }
 
         return super.onOptionsItemSelected(item);

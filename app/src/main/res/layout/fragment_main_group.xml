@@ -8,6 +8,7 @@
     tools:context=".fragment.main.MainAccountFragment">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/main_account_info_cardview"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"

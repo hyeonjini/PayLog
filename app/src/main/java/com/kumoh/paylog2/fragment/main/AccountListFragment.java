@@ -11,8 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -28,13 +30,15 @@ import com.kumoh.paylog2.dto.AccountInfo;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AccountListFragment extends Fragment implements AccountListRecyclerAdapter.AccountListRecyclerOnClickListener {
+public class AccountListFragment extends Fragment implements AccountListRecyclerAdapter.AccountListRecyclerOnClickListener, AccountListRecyclerAdapter.AccountListRecyclerLongClickListener {
 
     private LocalDatabase db;
     private AccountListRecyclerAdapter adapter;
     public AccountListFragment() {
         // Required empty public constructor
     }
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -49,6 +53,7 @@ public class AccountListFragment extends Fragment implements AccountListRecycler
         adapter = new AccountListRecyclerAdapter(accountList);
         //리스너 등록
         adapter.setOnClickListener(this);
+        adapter.setLongClickListener(this);
 
         recyclerView.setAdapter(adapter);
         //db 연결
@@ -111,5 +116,34 @@ public class AccountListFragment extends Fragment implements AccountListRecycler
     }
 
     //길게 터치
+    @Override
+    public void onItemLongClicked(View view, int position) {
+        AccountInfo account = null;
+        account = adapter.getItem(position);
 
+        PopupMenu popup=new PopupMenu(getActivity(), view);
+        popup.getMenuInflater().inflate(R.menu.item_account_popup_menu,popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+
+                switch(item.getItemId()){
+
+                    case R.id.account_list_revise_popup_item:
+                        Toast.makeText(getContext(), "수정", Toast.LENGTH_SHORT).show();
+                        break;
+
+                    case R.id.account_list_delete_popup_item:
+                        Toast.makeText(getContext(), "삭제", Toast.LENGTH_SHORT).show();
+                        break;
+
+                    case R.id.account_list_main_popup_item:
+                        Toast.makeText(getContext(), "대표", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                return false;
+            }
+        });
+        popup.show();
+    }
 }
