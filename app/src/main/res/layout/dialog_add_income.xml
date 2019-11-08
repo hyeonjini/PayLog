@@ -106,7 +106,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        android:layout_weight="1">
+        android:layout_weight="0.5">
         <Button
             android:layout_margin="3dp"
             android:layout_width="0dp"
@@ -128,5 +128,19 @@
             android:textColor="#ffffff"
             android:id="@+id/add_income_cancel_button"/>
 
+    </LinearLayout>
+    <LinearLayout
+        android:background="#ffffff"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_weight="0.5">
+
+        <TextView
+            android:id="@+id/add_income_warning_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/holo_red_dark"
+            android:textAlignment="center"/>
     </LinearLayout>
 </LinearLayout>
