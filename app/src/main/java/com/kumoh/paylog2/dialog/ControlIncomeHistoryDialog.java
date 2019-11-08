@@ -9,26 +9,34 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+
+import androidx.annotation.NonNull;
 
 import com.kumoh.paylog2.R;
+import com.kumoh.paylog2.dialog.button.DeleteButton;
 import com.kumoh.paylog2.dto.ContentsCategoryItem;
+import com.kumoh.paylog2.dto.ContentsListBody;
 
 import java.util.Calendar;
 import java.util.List;
 
-public class AddIncomeHistoryDialog extends Dialog implements View.OnClickListener {
+public class ControlIncomeHistoryDialog extends Dialog implements View.OnClickListener{
     Button dateSelectButton, categorySelectButton;
     EditText amount, description;
-    Button addButton, cancelButton;
+    Button updateButton, cancelButton, deleteButton;
     DatePickerDialog.OnDateSetListener pickerCallBack;
     ContentsCategoryItem categoryItem;
     List<ContentsCategoryItem> lists;
-    AddIncomeHistoryDialogListener addIncomeHistoryDialogListener;
+    ContentsListBody item;
+    ControlIncomeHistoryDialogListener controlIncomeHistoryDialogListener;
 
-    public AddIncomeHistoryDialog(Context context, List<ContentsCategoryItem> lists){
+    public ControlIncomeHistoryDialog(@NonNull Context context, List<ContentsCategoryItem> lists, ContentsListBody item) {
         super(context);
         this.lists = lists;
+        this.item = item;
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -43,17 +51,36 @@ public class AddIncomeHistoryDialog extends Dialog implements View.OnClickListen
         categorySelectButton = (Button) findViewById(R.id.add_income_select_category_button);
         amount = (EditText) findViewById(R.id.add_income_amount_text);
         description = (EditText) findViewById(R.id.add_income_description_text);
-        addButton = (Button) findViewById(R.id.add_income_ok_button);
+        updateButton = (Button) findViewById(R.id.add_income_ok_button);
         cancelButton = (Button) findViewById(R.id.add_income_cancel_button);
+
+        // 기존 레이아웃에 삭제 버튼 추가
+        DeleteButton delLayout = new DeleteButton(getContext());
+        LinearLayout mainLayout = findViewById(R.id.dialog_layout);
+        mainLayout.addView(delLayout);
+
+        deleteButton = findViewById(R.id.delete_button);
+        deleteButton.setBackgroundColor(getContext().getResources().getColor(R.color.income_Color));
+
+        dateSelectButton.setText(item.getDate());
+        for(ContentsCategoryItem c : lists){
+            if(item.getCategoryId() == c.getId())
+                categorySelectButton.setText(c.getCategory());
+        }
+        amount.setText(Integer.toString(item.getAmount()));
+        description.setText(item.getDescription());
+        updateButton.setText("수정");
 
         //날짜 선택 리스너
         dateSelectButton.setOnClickListener(this);
         //카테고리 선택 리스너
         categorySelectButton.setOnClickListener(this);
-        //추가 버튼 리스너
-        addButton.setOnClickListener(this);
+        //수정 버튼 리스너
+        updateButton.setOnClickListener(this);
         //취소 버튼 리스너
         cancelButton.setOnClickListener(this);
+        //삭제 버튼 리스너
+        deleteButton.setOnClickListener(this);
 
         //date picker callback method
         pickerCallBack = new DatePickerDialog.OnDateSetListener() {
@@ -85,20 +112,25 @@ public class AddIncomeHistoryDialog extends Dialog implements View.OnClickListen
                 sid.show();
                 break;
             case R.id.add_income_ok_button:
-                addIncomeHistoryDialogListener.onAddButtonClicked(categoryItem.getKind(),dateSelectButton.getText().toString(),
+                controlIncomeHistoryDialogListener.onUpdateButtonClicked(categoryItem.getKind(),dateSelectButton.getText().toString(),
                         categoryItem.getId(),description.getText().toString(),Integer.parseInt(amount.getText().toString()));
                 dismiss();
                 break;
             case R.id.add_income_cancel_button:
                 cancel();
                 break;
+            case R.id.delete_button:
+                controlIncomeHistoryDialogListener.onDeleteButtonClicked();
+                dismiss();
+                break;
         }
     }
 
-    public interface AddIncomeHistoryDialogListener{
-        void onAddButtonClicked(int kind, String date, int category, String description, int amount);
+    public interface ControlIncomeHistoryDialogListener{
+        void onUpdateButtonClicked(int kind, String date, int category, String description, int amount);
+        void onDeleteButtonClicked();
     }
-    public void setAddIncomeHistoryDialogListener(AddIncomeHistoryDialogListener addIncomeHistoryDialogListener){
-        this.addIncomeHistoryDialogListener = addIncomeHistoryDialogListener;
+    public void setControlIncomeHistoryDialogListener(ControlIncomeHistoryDialogListener controlIncomeHistoryDialogListener){
+        this.controlIncomeHistoryDialogListener = controlIncomeHistoryDialogListener;
     }
 }

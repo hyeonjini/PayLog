@@ -22,6 +22,7 @@ public class ContentsListRecyclerAdapter
 
     private List<ContentsListItem> data;
     private List<ContentsCategoryItem> categoryItems;
+    private ContentsListRecyclerLongClickListener longClickListener;
     private DecimalFormat dc = new DecimalFormat("###,###,###,###,###");
     private static final int VIEW_TYPE_HEADER = 0;
     final static int SPENDING_VIEW = -1;
@@ -65,25 +66,40 @@ public class ContentsListRecyclerAdapter
         ContentsListItem item = data.get(position);
         if (holder instanceof ContentsListRecyclerAdapterHeaderViewHolder){
             ((ContentsListRecyclerAdapterHeaderViewHolder) holder).date.setText(item.getDate());
-            //((ContentsListRecyclerAdapterHeaderViewHolder) holder).income.setText(Integer.toString(item.getIncome()));
             ((ContentsListRecyclerAdapterHeaderViewHolder) holder).income.setText(dc.format(item.getIncome()));
-            //((ContentsListRecyclerAdapterHeaderViewHolder) holder).spending.setText(Integer.toString(item.getSepnding()));
             ((ContentsListRecyclerAdapterHeaderViewHolder) holder).spending.setText(dc.format(item.getSepnding()));
         }
         else if (holder instanceof ContentsListRecyclerAdapterSpendingViewHolder){
-
             ((ContentsListRecyclerAdapterSpendingViewHolder) holder).category.setText(getCategoryById(((ContentsListBody) item).getCategoryId()));
-            //((ContentsListRecyclerAdapterSpendingViewHolder) holder).category.setText("지출");
-            //((ContentsListRecyclerAdapterSpendingViewHolder) holder).spending.setText(Integer.toString(((ContentsListBody) item).getAmount()));
             ((ContentsListRecyclerAdapterSpendingViewHolder) holder).spending.setText(dc.format(((ContentsListBody) item).getAmount()));
             ((ContentsListRecyclerAdapterSpendingViewHolder) holder).description.setText(((ContentsListBody) item).getDescription());
+            // 지출 항목 길게 터치 시 리스너 등록
+            if(longClickListener != null){
+                final int pos = position;
+                holder.itemView.setOnLongClickListener(new View.OnLongClickListener(){
+                    @Override
+                    public boolean onLongClick(View v){
+                        longClickListener.onItemLongClicked(pos);
+                        return false;
+                    }
+                });
+            }
         }
         else if (holder instanceof ContentsListRecyclerAdapterIncomeViewHolder){
             ((ContentsListRecyclerAdapterIncomeViewHolder) holder).category.setText(getCategoryById(((ContentsListBody) item).getCategoryId()));
-            //((ContentsListRecyclerAdapterIncomeViewHolder) holder).category.setText("수입");
-            //((ContentsListRecyclerAdapterIncomeViewHolder) holder).income.setText(Integer.toString(((ContentsListBody) item).getAmount()));
             ((ContentsListRecyclerAdapterIncomeViewHolder) holder).income.setText(dc.format(((ContentsListBody) item).getAmount()));
             ((ContentsListRecyclerAdapterIncomeViewHolder) holder).description.setText(((ContentsListBody) item).getDescription());
+            // 수입 항목 길게 터치 시 리스너 등록
+            if(longClickListener != null){
+                final int pos = position;
+                holder.itemView.setOnLongClickListener(new View.OnLongClickListener(){
+                    @Override
+                    public boolean onLongClick(View v){
+                        longClickListener.onItemLongClicked(pos);
+                        return false;
+                    }
+                });
+            }
         }
     }
     @Override
@@ -137,5 +153,14 @@ public class ContentsListRecyclerAdapter
             }
         }
         return "미분류";
+    }
+
+    // 롱 클릭 리스너 인터페이스
+    public interface ContentsListRecyclerLongClickListener {
+        void onItemLongClicked(int pos);
+    }
+
+    public void setLongClickListener(ContentsListRecyclerLongClickListener longClickListener){
+        this.longClickListener = longClickListener;
     }
 }

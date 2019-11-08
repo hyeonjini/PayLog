@@ -3,8 +3,10 @@ package com.kumoh.paylog2.db;
 import androidx.lifecycle.LiveData;
 import androidx.room.ColumnInfo;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.kumoh.paylog2.dto.ContentsMonthItem;
 
@@ -28,4 +30,10 @@ public interface HistoryDao {
     // 해당 accountId의 fromDate 부터 toDate 까지의 history
     @Query("SELECT * FROM History WHERE accountId = :accountId and date > :fromDate and date < :toDate order by date desc")
     List<History> getAllFromToByAccountId(int accountId, String fromDate, String toDate);
+
+    @Update
+    void updateHistory(History history);
+
+    @Query("DELETE FROM History WHERE historyId = :historyId")
+    void deleteHistory(int historyId);
 }

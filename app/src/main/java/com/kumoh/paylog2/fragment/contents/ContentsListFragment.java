@@ -1,9 +1,11 @@
 package com.kumoh.paylog2.fragment.contents;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -13,7 +15,10 @@ import com.kumoh.paylog2.R;
 import com.kumoh.paylog2.adapter.contents.ContentsListRecyclerAdapter;
 import com.kumoh.paylog2.db.Category;
 import com.kumoh.paylog2.db.History;
+import com.kumoh.paylog2.db.HistoryDao;
 import com.kumoh.paylog2.db.LocalDatabase;
+import com.kumoh.paylog2.dialog.ControlIncomeHistoryDialog;
+import com.kumoh.paylog2.dialog.ControlSpendingHistoryDialog;
 import com.kumoh.paylog2.dto.ContentsCategoryItem;
 import com.kumoh.paylog2.dto.ContentsListBody;
 import com.kumoh.paylog2.dto.ContentsListHeader;
@@ -22,12 +27,17 @@ import com.kumoh.paylog2.dto.ContentsListItem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContentsListFragment extends Fragment {
+public class ContentsListFragment extends Fragment implements ContentsListRecyclerAdapter.ContentsListRecyclerLongClickListener {
+    final static int SPENDING_VIEW = -1;
+    final static int INCOME_VIEW = 1;
+
     LocalDatabase db;
     private int accountId;
     private ContentsListRecyclerAdapter adapter;
     private ArrayList<ContentsListItem> listItem;
     private ArrayList<ContentsCategoryItem> categoryItems;
+    List<ContentsCategoryItem> spendingCategories;
+    List<ContentsCategoryItem> incomeCategories;
 
     public ContentsListFragment(int accountId){
         this.accountId = accountId;
@@ -40,6 +50,7 @@ public class ContentsListFragment extends Fragment {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         adapter = new ContentsListRecyclerAdapter(new ArrayList<ContentsListItem>(), new ArrayList<ContentsCategoryItem>());
+        adapter.setLongClickListener(this);
 
         recyclerView.setAdapter(adapter);
         db = LocalDatabase.getInstance(getContext());
@@ -56,6 +67,7 @@ public class ContentsListFragment extends Fragment {
                 adapter.setCategoryItems(categoryItems);
             }
         });
+        initCategories();
 
         return rootView;
     }
@@ -126,6 +138,102 @@ public class ContentsListFragment extends Fragment {
 
         for(Category category : data){
             categoryItems.add(new ContentsCategoryItem(category.getCategoryId(), category.getName(), category.getKind()));
+        }
+    }
+
+    @Override
+    public void onItemLongClicked(int pos) {
+        Toast.makeText(getContext(), "길게 눌림", Toast.LENGTH_SHORT).show();
+        if(listItem.get(pos).getViewType() == INCOME_VIEW){
+            ControlIncomeHistoryDialog controlIncomeHistoryDialog = new ControlIncomeHistoryDialog(getContext(), incomeCategories, (ContentsListBody) listItem.get(pos));
+            controlIncomeHistoryDialog.setControlIncomeHistoryDialogListener(new ControlIncomeHistoryDialog.ControlIncomeHistoryDialogListener() {
+                @Override
+                public void onUpdateButtonClicked(int kind, String date, int category, String description, int amount) {
+                    History historyToUpdate = new History(accountId, kind, date, category, description, amount);
+                    historyToUpdate.setHistoryId(((ContentsListBody) listItem.get(pos)).getHistoryId());
+                    new UpdateHistory(db.historyDao()).execute(historyToUpdate);
+                }
+                @Override
+                public void onDeleteButtonClicked(){
+                    new DeleteHistory(db.historyDao()).execute(((ContentsListBody) listItem.get(pos)).getHistoryId());
+                }
+            });
+            controlIncomeHistoryDialog.show();
+        } else if(listItem.get(pos).getViewType() == SPENDING_VIEW){
+            ControlSpendingHistoryDialog controlSpendingHistoryDialog = new ControlSpendingHistoryDialog(getContext(), spendingCategories, (ContentsListBody) listItem.get(pos));
+            controlSpendingHistoryDialog.setControlSpendingHistoryDialogListener(new ControlSpendingHistoryDialog.ControlSpendingHistoryDialogListener() {
+                @Override
+                public void onUpdateButtonClicked(int kind, String date, int category, String description, int amount) {
+                    History historyToUpdate = new History(accountId, kind, date, category, description, amount);
+                    historyToUpdate.setHistoryId(((ContentsListBody) listItem.get(pos)).getHistoryId());
+                    new UpdateHistory(db.historyDao()).execute(historyToUpdate);
+                }
+                @Override
+                public void onDeleteButtonClicked() {
+                    new DeleteHistory(db.historyDao()).execute(((ContentsListBody) listItem.get(pos)).getHistoryId());
+                }
+            });
+            controlSpendingHistoryDialog.show();
+        }
+    }
+
+    // 카테고리 초기화
+    private void initCategories(){
+        List<ContentsCategoryItem> spendingCategories = new ArrayList<>();
+        List<ContentsCategoryItem> incomeCategories = new ArrayList<>();
+
+        db.categoryDao().getSpendingCategories().observe(this, list->{
+            for(int pos = 0; pos < list.size(); pos++){
+                spendingCategories.add(new ContentsCategoryItem(list.get(pos).getCategoryId(), list.get(pos).getName(), list.get(pos).getKind()));
+            }
+        });
+
+        db.categoryDao().getIncomeCategories().observe(this, list->{
+            for(int pos = 0; pos < list.size(); pos++){
+                incomeCategories.add(new ContentsCategoryItem(list.get(pos).getCategoryId(), list.get(pos).getName(), list.get(pos).getKind()));
+            }
+        });
+
+        this.spendingCategories =  spendingCategories;
+        this.incomeCategories = incomeCategories;
+    }
+
+    private static class UpdateHistory extends AsyncTask<History, Void, Void> {
+        HistoryDao dao;
+        public UpdateHistory(HistoryDao dao) {
+            this.dao = dao;
+        }
+        @Override
+        protected Void doInBackground(History... histories) {
+            //날짜 보정
+            String date = histories[0].getDate();
+            String split[] = date.split("-");
+            String year = split[0];
+            String month = split[1];
+            String day = split[2];
+            if(month.length() == 1){
+                month = "0"+month;
+            }
+            if(day.length() == 1){
+                day = "0"+day;
+            }
+            date = year+"-"+month+"-"+day;
+            histories[0].setDate(date);
+
+            dao.updateHistory(histories[0]);
+            return null;
+        }
+    }
+
+    private static class DeleteHistory extends AsyncTask<Integer, Void, Void> {
+        HistoryDao dao;
+        public DeleteHistory(HistoryDao dao) {
+            this.dao = dao;
+        }
+        @Override
+        protected Void doInBackground(Integer... historyIds) {
+            dao.deleteHistory(historyIds[0]);
+            return null;
         }
     }
 }
