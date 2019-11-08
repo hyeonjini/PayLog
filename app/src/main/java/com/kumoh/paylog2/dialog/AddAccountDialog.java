@@ -12,8 +12,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.kumoh.paylog2.R;
+import com.kumoh.paylog2.dto.AccountInfo;
 
 public class AddAccountDialog extends Dialog implements View.OnClickListener{
+    private AccountInfo accountInfo;
+
     private EditText accountName;
     private EditText budget;
     private EditText subscribe;
@@ -26,6 +29,10 @@ public class AddAccountDialog extends Dialog implements View.OnClickListener{
 
     public AddAccountDialog(@NonNull Context context) {
         super(context);
+    }
+    public AddAccountDialog(@NonNull Context context, AccountInfo accountInfo) {
+        super(context);
+        this.accountInfo = accountInfo;
     }
 
     @Override
@@ -45,6 +52,13 @@ public class AddAccountDialog extends Dialog implements View.OnClickListener{
         addButton = (Button)findViewById(R.id.account_add_button);
         cancelButton = (Button)findViewById(R.id.account_add_cancel);
 
+        if(accountInfo != null) {
+            accountName.setText(accountInfo.getName());
+            subscribe.setText(accountInfo.getSubscribe());
+            budget.setText(accountInfo.getBudget());
+            addButton.setText("수정");
+        }
+
         //리스너 등록
         addButton.setOnClickListener(this);
         cancelButton.setOnClickListener(this);
@@ -53,11 +67,17 @@ public class AddAccountDialog extends Dialog implements View.OnClickListener{
     public void onClick(View v){
         switch (v.getId()){
             case R.id.account_add_button:
-                int budget = Integer.parseInt(this.budget.getText().toString());
-                boolean isMain = false;
                 String accountName = this.accountName.getText().toString();
                 String subscribe = this.subscribe.getText().toString();
-                addAccountDialogListener.onAddButtonClicked(budget,accountName,subscribe,isMain);
+                int budget = Integer.parseInt(this.budget.getText().toString());
+
+                if(accountInfo == null) {
+                    boolean isMain = false;
+                    addAccountDialogListener.onAddButtonClicked(budget,accountName,subscribe,isMain);
+                } else {
+                    addAccountDialogListener.onReviseButtonClicked(accountInfo.getAccountId(), budget, accountName, subscribe);
+                }
+
                 dismiss();
                 break;
             case R.id.account_add_cancel:
@@ -68,6 +88,7 @@ public class AddAccountDialog extends Dialog implements View.OnClickListener{
 
     public interface AddAccountDialogListener {
         void onAddButtonClicked(int budget,String accountName, String subscribe, boolean isMain);
+        void onReviseButtonClicked(int accountId, int budget, String accountName, String subscribe);
         void onCancelButtonClicked();
     }
     public void setListener(AddAccountDialogListener addAccountDialogListener){
