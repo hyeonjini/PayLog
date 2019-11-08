@@ -124,7 +124,7 @@ public class ContentsCalendarFragment extends Fragment implements View.OnClickLi
             for(int j = 1; j < dayOfWeek; j++){
                 calendarList.add("Empty"); // 2. 비어있는 일자 타입(String) 추가
             }
-            for(int j = 1; j <= max; j++){
+            for(int j = 1; j <= max; j++) {
                 GregorianCalendar day
                         = new GregorianCalendar(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),j);
                 // 3-1. 첫주 이후 주가 시작될때 헤더 타입(Long) 추가

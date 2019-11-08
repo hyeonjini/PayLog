@@ -38,7 +38,6 @@ public class AccountListFragment extends Fragment implements AccountListRecycler
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -75,6 +74,12 @@ public class AccountListFragment extends Fragment implements AccountListRecycler
                             public void onAddButtonClicked(int budget,String AccountName, String subscribe, boolean isMain) {
                                 new InsertAccountAsyncTask(db.accountDao()).execute(new Account(budget,AccountName,subscribe, 0));
                             }
+
+                            @Override
+                            public void onReviseButtonClicked(int accountId, int budget, String accountName, String subscribe) {
+
+                            }
+
                             @Override
                             public void onCancelButtonClicked() {
 
@@ -102,9 +107,22 @@ public class AccountListFragment extends Fragment implements AccountListRecycler
         }
     }
 
+    private static class UpdateAccountAsyncTask extends AsyncTask<AccountInfo, Void, Void> {
+        private AccountDao dao;
+        public UpdateAccountAsyncTask(AccountDao dao) { this.dao = dao;}
+
+        @Override
+        protected Void doInBackground(AccountInfo... accountInfos) {
+            dao.updateAccount(accountInfos[0].getAccountId(), accountInfos[0].getName(),
+                    accountInfos[0].getSubscribe(), accountInfos[0].getBudget());
+
+            return null;
+        }
+    }
+
     private static class DeleteAccountAsyncTask extends AsyncTask<Integer, Void, Void> {
         private AccountDao dao;
-        public DeleteAccountAsyncTask(AccountDao dao) {this.dao = dao; }
+        public DeleteAccountAsyncTask(AccountDao dao) { this.dao = dao; }
 
         @Override
         protected Void doInBackground(Integer... accounts) {
@@ -114,10 +132,22 @@ public class AccountListFragment extends Fragment implements AccountListRecycler
         }
     }
 
+    private static class WipeOutAndAppointMainAccountAsyncTask extends AsyncTask<Integer, Void, Void> {
+        private AccountDao dao;
+        public WipeOutAndAppointMainAccountAsyncTask(AccountDao dao) { this.dao = dao;}
+
+        @Override
+        protected Void doInBackground(Integer... integers) {
+            dao.wipeOutAndAppointMainAcocuntById(integers[0]);
+
+            return null;
+        }
+    }
+
     //리스너 동작 구현
     //짧게 터치
     @Override
-    public void onItemClicked(int position){
+    public void onItemClicked(int position) {
         AccountInfo account = null;
         account = adapter.getItem(position);
 
@@ -138,21 +168,35 @@ public class AccountListFragment extends Fragment implements AccountListRecycler
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-
+                AccountInfo accountInfo = adapter.getItem(position);
                 switch(item.getItemId()){
-
                     case R.id.account_list_revise_popup_item:
-                        Toast.makeText(getContext(), "수정", Toast.LENGTH_SHORT).show();
+                        AddAccountDialog dialog = new AddAccountDialog(getContext(), accountInfo);
+                        dialog.setListener(new AddAccountDialog.AddAccountDialogListener() {
+                            @Override
+                            public void onAddButtonClicked(int budget, String accountName, String subscribe, boolean isMain) {
+
+                            }
+
+                            @Override
+                            public void onReviseButtonClicked(int accountId, int budget, String accountName, String subscribe) {
+                                new UpdateAccountAsyncTask(db.accountDao()).execute(new AccountInfo(accountId, accountName, false, budget, subscribe, 0, 0));
+                            }
+
+                            @Override
+                            public void onCancelButtonClicked() {
+                                Toast.makeText(getContext(), "취소", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        dialog.show();
                         break;
 
                     case R.id.account_list_delete_popup_item:
-                        AccountInfo accountInfo = adapter.getItem(position);
-                        Toast.makeText(getContext(), "삭제", Toast.LENGTH_SHORT).show();
                         new DeleteAccountAsyncTask(db.accountDao()).execute(accountInfo.getAccountId());
                         break;
 
                     case R.id.account_list_main_popup_item:
-                        Toast.makeText(getContext(), "대표", Toast.LENGTH_SHORT).show();
+                        new WipeOutAndAppointMainAccountAsyncTask(db.accountDao()).execute(accountInfo.getAccountId());
                         break;
                 }
                 return false;

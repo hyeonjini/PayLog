@@ -35,6 +35,7 @@ public class AddAccountDialog extends Dialog implements View.OnClickListener{
         this.accountInfo = accountInfo;
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -55,7 +56,7 @@ public class AddAccountDialog extends Dialog implements View.OnClickListener{
         if(accountInfo != null) {
             accountName.setText(accountInfo.getName());
             subscribe.setText(accountInfo.getSubscribe());
-            budget.setText(accountInfo.getBudget());
+            budget.setText(Integer.toString(accountInfo.getBudget()));
             addButton.setText("수정");
         }
 

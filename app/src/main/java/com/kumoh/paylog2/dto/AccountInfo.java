@@ -8,14 +8,17 @@ public class AccountInfo {
     private String name;
     private boolean isMain;
     private int budget;
+    private String subscribe;
+
     private int spending;
     private int income;
 
-    public AccountInfo(int accountId, String name,boolean isMain, int budget, int spending, int income) {
+    public AccountInfo(int accountId, String name,boolean isMain, int budget, String subscribe, int spending, int income) {
         this.accountId = accountId;
         this.name = name;
         this.isMain = isMain;
         this.budget = budget;
+        this.subscribe = subscribe;
         this.spending = spending;
         this.income = income;
     }
@@ -67,4 +70,8 @@ public class AccountInfo {
     public void setIncome(int income) {
         this.income = income;
     }
+
+    public String getSubscribe() { return subscribe; }
+
+    public void setSubscribe(String subscribe) { this.subscribe = subscribe; }
 }
