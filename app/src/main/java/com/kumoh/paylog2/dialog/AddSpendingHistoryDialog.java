@@ -9,19 +9,22 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
 import com.kumoh.paylog2.R;
 import com.kumoh.paylog2.dto.ContentsCategoryItem;
+import com.kumoh.paylog2.util.MyException;
 
 import java.util.Calendar;
 import java.util.List;
 
 public class AddSpendingHistoryDialog extends Dialog implements View.OnClickListener{
     Button dateSelectButton, categorySelectButton;
-    EditText amount, description;
+    EditText amountEdit, descriptionEdit;
     Button addButton, cancelButton;
+    TextView warningMessage;
     DatePickerDialog.OnDateSetListener pickerCallBack;
     ContentsCategoryItem categoryItem;
     List<ContentsCategoryItem> lists;
@@ -44,18 +47,16 @@ public class AddSpendingHistoryDialog extends Dialog implements View.OnClickList
 
         dateSelectButton = (Button) findViewById(R.id.add_spending_select_date_button);
         categorySelectButton = (Button) findViewById(R.id.add_spending_select_category_button);
-        amount = (EditText) findViewById(R.id.add_spending_amount_text);
-        description = (EditText) findViewById(R.id.add_spending_description_text);
+        amountEdit = (EditText) findViewById(R.id.add_spending_amount_text);
+        descriptionEdit = (EditText) findViewById(R.id.add_spending_description_text);
         addButton = (Button) findViewById(R.id.add_spending_ok_button);
         cancelButton = (Button) findViewById(R.id.add_spending_cancel_button);
+        warningMessage = (TextView) findViewById(R.id.add_spending_warning_message);
 
-        //날짜 선택 리스너
+        // 리스너 등록
         dateSelectButton.setOnClickListener(this);
-        //카테고리 선택 리스너
         categorySelectButton.setOnClickListener(this);
-        //추가 버튼 리스너
         addButton.setOnClickListener(this);
-        //취소 버튼 리스너
         cancelButton.setOnClickListener(this);
 
         //date picker callback method
@@ -89,9 +90,28 @@ public class AddSpendingHistoryDialog extends Dialog implements View.OnClickList
                 ssd.show();
                 break;
             case R.id.add_spending_ok_button:
-                addSpendingHistoryDialogListener.onAddButtonClicked(categoryItem.getKind(),dateSelectButton.getText().toString(),
-                        categoryItem.getId(),description.getText().toString(),Integer.parseInt(amount.getText().toString())*-1);
-                dismiss();
+                try {
+                    if(categoryItem == null) throw new MyException("분류를 선택 해주세요");
+
+                    int kind = categoryItem.getKind();
+                    String date = dateSelectButton.getText().toString();
+                    int category = categoryItem.getId();
+                    String description = descriptionEdit.getText().toString();
+                    int amount = Integer.parseInt(amountEdit.getText().toString()) * (-1);
+
+                    // 날짜 선택이 기본 값임
+                    if(date.equals("날짜 선택")) throw new MyException("날짜를 선택 해주세요");
+                    if(description.equals("")) throw new MyException("내용을 기재 해주세요");
+
+                    addSpendingHistoryDialogListener.onAddButtonClicked(kind, date, category, description, amount);
+
+                    dismiss();
+                } catch (NumberFormatException e) {
+                    warningMessage.setText("금액을 입력 해주세요");
+                }
+                catch (MyException e) {
+                    warningMessage.setText(e.getMessage());
+                }
                 break;
             case R.id.add_spending_cancel_button:
                 cancel();

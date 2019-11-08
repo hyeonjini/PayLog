@@ -1,4 +1,4 @@
-package com.kumoh.paylog2;
+package com.kumoh.paylog2.util;
 
 import android.content.Context;
 import android.os.Environment;
@@ -61,15 +61,15 @@ public class FileConversion {
         row = sheet.createRow(LOGO_START_ROW);
 
 
-        workbook.getNumCellStyles();
+        //workbook.getNumCellStyles();
 
-        CellStyle cellStyle = workbook.createCellStyle();
-        cellStyle.setAlignment(HorizontalAlignment.CENTER);
-        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        //CellStyle cellStyle = workbook.createCellStyle();
+        //cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        //cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
         cell = row.createCell(0);
         cell.setCellValue("PayLog");
-        cell.setCellStyle(cellStyle);
+        //cell.setCellStyle(cellStyle);
 
         //셀 병합
         sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 10)); //열시작, 열종료, 행시작, 행종료 (자바배열과 같이 0부터 시작)

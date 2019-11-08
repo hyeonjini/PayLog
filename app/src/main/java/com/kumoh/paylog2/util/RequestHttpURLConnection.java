@@ -1,4 +1,4 @@
-package com.kumoh.paylog2;
+package com.kumoh.paylog2.util;
 
 import android.graphics.Bitmap;
 import android.util.Base64;
@@ -13,6 +13,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class RequestHttpURLConnection {
 
@@ -32,7 +34,7 @@ public class RequestHttpURLConnection {
             // URL 요청에 대한 메소드 설정 : POST.
             conn.setRequestMethod("POST");
             // Content type 설정. Request Body 전달시 json 으로 서버에 전달
-            conn.setRequestProperty("Content_Type", "application/json");
+            conn.setRequestProperty("Content-Type", "application/json");
             // Accept type 설정. Response Data 를 json 으로 서버로 받음
             conn.setRequestProperty("Accept", "application/json");
             // 컨트롤 캐쉬 설정(캐쉬를 유지할 필요가 없으므로 no-cache)
@@ -47,8 +49,17 @@ public class RequestHttpURLConnection {
             JSONObject job = new JSONObject();
             job.put("id", "1");
             job.put("image", getBase64String(image));
-            // [2-2]. parameter 전달 및 데이터 읽어오기.
 
+            long time = System.currentTimeMillis();
+            SimpleDateFormat dayTime = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+            String strDT = dayTime.format(new Date(time));
+            System.out.println(strDT);
+
+
+            // 혹시나 BufferedWriter랑 섞어서 사용하는거랑 OutputStream 그 자체로 사용하는거랑 속도 비교를 해봤는데
+            // OutputStream만 쓴 경우가 더 빨랐다 왜지?? (좀더 공부 해봐야할듯)
+
+            // [2-2]. parameter 전달 및 데이터 읽어오기.
             OutputStream os = conn.getOutputStream();
             os.write(job.toString().getBytes()); // 출력 스트림에 출력.
             os.flush(); // 출력 스트림을 플러시(비운다)하고 버퍼링 된 모든 출력 바이트를 강제 실행.

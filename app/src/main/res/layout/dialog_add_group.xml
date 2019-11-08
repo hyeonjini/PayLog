@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="wrap_content"
-    android:paddingTop = "60dp"
+    android:paddingTop = "40dp"
     android:paddingBottom="60dp"
     android:paddingStart="30dp"
     android:paddingEnd="30dp"
     android:layout_height="wrap_content">
 
+    <!-- 경고 메세지 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/add_account_warning_message"
+        android:textColor="@android:color/holo_red_dark"
+        android:textAlignment="center"
+        />
     <!-- 그룹이름-->
     <LinearLayout
         android:padding="5dp"

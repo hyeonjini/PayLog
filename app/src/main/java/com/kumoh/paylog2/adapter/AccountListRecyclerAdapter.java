@@ -56,8 +56,8 @@ public class AccountListRecyclerAdapter extends RecyclerView.Adapter<AccountList
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    longClickListener.onItemLongClicked(pos);
-                    return false;
+                    longClickListener.onItemLongClicked(v, pos);
+                    return true;
                 }
             });
         }
@@ -102,7 +102,7 @@ public class AccountListRecyclerAdapter extends RecyclerView.Adapter<AccountList
 
     //리스너 인터페이스 (길게 터치)
     public interface AccountListRecyclerLongClickListener{
-        void onItemLongClicked(int position);
+        void onItemLongClicked(View view, int position);
     }
     public void setLongClickListener(AccountListRecyclerLongClickListener longClickListener){
         this.longClickListener = longClickListener;

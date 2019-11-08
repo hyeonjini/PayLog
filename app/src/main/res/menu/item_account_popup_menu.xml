@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:title="@string/item_revise"
+        android:id="@+id/account_list_revise_popup_item"/>
+    <item
+        android:title="@string/item_delete"
+        android:id="@+id/account_list_delete_popup_item"/>
+    <item
+        android:title="@string/item_main_account"
+        android:id="@+id/account_list_main_popup_item"/>
+</menu>

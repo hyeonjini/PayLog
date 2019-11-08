@@ -6,33 +6,27 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.kumoh.paylog2.R;
-import com.kumoh.paylog2.RequestHttpURLConnection;
+import com.kumoh.paylog2.util.RequestHttpURLConnection;
 import com.kumoh.paylog2.adapter.contents.ContentsFragmentAdapter;
 import com.kumoh.paylog2.db.History;
 import com.kumoh.paylog2.db.HistoryDao;
@@ -41,6 +35,8 @@ import com.kumoh.paylog2.dialog.AddIncomeHistoryDialog;
 import com.kumoh.paylog2.dialog.AddSpendingHistoryDialog;
 import com.kumoh.paylog2.dto.ContentsCategoryItem;
 import com.theartofdev.edmodo.cropper.CropImage;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -199,16 +195,18 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
 
         try {
             switch(requestCode) {
-                case REQUEST_TAKE_PHOTO:
-                    if(resultCode == RESULT_OK) {
+                case REQUEST_TAKE_PHOTO: {
+                    if (resultCode == RESULT_OK) {
                         // 저장된 경로의 이미지 파일
                         File originalFile = new File(mCurrentPhotoPath);
 
                         // start cropping activity for pre-acquired image saved on the device
                         CropImage.activity(Uri.fromFile(originalFile))
                                 .start(this);
-                    }
 
+                    }
+                    break;
+                }
                 case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
                 {
                     CropImage.ActivityResult result = CropImage.getActivityResult(data);
@@ -217,6 +215,7 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
                             Uri resultUri = result.getUri();
                             Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), resultUri);
 
+                            new SendImageAsyncTask().execute(bitmap);
                              /*----------------------------------------
                             //
                             // 이 부분에서 서버로 보내면 될듯
@@ -224,10 +223,12 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
                              -----------------------------------------*/
 
                         } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                            Exception error = result.getError();
+                            //Exception error = resultUri.getError();
                         }
+                        originalFile = new File(mCurrentPhotoPath);
                         originalFile.delete();
                     }
+                    break;
                 }
             }
         } catch(Exception error) {
@@ -366,5 +367,26 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-//    private static class
+    private static class SendImageAsyncTask extends AsyncTask<Bitmap, Void, Void> {
+        RequestHttpURLConnection conn;
+
+        @Override
+        protected void onPreExecute() {
+            conn = new RequestHttpURLConnection();
+        }
+
+        @Override
+        protected Void doInBackground(Bitmap... bitmaps) {
+            JSONObject jObj = conn.requestImageProcessing("http://202.31.138.206:3000/image", bitmaps[0]);
+
+            // Gson 이용해서 객체에 담기
+            // 담은 객체 roomDB에 저장
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+        }
+    }
 }

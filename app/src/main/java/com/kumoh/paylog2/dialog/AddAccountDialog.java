@@ -12,8 +12,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.kumoh.paylog2.R;
+import com.kumoh.paylog2.dto.AccountInfo;
+import com.kumoh.paylog2.util.MyException;
 
 public class AddAccountDialog extends Dialog implements View.OnClickListener{
+    private AccountInfo accountInfo;
+
+    private TextView warningMessage;
+
     private EditText accountName;
     private EditText budget;
     private EditText subscribe;
@@ -27,6 +33,11 @@ public class AddAccountDialog extends Dialog implements View.OnClickListener{
     public AddAccountDialog(@NonNull Context context) {
         super(context);
     }
+    public AddAccountDialog(@NonNull Context context, AccountInfo accountInfo) {
+        super(context);
+        this.accountInfo = accountInfo;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -39,11 +50,19 @@ public class AddAccountDialog extends Dialog implements View.OnClickListener{
 
         setContentView(R.layout.dialog_add_group);
 
+        warningMessage = (TextView) findViewById(R.id.add_account_warning_message);
         accountName = (EditText) findViewById(R.id.add_account_name);
         subscribe = (EditText) findViewById(R.id.add_account_subscribe);
         budget = (EditText) findViewById(R.id.add_account_budget);
         addButton = (Button)findViewById(R.id.account_add_button);
         cancelButton = (Button)findViewById(R.id.account_add_cancel);
+
+        if(accountInfo != null) {
+            accountName.setText(accountInfo.getName());
+            subscribe.setText(accountInfo.getSubscribe());
+            budget.setText(Integer.toString(accountInfo.getBudget()));
+            addButton.setText("수정");
+        }
 
         //리스너 등록
         addButton.setOnClickListener(this);
@@ -53,12 +72,28 @@ public class AddAccountDialog extends Dialog implements View.OnClickListener{
     public void onClick(View v){
         switch (v.getId()){
             case R.id.account_add_button:
-                int budget = Integer.parseInt(this.budget.getText().toString());
-                boolean isMain = false;
-                String accountName = this.accountName.getText().toString();
-                String subscribe = this.subscribe.getText().toString();
-                addAccountDialogListener.onAddButtonClicked(budget,accountName,subscribe,isMain);
-                dismiss();
+                try {
+                    String accountName = this.accountName.getText().toString();
+                    String subscribe = this.subscribe.getText().toString();
+                    int budget = Integer.parseInt(this.budget.getText().toString());
+
+                    if(accountName.equals("")) throw new MyException("이름을 입력 해주세요.");
+                    if(subscribe.equals("")) throw new MyException("설명을 입력 해주세요.");
+                    // if(budget == null) 인 경우는
+                    // 이미 Integer.parseInt 에서 throw 되어서 NumberFormatException 에서 catch 됨
+
+                    if(accountInfo == null) {
+                        addAccountDialogListener.onAddButtonClicked(budget,accountName,subscribe,false);
+                    } else {
+                        addAccountDialogListener.onReviseButtonClicked(accountInfo.getAccountId(), budget, accountName, subscribe);
+                    }
+
+                    dismiss();
+                } catch (NumberFormatException e) {
+                    warningMessage.setText("예산을 입력 해주세요.");
+                } catch (MyException e) {
+                    warningMessage.setText(e.getMessage());
+                }
                 break;
             case R.id.account_add_cancel:
                 cancel();
@@ -68,7 +103,8 @@ public class AddAccountDialog extends Dialog implements View.OnClickListener{
 
     public interface AddAccountDialogListener {
         void onAddButtonClicked(int budget,String accountName, String subscribe, boolean isMain);
-        void onCancelButtonClicked();
+        void onReviseButtonClicked(int accountId, int budget, String accountName, String subscribe);
+        // void onCancelButtonClicked();
     }
     public void setListener(AddAccountDialogListener addAccountDialogListener){
         this.addAccountDialogListener = addAccountDialogListener;
