@@ -1,4 +1,4 @@
-package com.kumoh.paylog2;
+package com.kumoh.paylog2.util;
 
 import android.graphics.Bitmap;
 import android.util.Base64;

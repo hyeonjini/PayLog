@@ -1,4 +1,4 @@
-package com.kumoh.paylog2;
+package com.kumoh.paylog2.util;
 
 import android.content.Context;
 import android.os.Environment;

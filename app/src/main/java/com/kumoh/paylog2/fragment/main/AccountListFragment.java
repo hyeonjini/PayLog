@@ -26,6 +26,7 @@ import com.kumoh.paylog2.db.AccountDao;
 import com.kumoh.paylog2.db.LocalDatabase;
 import com.kumoh.paylog2.dialog.AddAccountDialog;
 import com.kumoh.paylog2.dto.AccountInfo;
+import com.kumoh.paylog2.util.MyException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,16 +75,8 @@ public class AccountListFragment extends Fragment implements AccountListRecycler
                             public void onAddButtonClicked(int budget,String AccountName, String subscribe, boolean isMain) {
                                 new InsertAccountAsyncTask(db.accountDao()).execute(new Account(budget,AccountName,subscribe, 0));
                             }
-
-                            @Override
-                            public void onReviseButtonClicked(int accountId, int budget, String accountName, String subscribe) {
-
-                            }
-
-                            @Override
-                            public void onCancelButtonClicked() {
-
-                            }
+                            @Override // not used
+                            public void onReviseButtonClicked(int accountId, int budget, String accountName, String subscribe) {}
                         });
                         dialog.show();
                         break;
@@ -170,33 +163,40 @@ public class AccountListFragment extends Fragment implements AccountListRecycler
             public boolean onMenuItemClick(MenuItem item) {
                 AccountInfo accountInfo = adapter.getItem(position);
                 switch(item.getItemId()){
+                    // account 수정
                     case R.id.account_list_revise_popup_item:
                         AddAccountDialog dialog = new AddAccountDialog(getContext(), accountInfo);
                         dialog.setListener(new AddAccountDialog.AddAccountDialogListener() {
-                            @Override
-                            public void onAddButtonClicked(int budget, String accountName, String subscribe, boolean isMain) {
-
-                            }
-
+                            @Override // not used
+                            public void onAddButtonClicked(int budget, String accountName, String subscribe, boolean isMain) {}
                             @Override
                             public void onReviseButtonClicked(int accountId, int budget, String accountName, String subscribe) {
                                 new UpdateAccountAsyncTask(db.accountDao()).execute(new AccountInfo(accountId, accountName, false, budget, subscribe, 0, 0));
-                            }
-
-                            @Override
-                            public void onCancelButtonClicked() {
-                                Toast.makeText(getContext(), "취소", Toast.LENGTH_SHORT).show();
                             }
                         });
                         dialog.show();
                         break;
 
+                    // account 삭제
                     case R.id.account_list_delete_popup_item:
-                        new DeleteAccountAsyncTask(db.accountDao()).execute(accountInfo.getAccountId());
+                        try {
+                            if(accountInfo.isMain() == true) throw new MyException("Main Group은 삭제할 수 없습니다");
+
+                            new DeleteAccountAsyncTask(db.accountDao()).execute(accountInfo.getAccountId());
+                        } catch (MyException e) {
+                            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
                         break;
 
+                    // 기존의 Group을 Main Group으로 등록
                     case R.id.account_list_main_popup_item:
-                        new WipeOutAndAppointMainAccountAsyncTask(db.accountDao()).execute(accountInfo.getAccountId());
+                        try {
+                            if(accountInfo.isMain() == true) throw new MyException("이미 Main Group 입니다.");
+                        } catch (MyException e) {
+                            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+
+                            new WipeOutAndAppointMainAccountAsyncTask(db.accountDao()).execute(accountInfo.getAccountId());
+                        }
                         break;
                 }
                 return false;

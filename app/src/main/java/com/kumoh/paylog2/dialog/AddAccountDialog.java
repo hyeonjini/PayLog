@@ -13,9 +13,12 @@ import androidx.annotation.NonNull;
 
 import com.kumoh.paylog2.R;
 import com.kumoh.paylog2.dto.AccountInfo;
+import com.kumoh.paylog2.util.MyException;
 
 public class AddAccountDialog extends Dialog implements View.OnClickListener{
     private AccountInfo accountInfo;
+
+    private TextView warningMessage;
 
     private EditText accountName;
     private EditText budget;
@@ -47,6 +50,7 @@ public class AddAccountDialog extends Dialog implements View.OnClickListener{
 
         setContentView(R.layout.dialog_add_group);
 
+        warningMessage = (TextView) findViewById(R.id.add_account_warning_message);
         accountName = (EditText) findViewById(R.id.add_account_name);
         subscribe = (EditText) findViewById(R.id.add_account_subscribe);
         budget = (EditText) findViewById(R.id.add_account_budget);
@@ -68,18 +72,28 @@ public class AddAccountDialog extends Dialog implements View.OnClickListener{
     public void onClick(View v){
         switch (v.getId()){
             case R.id.account_add_button:
-                String accountName = this.accountName.getText().toString();
-                String subscribe = this.subscribe.getText().toString();
-                int budget = Integer.parseInt(this.budget.getText().toString());
+                try {
+                    String accountName = this.accountName.getText().toString();
+                    String subscribe = this.subscribe.getText().toString();
+                    int budget = Integer.parseInt(this.budget.getText().toString());
 
-                if(accountInfo == null) {
-                    boolean isMain = false;
-                    addAccountDialogListener.onAddButtonClicked(budget,accountName,subscribe,isMain);
-                } else {
-                    addAccountDialogListener.onReviseButtonClicked(accountInfo.getAccountId(), budget, accountName, subscribe);
+                    if(accountName.equals("")) throw new MyException("이름을 입력 해주세요.");
+                    if(subscribe.equals("")) throw new MyException("설명을 입력 해주세요.");
+                    // if(budget == null) 인 경우는
+                    // 이미 Integer.parseInt 에서 throw 되어서 NumberFormatException 에서 catch 됨
+
+                    if(accountInfo == null) {
+                        addAccountDialogListener.onAddButtonClicked(budget,accountName,subscribe,false);
+                    } else {
+                        addAccountDialogListener.onReviseButtonClicked(accountInfo.getAccountId(), budget, accountName, subscribe);
+                    }
+
+                    dismiss();
+                } catch (NumberFormatException e) {
+                    warningMessage.setText("예산을 입력 해주세요.");
+                } catch (MyException e) {
+                    warningMessage.setText(e.getMessage());
                 }
-
-                dismiss();
                 break;
             case R.id.account_add_cancel:
                 cancel();
@@ -90,7 +104,7 @@ public class AddAccountDialog extends Dialog implements View.OnClickListener{
     public interface AddAccountDialogListener {
         void onAddButtonClicked(int budget,String accountName, String subscribe, boolean isMain);
         void onReviseButtonClicked(int accountId, int budget, String accountName, String subscribe);
-        void onCancelButtonClicked();
+        // void onCancelButtonClicked();
     }
     public void setListener(AddAccountDialogListener addAccountDialogListener){
         this.addAccountDialogListener = addAccountDialogListener;

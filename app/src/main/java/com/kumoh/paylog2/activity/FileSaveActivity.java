@@ -16,16 +16,14 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.kumoh.paylog2.FileConversion;
+import com.kumoh.paylog2.util.FileConversion;
 import com.kumoh.paylog2.R;
 import com.kumoh.paylog2.db.Account;
 import com.kumoh.paylog2.db.History;
 import com.kumoh.paylog2.db.HistoryDao;
 import com.kumoh.paylog2.db.LocalDatabase;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
