@@ -102,6 +102,18 @@ public class AccountListFragment extends Fragment implements AccountListRecycler
         }
     }
 
+    private static class DeleteAccountAsyncTask extends AsyncTask<Integer, Void, Void> {
+        private AccountDao dao;
+        public DeleteAccountAsyncTask(AccountDao dao) {this.dao = dao; }
+
+        @Override
+        protected Void doInBackground(Integer... accounts) {
+            dao.deleteAccountById(accounts[0]);
+
+            return null;
+        }
+    }
+
     //리스너 동작 구현
     //짧게 터치
     @Override
@@ -134,7 +146,9 @@ public class AccountListFragment extends Fragment implements AccountListRecycler
                         break;
 
                     case R.id.account_list_delete_popup_item:
+                        AccountInfo accountInfo = adapter.getItem(position);
                         Toast.makeText(getContext(), "삭제", Toast.LENGTH_SHORT).show();
+                        new DeleteAccountAsyncTask(db.accountDao()).execute(accountInfo.getAccountId());
                         break;
 
                     case R.id.account_list_main_popup_item:

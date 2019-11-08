@@ -17,8 +17,8 @@ public interface AccountDao {
     Account getAccountById(int accountId);
     @Insert
     void insertAccount(Account account);
-    @Delete
-    void deleteAccount(Account account);
+    @Query("DELETE FROM Account WHERE accountId = :accountId")
+    void deleteAccountById(int accountId);
     @Update
     void updateAccount(Account account);
     @Query("SELECT * FROM Account")
