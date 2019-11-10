@@ -2,6 +2,7 @@ package com.kumoh.paylog2.db;
 
 
 import androidx.annotation.Nullable;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;

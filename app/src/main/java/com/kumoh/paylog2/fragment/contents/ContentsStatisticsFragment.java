@@ -2,7 +2,6 @@ package com.kumoh.paylog2.fragment.contents;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +22,7 @@ import com.kumoh.paylog2.adapter.contents.ContentsStatisticsRecyclerAdapter;
 import com.kumoh.paylog2.db.Category;
 import com.kumoh.paylog2.db.History;
 import com.kumoh.paylog2.db.LocalDatabase;
+import com.kumoh.paylog2.dto.ContentsCalendarItem;
 import com.kumoh.paylog2.dto.ContentsCategoryItem;
 import com.kumoh.paylog2.dto.ContentsStatisticsCategoryItem;
 
@@ -35,7 +35,8 @@ public class ContentsStatisticsFragment extends Fragment {
     private int accountId;
     private List<ContentsStatisticsCategoryItem> list;
     private List<ContentsCategoryItem> spendingCategories;
-    private List<ContentsCategoryItem> incomeCategories;
+    //private List<ContentsCategoryItem> incomeCategories;
+    private RecyclerView recyclerView;
     private ContentsStatisticsRecyclerAdapter adapter;
 
     public ContentsStatisticsFragment(int accountId){
@@ -47,14 +48,29 @@ public class ContentsStatisticsFragment extends Fragment {
                              Bundle savedInstanceState) {
         rootView = (ViewGroup) inflater.inflate(R.layout.fragment_contents_statistics, container, false);
 
+        recyclerView = rootView.findViewById(R.id.category_items);
+
         db = LocalDatabase.getInstance(getContext());
 
-        initCategories();
+        adapter = new ContentsStatisticsRecyclerAdapter(new ArrayList<>(), new ArrayList<>());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(linearLayoutManager);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration
+                (recyclerView.getContext(), linearLayoutManager.getOrientation());
+        recyclerView.addItemDecoration(dividerItemDecoration);
+        recyclerView.setAdapter(adapter);
 
-        db.historyDao().getAllByAccountId(accountId).observe(this,list->{
+        db.categoryDao().getSpendingCategories().observe(this, list->{
+            for(int pos = 0; pos < list.size(); pos++){
+                initCategories(list);
+            }
+            adapter.setCategories(this.spendingCategories);
+        });
+
+        db.historyDao().getGroupedListByCategory(accountId).observe(this,list->{
             makeItemList(list);
             setPieChart(this.list);
-            setCategoryView(this.list);
+            adapter.setData(this.list);
         });
 
         return rootView;
@@ -79,9 +95,9 @@ public class ContentsStatisticsFragment extends Fragment {
         int etcSum = 0;
         for(ContentsStatisticsCategoryItem item : list) {
             if(index < 4) // 4번째 항목까지 별개 항목으로 취급
-                entries.add(new PieEntry(item.getValue(), item.getCategory()));
+                entries.add(new PieEntry(item.getAmount(), getSpendingCategoryById(item.getCategoryId())));
             else // 5번째 항목부터 "그 외" 분류에 추가
-                etcSum += item.getValue();
+                etcSum += item.getAmount();
             index++;
         }
         if(list.size() > 4)
@@ -89,7 +105,7 @@ public class ContentsStatisticsFragment extends Fragment {
 
         // dataSet 설정
         PieDataSet dataSet = new PieDataSet(entries,"");
-        dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE); // dataSet의 value 값  차트 밖에 표기
+        dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE); // dataSet의 value 값 차트 밖에 표기
         dataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE); // dataSet의 category 값 차트 밖에 표기
         dataSet.setValueLinePart1OffsetPercentage(100.f); // 차트 중앙으로부터 시작선 위치 지정(%)
         dataSet.setValueLinePart1Length(1.2f); // 선 앞부분 설정
@@ -108,60 +124,44 @@ public class ContentsStatisticsFragment extends Fragment {
         pieChart.invalidate();
     }
 
-    // 카테고리 별 목록 리사이클러뷰 생성 함수
-    private void setCategoryView(List<ContentsStatisticsCategoryItem> list){
-        RecyclerView recyclerView = rootView.findViewById(R.id.category_items);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(linearLayoutManager);
-
-        adapter = new ContentsStatisticsRecyclerAdapter(list);
-        recyclerView.setAdapter(adapter);
-
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration
-                (recyclerView.getContext(), linearLayoutManager.getOrientation());
-        recyclerView.addItemDecoration(dividerItemDecoration);
-    }
-
-    private void makeItemList(List<History> newData){
+    private void makeItemList(List<ContentsStatisticsCategoryItem> newData){
         if(newData.size() > 0){
             list = new ArrayList<>();
-            for(History h : newData){
-                if(h.getKind() == 1){
-                    list.add(new ContentsStatisticsCategoryItem(-h.getAmount(), getSpendingCategoryById(h.getCategoryId())));
+            for(ContentsStatisticsCategoryItem h : newData){
+                if(h.getKind() == 1 || h.getKind() == 3){
+                    list.add(new ContentsStatisticsCategoryItem(-h.getAmount(), h.getCategoryId(), h.getKind()));
                 }
             }
         }else{
             list = new ArrayList<>();
-            list.add(new ContentsStatisticsCategoryItem(0,"항목 없음"));
+            list.add(new ContentsStatisticsCategoryItem(0,0, 1));
         }
     }
 
     // 카테고리 초기화
-    private void initCategories(){
-        List<ContentsCategoryItem> spendingCategories = new ArrayList<>();
-        List<ContentsCategoryItem> incomeCategories = new ArrayList<>();
-
-        db.categoryDao().getSpendingCategories().observe(this, list->{
-            for(int pos = 0; pos < list.size(); pos++){
-                spendingCategories.add(new ContentsCategoryItem(list.get(pos).getCategoryId(), list.get(pos).getName(), list.get(pos).getKind()));
-            }
-        });
-
+    private void initCategories(List<Category> list){
+        spendingCategories = new ArrayList<>();
+        //incomeCategories = new ArrayList<>();
+        for(int pos = 0; pos < list.size(); pos++){
+            spendingCategories.add(new ContentsCategoryItem(list.get(pos).getCategoryId(), list.get(pos).getName(), list.get(pos).getKind()));
+        }
+        /*
         db.categoryDao().getIncomeCategories().observe(this, list->{
             for(int pos = 0; pos < list.size(); pos++){
                 incomeCategories.add(new ContentsCategoryItem(list.get(pos).getCategoryId(), list.get(pos).getName(), list.get(pos).getKind()));
+                this.incomeCategories = incomeCategories;
             }
         });
-
-        this.spendingCategories =  spendingCategories;
-        this.incomeCategories = incomeCategories;
+        */
     }
 
     private String getSpendingCategoryById(int id){
         String category = null;
-        for(ContentsCategoryItem c : spendingCategories){
-            if(id == c.getId())
-                category = c.getCategory();
+        if(spendingCategories != null){
+            for(ContentsCategoryItem c : spendingCategories){
+                if(id == c.getId())
+                    category = c.getCategory();
+            }
         }
         return category;
     }

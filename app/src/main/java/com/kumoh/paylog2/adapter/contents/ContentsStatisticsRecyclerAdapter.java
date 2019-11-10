@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kumoh.paylog2.R;
+import com.kumoh.paylog2.dto.ContentsCategoryItem;
 import com.kumoh.paylog2.dto.ContentsStatisticsCategoryItem;
 
 import java.text.DecimalFormat;
@@ -25,6 +26,7 @@ public class ContentsStatisticsRecyclerAdapter
         extends RecyclerView.Adapter<ContentsStatisticsRecyclerAdapter.StatisticsCategoryViewHolder> {
 
     private List<ContentsStatisticsCategoryItem> list;
+    private List<ContentsCategoryItem> categories;
 
     public class StatisticsCategoryViewHolder extends RecyclerView.ViewHolder{
         protected ImageView icon;
@@ -39,8 +41,9 @@ public class ContentsStatisticsRecyclerAdapter
         }
     }
 
-    public ContentsStatisticsRecyclerAdapter(List<ContentsStatisticsCategoryItem> list) {
+    public ContentsStatisticsRecyclerAdapter(List<ContentsStatisticsCategoryItem> list, List<ContentsCategoryItem> categories) {
         this.list = list;
+        this.categories = categories;
     }
 
     @Override
@@ -56,18 +59,18 @@ public class ContentsStatisticsRecyclerAdapter
     public void onBindViewHolder(@NonNull StatisticsCategoryViewHolder viewHolder, int pos)
     {
         viewHolder.category.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17);
+        viewHolder.category.setGravity(Gravity.CENTER_VERTICAL|Gravity.LEFT);
         viewHolder.value.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-
-        viewHolder.category.setGravity(Gravity.CENTER);
         viewHolder.value.setGravity(Gravity.CENTER_VERTICAL|Gravity.RIGHT);
+
         viewHolder.value.setTextColor(ContextCompat.getColor(viewHolder.value.getContext(), R.color.mainColor));
 
         viewHolder.icon.setImageURI(
-                Uri.parse("android.resource://com.kumoh.paylog2/" + getIconValue(list.get(pos).getCategory())));
-        viewHolder.category.setText(list.get(pos).getCategory());
+                Uri.parse("android.resource://com.kumoh.paylog2/" + getIconValue(list.get(pos).getCategoryId())));
+        viewHolder.category.setText(getSpendingCategoryById(list.get(pos).getCategoryId()));
         DecimalFormat format = new DecimalFormat(" ###,###");
         String symbol = Currency.getInstance(Locale.KOREA).getSymbol();
-        viewHolder.value.setText(symbol + format.format(list.get(pos).getValue()));
+        viewHolder.value.setText(symbol + format.format(list.get(pos).getAmount()));
     }
     @Override
     public int getItemCount()
@@ -75,40 +78,59 @@ public class ContentsStatisticsRecyclerAdapter
         return (null != list ? list.size() : 0);
     }
 
+    public void setData(List<ContentsStatisticsCategoryItem> list){
+        this.list = list;
+        notifyDataSetChanged();
+    }
+
+    public void setCategories(List<ContentsCategoryItem> categories){
+        this.categories = categories;
+        notifyDataSetChanged();
+    }
+
+    private String getSpendingCategoryById(int id){
+        String category = null;
+        for(ContentsCategoryItem c : categories){
+            if(id == c.getId())
+                category = c.getCategory();
+        }
+        return category;
+    }
+
     // 카테고리 별 아이콘 R.drawable 값 가져오기
-    public int getIconValue(String category) {
-        switch (category){
-            case "식비":
+    public int getIconValue(int categoryId) {
+        switch (categoryId){
+            case 5:
                 return R.drawable.black_icon_fork_14dp;
-            case "카페/간식":
+            case 6:
                 return R.drawable.black_icon_cafesnack_24dp;
-            case "술/유흥":
+            case 7:
                 return R.drawable.black_icon_drink_24dp;
-            case "생활":
+            case 8:
                 return R.drawable.black_icon_broom_14dp;
-            case "문화/여가":
+            case 9:
                 return R.drawable.black_icon_culture_24dp;
-            case "패션/쇼핑":
+            case 10:
                 return R.drawable.black_icon_shirt_14dp;
-            case "교통":
+            case 11:
                 return R.drawable.black_icon_bus_24dp;
-            case "자동차":
+            case 12:
                 return R.drawable.black_icon_car_24dp;
-            case "주거":
+            case 13:
                 return R.drawable.black_icon_house_24dp;
-            case "통신비":
+            case 14:
                 return R.drawable.black_icon_phone_14dp;
-            case "의료/건강":
+            case 15:
                 return R.drawable.black_icon_medikit_24dp;
-            case "금융":
+            case 16:
                 return R.drawable.black_icon_wallet_24dp;
-            case "여행":
+            case 17:
                 return R.drawable.black_icon_travel_24dp;
-            case "교육":
+            case 18:
                 return R.drawable.black_icon_education_24dp;
-            case "자녀":
+            case 19:
                 return R.drawable.black_icon_pencil_24dp;
-            case "경조사/선물":
+            case 20:
                 return R.drawable.black_icon_present_24dp;
             default:
                 return R.drawable.black_icon_question_24dp;

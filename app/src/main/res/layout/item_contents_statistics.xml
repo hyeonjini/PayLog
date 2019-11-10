@@ -8,28 +8,26 @@
 
     <ImageView
         android:id="@+id/stat_icon"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_weight="0.8"
         android:layout_gravity="center"
-        android:layout_marginRight="10dp"
-        android:src="@drawable/black_icon_fork_14dp"/>
+        android:layout_marginRight="10dp" />
 
     <TextView
         android:id="@+id/stat_category"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_gravity="center"
-        android:textAlignment="center" />
+        android:layout_weight="2"
+        android:layout_gravity="center" />
 
     <TextView
         android:id="@+id/stat_value"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="5"
+        android:layout_weight="3.2"
         android:layout_gravity="center"
-        android:paddingRight="20dp"/>
+        android:paddingRight="20dp" />
 
 
 </LinearLayout>

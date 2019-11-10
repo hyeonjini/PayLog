@@ -9,6 +9,7 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.kumoh.paylog2.dto.ContentsMonthItem;
+import com.kumoh.paylog2.dto.ContentsStatisticsCategoryItem;
 
 import java.util.List;
 
@@ -30,6 +31,14 @@ public interface HistoryDao {
     // 해당 accountId의 fromDate 부터 toDate 까지의 history
     @Query("SELECT * FROM History WHERE accountId = :accountId and date > :fromDate and date < :toDate order by date desc")
     List<History> getAllFromToByAccountId(int accountId, String fromDate, String toDate);
+
+    // 해당 accountId의 fromDate 부터 toDate 까지의 history (LiveData)
+    @Query("SELECT * FROM History WHERE accountId = :accountId and date > :fromDate and date < :toDate order by date asc")
+    LiveData<List<History>> getAllByAccountIdFromTo(int accountId, String fromDate, String toDate);
+
+    // 해당 accountId의 카테고리 별 amount 내림차순 정렬
+    @Query("SELECT amount, categoryId, kind From History WHERE accountId = :accountId GROUP BY categoryId ORDER BY amount asc")
+    LiveData<List<ContentsStatisticsCategoryItem>> getGroupedListByCategory(int accountId);
 
     @Update
     void updateHistory(History history);

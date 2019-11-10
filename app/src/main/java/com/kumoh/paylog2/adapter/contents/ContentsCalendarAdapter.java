@@ -1,6 +1,7 @@
 package com.kumoh.paylog2.adapter.contents;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,12 +12,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.kumoh.paylog2.R;
+import com.kumoh.paylog2.dto.ContentsCalendarItem;
 import com.kumoh.paylog2.dto.ContentsListDay;
 
+import org.w3c.dom.Text;
+
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Currency;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 
 public class ContentsCalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -25,10 +32,14 @@ public class ContentsCalendarAdapter extends RecyclerView.Adapter<RecyclerView.V
     private final int DAY_TYPE = 2;
 
     private ArrayList<Object> calList;
+    private ArrayList<ContentsCalendarItem> dataList;
+    private ArrayList<ContentsCalendarItem> headerList;
+    private int weekCounter = 0;
     private Context context;
 
-    public ContentsCalendarAdapter(ArrayList<Object> calList, Context context){
+    public ContentsCalendarAdapter(ArrayList<Object> calList, ArrayList<ContentsCalendarItem> dataList, Context context){
         this.calList = calList;
+        this.dataList = dataList;
         this.context = context;
     }
 
@@ -55,12 +66,14 @@ public class ContentsCalendarAdapter extends RecyclerView.Adapter<RecyclerView.V
     // 일자 타입을 위한 뷰 홀더
     private class DayViewHolder extends RecyclerView.ViewHolder{
         private TextView textView;
-        private View view;
+        private TextView incomeView;
+        private TextView spendingView;
 
         public DayViewHolder(@NonNull View view){
             super(view);
             this.textView = view.findViewById(R.id.cal_day_text);
-            this.view = view.findViewById(R.id.cal_day_view);
+            this.incomeView = view.findViewById(R.id.cal_day_income);
+            this.spendingView = view.findViewById(R.id.cal_day_spending);
         }
     }
 
@@ -99,16 +112,31 @@ public class ContentsCalendarAdapter extends RecyclerView.Adapter<RecyclerView.V
             HeaderViewHolder holder = (HeaderViewHolder)viewHolder;
             Object item = calList.get(pos);
             if(item instanceof Long){
-                ((HeaderViewHolder) viewHolder).textView.setText(formatDate((Long)item, "yyyy년 MM월"));
+                holder.weeklyIncome.setText("수입 " + formatMoney(headerList.get(weekCounter).getIncome()));
+                holder.weeklySpending.setText("지출 " + formatMoney(headerList.get(weekCounter).getSpending()));
+                holder.textView.setText((++weekCounter) + "주차");
             }
-        } else if(viewType == EMPTY_TYPE){
+        }
+        else if(viewType == EMPTY_TYPE){
             EmptyViewHolder holder = (EmptyViewHolder) viewHolder;
-        } else if(viewType == DAY_TYPE){
+        }
+        else if(viewType == DAY_TYPE){
             DayViewHolder holder = (DayViewHolder)viewHolder;
             Object item = calList.get(pos);
             if(item instanceof Calendar){
                 Long temp = ((Calendar) item).getTimeInMillis();
-                ((DayViewHolder) viewHolder).textView.setText(formatDate((Long)temp, "dd"));
+                String date = formatDate(temp, "dd");
+                holder.textView.setText(date);
+                if(dataList != null){
+                    for(ContentsCalendarItem c : dataList){
+                        if(c.getDate().equals(date)){
+                            Log.i("데이터 있음", date);
+                            holder.incomeView.setText(formatMoney(c.getIncome()));
+                            holder.spendingView.setText(formatMoney(c.getSpending()));
+                            break;
+                        }
+                    }
+                }
             }
         }
     }
@@ -131,7 +159,36 @@ public class ContentsCalendarAdapter extends RecyclerView.Adapter<RecyclerView.V
         return (null != calList ? calList.size() : 0);
     }
 
-    public static String formatDate(Long date, String format) {
+    private ArrayList<ContentsCalendarItem> setHeaderData(){
+        ArrayList<ContentsCalendarItem> headerData = new ArrayList<>();
+        ContentsCalendarItem temp = null;
+        GregorianCalendar cal = new GregorianCalendar();
+        cal.setTimeInMillis((Long)calList.get(0));
+
+        int dayCounter = 1;
+        int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+        int lastDateOfMonth = cal.getActualMaximum(Calendar.DAY_OF_WEEK);
+
+        // 주간 별 헤더 추가
+        for(int weekCounter = 1; dayCounter <= lastDateOfMonth; weekCounter++){
+            temp = new ContentsCalendarItem(Integer.toString(weekCounter), 0,0);
+            if(dataList != null){
+                for(ContentsCalendarItem c : dataList){
+                    if(Integer.parseInt(c.getDate()) > (7 * (weekCounter-1) + 1 - dayOfWeek)
+                            && Integer.parseInt(c.getDate()) <= (7 * weekCounter + 1 - dayOfWeek)){
+                        temp.setIncome(temp.getIncome() + c.getIncome());
+                        temp.setSpending(temp.getSpending() + c.getSpending());
+                    }
+                }
+            }
+            dayCounter++;
+            headerData.add(temp);
+        }
+
+        return headerData;
+    }
+
+    private String formatDate(Long date, String format) {
         try {
             SimpleDateFormat formatter = new SimpleDateFormat(format, Locale.ENGLISH);
             Date d = new Date(date);
@@ -139,5 +196,23 @@ public class ContentsCalendarAdapter extends RecyclerView.Adapter<RecyclerView.V
         } catch (Exception e) {
             return " ";
         }
+    }
+
+    private String formatMoney(int amount){
+        try{
+            DecimalFormat format = new DecimalFormat(" ###,###");
+            return format.format(amount);
+        } catch(Exception e){
+            return Integer.toString(amount);
+        }
+    }
+
+    public void resetData(ArrayList<Object> calList, ArrayList<ContentsCalendarItem> dataList){
+        weekCounter = 0;
+        this.calList = calList;
+        this.dataList = dataList;
+        this.headerList = setHeaderData();
+        Log.i("데이터 크기", this.dataList.size() + "");
+        notifyDataSetChanged();
     }
 }

@@ -4,11 +4,15 @@
     android:layout_height="match_parent">
 
     <!-- 헤더 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#BBB"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:animateLayoutChanges="true"
-        android:background="@color/fab40_mainColor"
         android:orientation="horizontal">
 
         <Button
@@ -25,7 +29,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:padding="16dp"
+            android:padding="7dp"
             android:textColor="@color/darkBlack"
             android:textAlignment="center"
             android:textSize="18sp" />
@@ -40,6 +44,12 @@
             android:textSize="22sp"/>
 
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:background="#BBB"/>
 
     <!-- 요일 -->
     <LinearLayout

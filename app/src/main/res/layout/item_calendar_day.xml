@@ -32,7 +32,9 @@
                 android:id="@+id/cal_day_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="20dp"
                 android:textSize="11sp"
                 tools:text="1" />
 
@@ -40,8 +42,11 @@
                 android:id="@+id/cal_day_income"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:textSize="11sp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="2dp"
+                android:layout_marginHorizontal="4dp"
+                android:textSize="8sp"
+                android:textColor="@color/income_Color"
                 android:layout_gravity="right"
                 tools:text="1" />
 
@@ -49,8 +54,10 @@
                 android:id="@+id/cal_day_spending"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:textSize="11sp"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginVertical="2dp"
+                android:textSize="8sp"
+                android:textColor="@color/spending_Color"
                 android:layout_gravity="right"
                 tools:text="1" />
 
