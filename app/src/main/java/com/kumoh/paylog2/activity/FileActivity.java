@@ -19,6 +19,7 @@ import com.kumoh.paylog2.R;
 import com.kumoh.paylog2.adapter.FileAdapter;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,28 +70,23 @@ public class FileActivity extends AppCompatActivity
         super.onActivityResult(0,0,null);
     }
 
-
-
     private ArrayList<File> getFileList() {
         String file_location = getApplicationContext().getExternalFilesDir(null).toString();
 
         File f = new File(file_location);
-        File[] files = f.listFiles();
-        /*File[] files = f.listFiles(new FileFilter() {
+        File[] files = f.listFiles(new FilenameFilter() {
             @Override
-            public boolean accept(File pathname) {
-                return pathname.getName().toLowerCase(Locale.US).endsWith(".xlsx"); //확장자
+            public boolean accept(File path, String fileName) {
+                return fileName.endsWith("xls");
             }
-        });*/
+        });
+
         // 리사이클러뷰에 표시할 데이터 리스트 생성.
         ArrayList<File> list = new ArrayList();
 
         for (int i=0; i<files.length; i++) {
             list.add(files[i]) ;
         }
-
-//        ListLiveData<File> lList = new ListLiveData<>();
-//        lList.setValue(list);
 
         return list;
     }

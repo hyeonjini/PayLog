@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,6 +15,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -32,9 +35,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AccountListFragment extends Fragment implements AccountListRecyclerAdapter.AccountListRecyclerOnClickListener, AccountListRecyclerAdapter.AccountListRecyclerLongClickListener {
-
     private LocalDatabase db;
     private AccountListRecyclerAdapter adapter;
+
+    FloatingActionButton groupAddFab;
+    private Animation fab_open, fab_close;
+    private Boolean isFabOpen = true;
+
+
     public AccountListFragment() {
         // Required empty public constructor
     }
@@ -62,8 +70,10 @@ public class AccountListFragment extends Fragment implements AccountListRecycler
             adapter.setData(list);
         });
 
+        recyclerView.addOnScrollListener(onScrollListener);
+
         //FloatingActionButton 설정
-        FloatingActionButton groupAddFab = (FloatingActionButton) rootView.findViewById(R.id.add_account_fab);
+        groupAddFab = (FloatingActionButton) rootView.findViewById(R.id.add_account_fab);
         groupAddFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,8 +93,13 @@ public class AccountListFragment extends Fragment implements AccountListRecycler
                 }
             }
         });
+
+        fab_open = AnimationUtils.loadAnimation(getContext(), R.anim.fab_open);
+        fab_close = AnimationUtils.loadAnimation(getContext(), R.anim.fab_close);
+
         return rootView;
     }
+
     //DB 접근 비동기 처리
     private static class InsertAccountAsyncTask extends AsyncTask<Account, Void, Void>{
 
@@ -153,9 +168,6 @@ public class AccountListFragment extends Fragment implements AccountListRecycler
     //길게 터치
     @Override
     public void onItemLongClicked(View view, int position) {
-        AccountInfo account = null;
-        account = adapter.getItem(position);
-
         PopupMenu popup=new PopupMenu(getActivity(), view);
         popup.getMenuInflater().inflate(R.menu.item_account_popup_menu,popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -192,10 +204,10 @@ public class AccountListFragment extends Fragment implements AccountListRecycler
                     case R.id.account_list_main_popup_item:
                         try {
                             if(accountInfo.isMain() == true) throw new MyException("이미 Main Group 입니다.");
-                        } catch (MyException e) {
-                            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
 
                             new WipeOutAndAppointMainAccountAsyncTask(db.accountDao()).execute(accountInfo.getAccountId());
+                        } catch (MyException e) {
+                            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                         }
                         break;
                 }
@@ -203,5 +215,29 @@ public class AccountListFragment extends Fragment implements AccountListRecycler
             }
         });
         popup.show();
+    }
+
+    private final RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+
+            switch(newState) {
+                case RecyclerView.SCROLL_STATE_IDLE:
+                case RecyclerView.SCROLL_STATE_DRAGGING:
+                    anim();
+                    break;
+            }
+        }
+    };
+
+    public void anim() {
+        if (isFabOpen) {
+            groupAddFab.startAnimation(fab_close);
+            isFabOpen = false;
+        } else {
+            groupAddFab.startAnimation(fab_open);
+            isFabOpen = true;
+        }
     }
 }

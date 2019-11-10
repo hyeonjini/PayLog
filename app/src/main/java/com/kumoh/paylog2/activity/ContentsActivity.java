@@ -18,10 +18,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.view.DragEvent;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
@@ -45,8 +48,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ContentsActivity extends AppCompatActivity implements View.OnClickListener
-,ViewPager.OnPageChangeListener{
+public class ContentsActivity extends AppCompatActivity implements View.OnClickListener, ViewPager.OnTouchListener, ViewPager.OnPageChangeListener{
     private Animation fab_open, fab_close;
     private LocalDatabase db;
     private int selectedAccountId;
@@ -67,8 +69,10 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contents);
-        //toolbar
+
         db = LocalDatabase.getInstance(this);
+
+        //toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar_contents);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -91,6 +95,8 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
         tabLayout.addTab(tabLayout.newTab().setText("월별"));
         tabLayout.addTab(tabLayout.newTab().setText("달력"));
         tabLayout.addTab(tabLayout.newTab().setText("통계"));
+
+        viewPager.setOnTouchListener(this);
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
@@ -133,7 +139,6 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
         }
         return super.onOptionsItemSelected(item);
     }
-
 
     @Override
     public void onBackPressed() {
@@ -253,6 +258,20 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        switch(motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                Toast.makeText(this, "down", Toast.LENGTH_SHORT).show();
+                break;
+            case MotionEvent.ACTION_UP:
+                Toast.makeText(this, "up", Toast.LENGTH_SHORT).show();
+                break;
+        }
+
+        return false;
     }
 
     // 카테고리 초기화
