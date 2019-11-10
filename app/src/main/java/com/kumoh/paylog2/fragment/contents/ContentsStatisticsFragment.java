@@ -2,6 +2,7 @@ package com.kumoh.paylog2.fragment.contents;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,15 +20,22 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.kumoh.paylog2.R;
 import com.kumoh.paylog2.adapter.contents.ContentsStatisticsRecyclerAdapter;
+import com.kumoh.paylog2.db.Category;
+import com.kumoh.paylog2.db.History;
+import com.kumoh.paylog2.db.LocalDatabase;
+import com.kumoh.paylog2.dto.ContentsCategoryItem;
 import com.kumoh.paylog2.dto.ContentsStatisticsCategoryItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ContentsStatisticsFragment extends Fragment {
-    ViewGroup rootView;
+    private ViewGroup rootView;
+    private LocalDatabase db;
     private int accountId;
     private List<ContentsStatisticsCategoryItem> list;
+    private List<ContentsCategoryItem> spendingCategories;
+    private List<ContentsCategoryItem> incomeCategories;
     private ContentsStatisticsRecyclerAdapter adapter;
 
     public ContentsStatisticsFragment(int accountId){
@@ -39,18 +47,15 @@ public class ContentsStatisticsFragment extends Fragment {
                              Bundle savedInstanceState) {
         rootView = (ViewGroup) inflater.inflate(R.layout.fragment_contents_statistics, container, false);
 
-        list = new ArrayList<ContentsStatisticsCategoryItem>();
-        list.add(new ContentsStatisticsCategoryItem(320000,"식비"));
-        list.add(new ContentsStatisticsCategoryItem(200000,"생활"));
-        list.add(new ContentsStatisticsCategoryItem(100000,"옷"));
-        list.add(new ContentsStatisticsCategoryItem(65000,"통신비"));
-        list.add(new ContentsStatisticsCategoryItem(56000,"교통"));
-        list.add(new ContentsStatisticsCategoryItem(30000,"문화/여가"));
+        db = LocalDatabase.getInstance(getContext());
 
+        initCategories();
 
-        setPieChart(list);
-        setCategoryView(list);
-        //setLineChart();
+        db.historyDao().getAllByAccountId(accountId).observe(this,list->{
+            makeItemList(list);
+            setPieChart(this.list);
+            setCategoryView(this.list);
+        });
 
         return rootView;
     }
@@ -79,7 +84,8 @@ public class ContentsStatisticsFragment extends Fragment {
                 etcSum += item.getValue();
             index++;
         }
-        entries.add(new PieEntry(etcSum, "그 외"));
+        if(list.size() > 4)
+            entries.add(new PieEntry(etcSum, "그 외"));
 
         // dataSet 설정
         PieDataSet dataSet = new PieDataSet(entries,"");
@@ -116,40 +122,47 @@ public class ContentsStatisticsFragment extends Fragment {
         recyclerView.addItemDecoration(dividerItemDecoration);
     }
 
-    /*
-    // 꺾은선 차트 생성 함수
-    private void setLineChart(){
-        LineChart lineChart = rootView.findViewById(R.id.day_chart);
-        lineChart.setTouchEnabled(false); // 차트 터치 비활성화
-        lineChart.getLegend().setEnabled(false); // 범례 비활성화
-        lineChart.getDescription().setEnabled(false); // 설명 비활성화
-
-        List<Entry> entries = new ArrayList<>();
-        for(int i = 1; i < 31; i++){
-            entries.add(new Entry(i,new Random().nextInt(10)));
+    private void makeItemList(List<History> newData){
+        if(newData.size() > 0){
+            list = new ArrayList<>();
+            for(History h : newData){
+                if(h.getKind() == 1){
+                    list.add(new ContentsStatisticsCategoryItem(-h.getAmount(), getSpendingCategoryById(h.getCategoryId())));
+                }
+            }
+        }else{
+            list = new ArrayList<>();
+            list.add(new ContentsStatisticsCategoryItem(0,"항목 없음"));
         }
-
-        LineDataSet dataset = new LineDataSet(entries, "일별 지출");
-        dataset.setColor(ContextCompat.getColor(getContext(),R.color.mainColor)); // LineColor 설정
-        dataset.setCircleColor(ContextCompat.getColor(getContext(),R.color.colorAccent)); // LineCircleColor 설정
-        dataset.setCircleHoleColor(ContextCompat.getColor(getContext(),R.color.mainColor)); // LineHoleColor 설정
-
-        LineData data = new LineData();
-        data.addDataSet(dataset);
-        data.setValueTextColor(ContextCompat.getColor(getContext(), R.color.colorBlack)); //라인 데이터의 텍스트 컬러
-        data.setValueTextSize(0); // 라인 데이터 텍스트 안보이게
-
-        XAxis xAxis = lineChart.getXAxis(); // x축 설정
-        xAxis.setDrawGridLinesBehindData(false);
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM); // x축 위치 설정
-        xAxis.setLabelCount(entries.size(),true); // x축 데이터 최대 개수
-        xAxis.setDrawGridLines(false);
-
-        dataset.setColors(ColorTemplate.COLORFUL_COLORS); //
-
-        lineChart.setData(data);
-        lineChart.animateY(1000);
-        lineChart.invalidate();
     }
-    */
+
+    // 카테고리 초기화
+    private void initCategories(){
+        List<ContentsCategoryItem> spendingCategories = new ArrayList<>();
+        List<ContentsCategoryItem> incomeCategories = new ArrayList<>();
+
+        db.categoryDao().getSpendingCategories().observe(this, list->{
+            for(int pos = 0; pos < list.size(); pos++){
+                spendingCategories.add(new ContentsCategoryItem(list.get(pos).getCategoryId(), list.get(pos).getName(), list.get(pos).getKind()));
+            }
+        });
+
+        db.categoryDao().getIncomeCategories().observe(this, list->{
+            for(int pos = 0; pos < list.size(); pos++){
+                incomeCategories.add(new ContentsCategoryItem(list.get(pos).getCategoryId(), list.get(pos).getName(), list.get(pos).getKind()));
+            }
+        });
+
+        this.spendingCategories =  spendingCategories;
+        this.incomeCategories = incomeCategories;
+    }
+
+    private String getSpendingCategoryById(int id){
+        String category = null;
+        for(ContentsCategoryItem c : spendingCategories){
+            if(id == c.getId())
+                category = c.getCategory();
+        }
+        return category;
+    }
 }

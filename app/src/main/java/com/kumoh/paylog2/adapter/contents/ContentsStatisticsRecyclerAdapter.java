@@ -111,7 +111,7 @@ public class ContentsStatisticsRecyclerAdapter
             case "경조사/선물":
                 return R.drawable.black_icon_present_24dp;
             default:
-                return 0;
+                return R.drawable.black_icon_question_24dp;
         }
     }
 }

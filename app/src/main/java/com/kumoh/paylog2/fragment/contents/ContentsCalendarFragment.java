@@ -128,7 +128,7 @@ public class ContentsCalendarFragment extends Fragment implements View.OnClickLi
                 GregorianCalendar day
                         = new GregorianCalendar(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),j);
                 // 3-1. 첫주 이후 주가 시작될때 헤더 타입(Long) 추가
-                if(day.get(Calendar.DAY_OF_WEEK) == 1){
+                if(day.get(Calendar.DAY_OF_WEEK) == 1 && j > 1){
                     calendarList.add(calendar.getTimeInMillis());
                 }
                 calendarList.add(day);  // 3. 일자 타입(Calendar) 추가
