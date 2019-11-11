@@ -29,7 +29,9 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.google.gson.Gson;
 import com.kumoh.paylog2.R;
+import com.kumoh.paylog2.dto.HistoryVO;
 import com.kumoh.paylog2.fragment.contents.ContentsListFragment;
 import com.kumoh.paylog2.fragment.contents.ContentsMonthFragment;
 import com.kumoh.paylog2.util.RequestHttpURLConnection;
@@ -270,7 +272,7 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
                             Uri resultUri = result.getUri();
                             Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), resultUri);
 
-                            new SendImageAsyncTask().execute(bitmap);
+                            new SendImageAsyncTask(db.historyDao()).execute(bitmap);
                              /*----------------------------------------
                             //
                             // 이 부분에서 서버로 보내면 될듯
@@ -449,6 +451,11 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
 
     private static class SendImageAsyncTask extends AsyncTask<Bitmap, Void, Void> {
         RequestHttpURLConnection conn;
+        HistoryDao dao;
+
+        public SendImageAsyncTask(HistoryDao dao) {
+            this.dao = dao;
+        }
 
         @Override
         protected void onPreExecute() {
@@ -457,10 +464,14 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
 
         @Override
         protected Void doInBackground(Bitmap... bitmaps) {
-            JSONObject jObj = conn.requestImageProcessing("http://202.31.138.206:3000/image", bitmaps[0]);
+            JSONObject jsonObject = conn.requestImageProcessing("http://192.168.1.72:3000/image", bitmaps[0]);
 
             // Gson 이용해서 객체에 담기
+            Gson gson = new Gson();
+            HistoryVO history = gson.fromJson(jsonObject.toString(), HistoryVO.class);
+
             // 담은 객체 roomDB에 저장
+            //dao.insertHistory(history);
 
             return null;
         }

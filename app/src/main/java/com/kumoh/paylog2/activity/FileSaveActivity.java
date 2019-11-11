@@ -40,11 +40,9 @@ public class FileSaveActivity extends AppCompatActivity implements View.OnClickL
     private ArrayAdapter<AccountSpinnerData> arrayAdapter;
 
     // fromDate
-    private TextView fromDateTextView;
     private Button fromDateBtn;
 
     // toDate
-    private TextView toDateTextView;
     private Button toDateBtn;
 
     //  fileName
@@ -86,9 +84,7 @@ public class FileSaveActivity extends AppCompatActivity implements View.OnClickL
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.main_icon_arrow_back_24dp);
 
         fromDateBtn = findViewById(R.id.save_file_select_fromDate_button);
-        fromDateTextView = findViewById(R.id.save_file_fromDate_text_view);
         toDateBtn = findViewById(R.id.save_file_select_toDate_button);
-        toDateTextView = findViewById(R.id.save_file_toDate_text_view);
         saveFileBtn = findViewById(R.id.save_file_btn);
         fileNameEdit = findViewById(R.id.file_name_edit);
 
@@ -121,8 +117,8 @@ public class FileSaveActivity extends AppCompatActivity implements View.OnClickL
             case R.id.save_file_btn: {
                 // 사용자가 설정한 값 가져오기
                 AccountSpinnerData accountInfo = (AccountSpinnerData) accountNameSpinner.getSelectedItem();
-                String fromDate = fromDateTextView.getText().toString();
-                String toDate = toDateTextView.getText().toString();
+                String fromDate = fromDateBtn.getText().toString();
+                String toDate = toDateBtn.getText().toString();
 
                 // 저장할 파일의 이름
                 String fileName = fileNameEdit.getText().toString() + ".xls";
@@ -169,7 +165,7 @@ public class FileSaveActivity extends AppCompatActivity implements View.OnClickL
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             monthOfYear = monthOfYear + 1;
-            fromDateTextView.setText(year + "-" + monthOfYear + "-" + dayOfMonth);
+            fromDateBtn.setText(year + "-" + monthOfYear + "-" + dayOfMonth);
         }
     };
 
@@ -177,7 +173,7 @@ public class FileSaveActivity extends AppCompatActivity implements View.OnClickL
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             monthOfYear = monthOfYear + 1;
-            toDateTextView.setText(year + "-" + monthOfYear + "-" + dayOfMonth);
+            toDateBtn.setText(year + "-" + monthOfYear + "-" + dayOfMonth);
         }
     };
 

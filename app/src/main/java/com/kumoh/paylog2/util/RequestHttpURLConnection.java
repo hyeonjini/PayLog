@@ -81,7 +81,6 @@ public class RequestHttpURLConnection {
             // 라인을 받아와 합친다.
             while ((line = reader.readLine()) != null){
                 page += line;
-
             }
 
             JSONObject receiptContext = new JSONObject(page);

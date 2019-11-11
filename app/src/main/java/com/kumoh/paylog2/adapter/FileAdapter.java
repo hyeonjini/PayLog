@@ -35,11 +35,13 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView file_name;
         TextView file_last_modified_time;
+        TextView file_size;
 
         ViewHolder(View itemView) {
             super(itemView);
             file_name = itemView.findViewById(R.id.file_name);
             file_last_modified_time = itemView.findViewById(R.id.file_last_modified_time);
+            file_size = itemView.findViewById(R.id.file_size);
         }
     }
 
@@ -71,14 +73,17 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
     public void onBindViewHolder(FileAdapter.ViewHolder holder, int position) {
         File file = mData.get(position);
 
-        //holder.file.setText(file.getAbsolutePath());
-
-        holder.file_name.setText(file.getName());
-
+        // 마지막 수정 시간
         Date lastModifiedTime = new Date(file.lastModified());
         Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String lastModifiedStringTime = format.format(lastModifiedTime);
 
-        holder.file_last_modified_time.setText(format.format(lastModifiedTime));
+        // 파일 크기
+        String fileSize = Long.toString(file.length() / 1024); // byte 크기(/1024)
+
+        holder.file_name.setText(file.getName());
+        holder.file_last_modified_time.setText(lastModifiedStringTime);
+        holder.file_size.setText(fileSize + " bytes");
 
         // onClick 리스너
         if(clickListener != null) {

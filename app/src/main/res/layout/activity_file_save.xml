@@ -21,15 +21,16 @@
         >
         <TextView
             android:id="@+id/group_name_text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="2"
             android:text="그룹이름 : "
             android:textSize="22dp"/>
         <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/account_name_spinner"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="5" />
     </LinearLayout>
 
     <LinearLayout
@@ -41,23 +42,14 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:text="From : "
             android:textSize="24dp"/>
-        <TextView
-            android:id="@+id/save_file_fromDate_text_view"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:text="선택 안함"
-            android:textSize="18dp"
-            android:textAlignment="center"
-            android:padding="10dp"/>
         <Button
             android:id="@+id/save_file_select_fromDate_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="5"
             android:text="날짜 선택"
             android:textSize="18dp"/>
     </LinearLayout>
@@ -71,23 +63,14 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:text="To : "
             android:textSize="24dp"/>
-        <TextView
-            android:id="@+id/save_file_toDate_text_view"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:text="선택 안함"
-            android:textSize="18dp"
-            android:textAlignment="center"
-            android:padding="10dp"/>
         <Button
             android:id="@+id/save_file_select_toDate_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="5"
             android:text="날짜 선택"
             android:textSize="18dp"/>
     </LinearLayout>
@@ -101,24 +84,27 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:text="Excel 버전 : "
             android:textSize="18dp" />
         <RadioGroup
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_weight="3">
+            android:layout_weight="5">
             <RadioButton
                 android:id="@+id/recent_version_radio_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Excel 2007 이후"/>
+                android:text="2007 이후(.xlxs)"
+                android:layout_marginLeft="5dp"/>
             <RadioButton
                 android:id="@+id/pre_version_radio_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Excel 2007 이전"/>
+                android:text="2007 이전(.xls)"
+                android:layout_marginLeft="10dp"
+                />
         </RadioGroup>
 
     </LinearLayout>
@@ -131,15 +117,17 @@
         android:layout_marginLeft="8dp"
         >
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="2"
             android:text="파일이름 : "
             android:textSize="22dp"/>
         <EditText
             android:id="@+id/file_name_edit"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            />
+            android:layout_weight="5"
+            android:hint="type filename"/>
     </LinearLayout>
 
     <LinearLayout

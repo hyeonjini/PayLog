@@ -29,7 +29,7 @@ public interface HistoryDao {
     LiveData<List<ContentsMonthItem>> getAllByMonthAndAccountId(int accountId);
 
     // 해당 accountId의 fromDate 부터 toDate 까지의 history
-    @Query("SELECT * FROM History WHERE accountId = :accountId and date > :fromDate and date < :toDate order by date desc")
+    @Query("SELECT * FROM History WHERE accountId = :accountId and date >= :fromDate and date <= :toDate order by date desc")
     List<History> getAllFromToByAccountId(int accountId, String fromDate, String toDate);
 
     // 해당 accountId의 fromDate 부터 toDate 까지의 history (LiveData)

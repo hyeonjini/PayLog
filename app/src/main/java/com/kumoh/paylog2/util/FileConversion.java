@@ -21,7 +21,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,55 +36,88 @@ public class FileConversion {
 
     private Map<Integer, String> titleMap = new HashMap<>();
 
+    // LOGO : Paylog
     private final static int LOGO_START_ROW = 0;
 
-    private final static int TITLE_START_ROW = 3;
+    // Conversion Date
+    private final static int CONVERSION_DATE_START_ROW = 3;
+    private final static int CONVERSION_DATE_START_COL = 4;
+
+    // GROUP
+    private final static int GROUP_START_ROW = 4;
+    private final static int GROUP_START_COL = 4;
+
+    // TITLE : 제목
+    private final static int TITLE_START_ROW = 6;
     private final static int TITLE_START_COL = 0;
 
-    private final static int CONTEXT_START_ROW = 4;
+    // CONTEXT : 내용
+    private final static int CONTEXT_START_ROW = 7;
     private final static int CONTEXT_START_COL = 0;
 
     public FileConversion() {
         workbook = new HSSFWorkbook();
         sheet = workbook.createSheet();
 
-        // 셀 너비 초기화
-        sheet.setColumnWidth(0, (10 * 500));
+        // 각 열의 너비 초기화
+        sheet.setColumnWidth(0, (8 * 500));
+        sheet.setColumnWidth(1, (7 * 500));
+        sheet.setColumnWidth(2, (10 * 500));
+        sheet.setColumnWidth(3, (6 * 500));
+        sheet.setColumnWidth(4, (6 * 500));
+        sheet.setColumnWidth(5, (8 * 500));
 
         // title 초기화
         titleMap.put(0, "날짜");
-        titleMap.put(1, "유형");
+        titleMap.put(1, "분류");
         titleMap.put(2, "내용");
-        titleMap.put(3, "가격");
+        titleMap.put(3, "수입");
+        titleMap.put(4, "지출");
+        titleMap.put(5, "비고");
     }
 
     // PayLog Logo 삽입
     private void inputLogo() {
         row = sheet.createRow(LOGO_START_ROW);
 
+        // 셀 병합
+        sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, titleMap.size() - 1)); //열시작, 열종료, 행시작, 행종료 (자바배열과 같이 0부터 시작)
 
-        //workbook.getNumCellStyles();
-
-        //CellStyle cellStyle = workbook.createCellStyle();
-        //cellStyle.setAlignment(HorizontalAlignment.CENTER);
-        //cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-
-        cell = row.createCell(0);
+        cell = row.createCell(LOGO_START_ROW);
         cell.setCellValue("PayLog");
-        //cell.setCellStyle(cellStyle);
-
-        //셀 병합
-        sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 10)); //열시작, 열종료, 행시작, 행종료 (자바배열과 같이 0부터 시작)
-
-        cell.getCellStyle().setAlignment(HorizontalAlignment.CENTER);
-        cell.getCellStyle().setVerticalAlignment(VerticalAlignment.CENTER);
-
-        Font font = workbook.createFont();
-        font.setFontHeightInPoints((short)20);
-        cell.getCellStyle().setFont(font);
     }
 
-    // 제목 입력
+    // 그룹 이름 삽입
+    private void inputGroupName() {
+        row = sheet.createRow(GROUP_START_ROW);
+
+        // 셀 병합
+        sheet.addMergedRegion(new CellRangeAddress(GROUP_START_ROW, GROUP_START_ROW, GROUP_START_COL, GROUP_START_COL+1));
+
+        cell = row.createCell(GROUP_START_COL);
+        cell.setCellValue("그룹 이름 : ");
+    }
+
+    // 변환 날짜 삽입
+    private void inputConversionDate() {
+        // 현재 날짜
+        SimpleDateFormat format = new SimpleDateFormat( "yyyy년 MM월dd일 HH시mm분ss초");
+        Date time = new Date();
+        String currentTime = format.format(time);
+
+        row = sheet.createRow(CONVERSION_DATE_START_ROW);
+
+        // 셀 병합
+        sheet.addMergedRegion(new CellRangeAddress(CONVERSION_DATE_START_ROW, CONVERSION_DATE_START_ROW, CONVERSION_DATE_START_COL, CONVERSION_DATE_START_COL+1));
+
+        cell = row.createCell(CONVERSION_DATE_START_COL);
+        cell.setCellValue("파일 변환 날짜 : " + currentTime);
+    }
+
+    //   제목 입력   * 건드릴 필요 없음 *
+    //
+    // - TITLE_START_ROW : 제목 시작 행 (멤버변수에서 초기화)
+    // - titleMap : 초기화된 제목 Map (생성자에서 초기화)
     private void typeTitles() {
         row = sheet.createRow(TITLE_START_ROW);
         // (0, i)위치의 셀에 각 title 입력
@@ -90,10 +125,6 @@ public class FileConversion {
             cell = row.createCell(i);
             cell.setCellValue(titleMap.get(i));
         }
-
-        Font font = workbook.createFont();
-        font.setFontHeightInPoints((short)10);
-        cell.getCellStyle().setFont(font);
     }
 
     // 데이터 입력
@@ -127,6 +158,17 @@ public class FileConversion {
         }
     }
 
+    private void setCellStyle() {
+        // 모든 cell style 적용
+        // 가운데 정렬
+        cell.getCellStyle().setAlignment(HorizontalAlignment.CENTER);
+        cell.getCellStyle().setVerticalAlignment(VerticalAlignment.CENTER);
+//        // 글자 크기 20
+//        Font font = workbook.createFont();
+//        font.setFontHeightInPoints((short)20);
+//        cell.getCellStyle().setFont(font);
+    }
+
     private File saveFileToExternalStorage(Context context, String fileName) {
         File file = new File(context.getExternalFilesDir(null), fileName);
 
@@ -154,8 +196,11 @@ public class FileConversion {
 
     public File saveExcelFile(Context context, List<History> mItems, String fileName) {
         inputLogo();
+        inputGroupName();
+        inputConversionDate();
         typeTitles();
         typeContexts(mItems);
+        setCellStyle();
 
         return saveFileToExternalStorage(context, fileName);
     }
