@@ -54,6 +54,7 @@
         android:backgroundTint="#ee2560"
         android:src="@drawable/white_icon_add_24dp"
         android:visibility="invisible"
+        android:clickable="false"
         app:borderWidth="0dp"
         app:fabSize="normal"
         app:rippleColor="@color/mainColor" />
@@ -68,6 +69,7 @@
         android:backgroundTint="#60c5ba"
         android:src="@drawable/white_icon_add_24dp"
         android:visibility="invisible"
+        android:clickable="false"
         app:borderWidth="0dp"
         app:fabSize="normal"
         app:rippleColor="@color/mainColor" />

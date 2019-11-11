@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
@@ -29,6 +30,8 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.kumoh.paylog2.R;
+import com.kumoh.paylog2.fragment.contents.ContentsListFragment;
+import com.kumoh.paylog2.fragment.contents.ContentsMonthFragment;
 import com.kumoh.paylog2.util.RequestHttpURLConnection;
 import com.kumoh.paylog2.adapter.contents.ContentsFragmentAdapter;
 import com.kumoh.paylog2.db.History;
@@ -48,12 +51,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ContentsActivity extends AppCompatActivity implements View.OnClickListener, ViewPager.OnTouchListener, ViewPager.OnPageChangeListener{
-    private Animation fab_open, fab_close;
+public class ContentsActivity extends AppCompatActivity implements View.OnClickListener, ViewPager.OnPageChangeListener,
+        ContentsListFragment.RecyclerScrollStateChangedListener, ContentsMonthFragment.RecyclerScrollStateChangedListener {
     private LocalDatabase db;
     private int selectedAccountId;
-    private FloatingActionButton fab, spendingFab, incomeFab, imageFab;
-    private Boolean isFabOpen = false;
+    private ViewPager viewPager;
+
+    // FAB
+    private FloatingActionButton addFab, spendingFab, incomeFab, imageFab;
+    private Animation fab_open, fab_close, all_fab_open, all_fab_close;
+    private Boolean isAddFabVisible = false;
+    private Boolean isAllFabVisible = true;
 
     // 기본 카테고리 리스트
     List<ContentsCategoryItem> spendingLists;
@@ -86,8 +94,9 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
         selectedAccountId = Integer.parseInt(intent.getStringExtra("selectedGroupId"));
 
         //Viewpager + tabLayout
-        ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager_contents);
+        viewPager = (ViewPager) findViewById(R.id.view_pager_contents);
         ContentsFragmentAdapter adapter = new ContentsFragmentAdapter(getSupportFragmentManager(), 0, selectedAccountId);
+
         viewPager.setAdapter(adapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout_contents);
@@ -96,39 +105,24 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
         tabLayout.addTab(tabLayout.newTab().setText("달력"));
         tabLayout.addTab(tabLayout.newTab().setText("통계"));
 
-        viewPager.setOnTouchListener(this);
-
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem(tab.getPosition());
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
+        tabLayout.addOnTabSelectedListener(tabSelectedListener);
 
         //FloatingActionButton
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
+        all_fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.all_fab_open);
+        all_fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.all_fab_close);
 
         spendingFab = (FloatingActionButton) findViewById(R.id.add_contents_fab_spending);
         incomeFab = (FloatingActionButton) findViewById(R.id.add_contents_fab_income);
-        fab = (FloatingActionButton) findViewById(R.id.add_contents_fab);
+        addFab = (FloatingActionButton) findViewById(R.id.add_contents_fab);
         imageFab = (FloatingActionButton) findViewById(R.id.capture_image_fab);
 
         spendingFab.setOnClickListener(this);
         incomeFab.setOnClickListener(this);
-        fab.setOnClickListener(this);
+        addFab.setOnClickListener(this);
         imageFab.setOnClickListener(this);
     }
 
@@ -150,10 +144,10 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.add_contents_fab:
-                anim();
+                addFabAnim();
                 break;
             case R.id.add_contents_fab_spending:
-                anim();
+                //addFabAnim();
                 AddSpendingHistoryDialog addSpendingHistoryDialog = new AddSpendingHistoryDialog(this, spendingLists);
 
                 addSpendingHistoryDialog.setAddSpendingHistoryDialogListener(new AddSpendingHistoryDialog.AddSpendingHistoryDialogListener() {
@@ -166,7 +160,7 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
                 addSpendingHistoryDialog.show();
                 break;
             case R.id.add_contents_fab_income:
-                anim();
+                //addFabAnim();
                 AddIncomeHistoryDialog addIncomeHistoryDialog = new AddIncomeHistoryDialog(this, incomeLists);
 
                 addIncomeHistoryDialog.setAddIncomeHistoryDialogListener(new AddIncomeHistoryDialog.AddIncomeHistoryDialogListener() {
@@ -191,6 +185,62 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
                 }
                 dispatchTakePictureIntent();
                 break;
+        }
+    }
+
+    private TabLayout.OnTabSelectedListener tabSelectedListener = new TabLayout.OnTabSelectedListener() {
+        @Override
+        public void onTabSelected(TabLayout.Tab tab) {
+            int position = tab.getPosition();
+
+            viewPager.setCurrentItem(position);
+            if(position < 2) {
+                if(isAllFabVisible != true) { // 보여야 할 곳에 안보이면 보여주고
+                    allFabAnim();
+                }
+            } else {
+                if(isAllFabVisible == true) { // 안보여야 할 곳에 보이면 숨기고
+                    allFabAnim();
+                }
+                if(isAddFabVisible == true) { // add Fab 이 펼쳐져 있으면 숨기고
+                    addFabAnim();
+                }
+            }
+        }
+        @Override
+        public void onTabUnselected(TabLayout.Tab tab) {}
+        @Override
+        public void onTabReselected(TabLayout.Tab tab) {}
+    };
+
+    // Fragment 에서 Fab anim 을 위한 interface 구현
+    @Override
+    public void onContentsListScrollChanged(int newState) {
+        recyclerAnim(newState);
+    }
+
+    @Override
+    public void onContentsMonthScrollChanged(int newState) {
+        recyclerAnim(newState);
+    }
+
+    private void recyclerAnim(int newState) {
+        switch(newState) {
+            case RecyclerView.SCROLL_STATE_DRAGGING: {
+                if (isAddFabVisible) {
+                    addFabAnim();
+                }
+                if (isAllFabVisible) {
+                    allFabAnim();
+                }
+                break;
+            }
+            case RecyclerView.SCROLL_STATE_IDLE: {
+                if (isAllFabVisible == false) {
+                    allFabAnim();
+                }
+                break;
+            }
         }
     }
 
@@ -249,29 +299,15 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onPageSelected(int position) {
         if(position == 0){
-            fab.show();
+            addFab.show();
         } else {
-            fab.hide();
+            addFab.hide();
         }
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
 
-    }
-
-    @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
-        switch(motionEvent.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                Toast.makeText(this, "down", Toast.LENGTH_SHORT).show();
-                break;
-            case MotionEvent.ACTION_UP:
-                Toast.makeText(this, "up", Toast.LENGTH_SHORT).show();
-                break;
-        }
-
-        return false;
     }
 
     // 카테고리 초기화
@@ -368,21 +404,46 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    public void anim() {
-        if (isFabOpen) {
-            fab.setImageDrawable(getResources().getDrawable(R.drawable.white_icon_edit_24dp));
+    private void anim() {
+        Toast.makeText(this, "하이", Toast.LENGTH_SHORT).show();
+    }
+
+    private void allFabAnim() {
+        if(isAllFabVisible) {
+            addFab.startAnimation(all_fab_close);
+            imageFab.startAnimation(all_fab_close);
+            addFab.setClickable(false);
+            imageFab.setClickable(false);
+
+            isAllFabVisible = false;
+        } else {
+            addFab.startAnimation(all_fab_open);
+            imageFab.startAnimation(all_fab_open);
+            addFab.setClickable(true);
+            imageFab.setClickable(true);
+
+            isAllFabVisible = true;
+        }
+    }
+
+    private void addFabAnim() {
+        if (isAddFabVisible) {
+            addFab.setImageDrawable(getResources().getDrawable(R.drawable.white_icon_edit_24dp));
+
             spendingFab.startAnimation(fab_close);
             incomeFab.startAnimation(fab_close);
             spendingFab.setClickable(false);
             incomeFab.setClickable(false);
-            isFabOpen = false;
+
+            isAddFabVisible = false;
         } else {
-            fab.setImageDrawable(getResources().getDrawable(R.drawable.white_icon_close_24dp));
+            addFab.setImageDrawable(getResources().getDrawable(R.drawable.white_icon_close_24dp));
             spendingFab.startAnimation(fab_open);
             incomeFab.startAnimation(fab_open);
             spendingFab.setClickable(true);
             incomeFab.setClickable(true);
-            isFabOpen = true;
+
+            isAddFabVisible = true;
         }
     }
 

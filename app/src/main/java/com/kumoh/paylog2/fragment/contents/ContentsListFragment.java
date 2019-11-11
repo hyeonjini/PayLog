@@ -1,5 +1,6 @@
 package com.kumoh.paylog2.fragment.contents;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,11 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kumoh.paylog2.R;
+import com.kumoh.paylog2.adapter.contents.ContentsFragmentAdapter;
 import com.kumoh.paylog2.adapter.contents.ContentsListRecyclerAdapter;
 import com.kumoh.paylog2.db.Category;
 import com.kumoh.paylog2.db.History;
@@ -39,6 +42,8 @@ public class ContentsListFragment extends Fragment implements ContentsListRecycl
     List<ContentsCategoryItem> spendingCategories;
     List<ContentsCategoryItem> incomeCategories;
 
+    private RecyclerScrollStateChangedListener recyclerScrollStateChangedListener;
+
     public ContentsListFragment(int accountId){
         this.accountId = accountId;
     }
@@ -49,8 +54,11 @@ public class ContentsListFragment extends Fragment implements ContentsListRecycl
         RecyclerView recyclerView = rootView.findViewById(R.id.contents_list_item_recycler_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
+
         adapter = new ContentsListRecyclerAdapter(new ArrayList<ContentsListItem>(), new ArrayList<ContentsCategoryItem>());
         adapter.setLongClickListener(this);
+
+        recyclerView.addOnScrollListener(onScrollListener);
 
         recyclerView.setAdapter(adapter);
         db = LocalDatabase.getInstance(getContext());
@@ -236,6 +244,33 @@ public class ContentsListFragment extends Fragment implements ContentsListRecycl
             return null;
         }
     }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if(context instanceof RecyclerScrollStateChangedListener) {
+            recyclerScrollStateChangedListener = (RecyclerScrollStateChangedListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement RecyclerScrollStateChangedListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        recyclerScrollStateChangedListener = null;
+    }
+
+    public interface RecyclerScrollStateChangedListener {
+        void onContentsListScrollChanged(int newState);
+    }
+
+    private RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+            recyclerScrollStateChangedListener.onContentsListScrollChanged(newState);
+        }
+    };
 }
 
 

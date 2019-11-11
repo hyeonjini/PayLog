@@ -1,10 +1,12 @@
 package com.kumoh.paylog2.fragment.contents;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +27,8 @@ public class ContentsMonthFragment extends Fragment {
     private LocalDatabase db;
     private ArrayList<ContentsMonthItem> listItem;
 
+    private RecyclerScrollStateChangedListener recyclerScrollStateChangedListener;
+
     public ContentsMonthFragment(int accountId){
         this.accountId = accountId;
     }
@@ -40,6 +44,8 @@ public class ContentsMonthFragment extends Fragment {
         listItem = new ArrayList<ContentsMonthItem>();
         ContentsMonthRecyclerAdapter adapter = new ContentsMonthRecyclerAdapter(listItem);
         recyclerView.setAdapter(adapter);
+
+        recyclerView.addOnScrollListener(onScrollListener);
 
         //DB설정
         db = LocalDatabase.getInstance(getContext());
@@ -87,4 +93,31 @@ public class ContentsMonthFragment extends Fragment {
         listItem.get(flag).setIncome(income);
         listItem.get(flag).setSpending(spending);
     }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if(context instanceof RecyclerScrollStateChangedListener) {
+            recyclerScrollStateChangedListener = (RecyclerScrollStateChangedListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement RecyclerScrollStateChangedListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        recyclerScrollStateChangedListener = null;
+    }
+
+    public interface RecyclerScrollStateChangedListener {
+        void onContentsMonthScrollChanged(int newState);
+    }
+
+    private RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+            recyclerScrollStateChangedListener.onContentsMonthScrollChanged(newState);
+        }
+    };
 }

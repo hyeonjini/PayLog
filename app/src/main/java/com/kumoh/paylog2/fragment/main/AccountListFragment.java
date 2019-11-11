@@ -42,7 +42,6 @@ public class AccountListFragment extends Fragment implements AccountListRecycler
     private Animation fab_open, fab_close;
     private Boolean isFabOpen = true;
 
-
     public AccountListFragment() {
         // Required empty public constructor
     }
