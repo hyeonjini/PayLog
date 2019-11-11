@@ -147,7 +147,7 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
                 addFabAnim();
                 break;
             case R.id.add_contents_fab_spending:
-                //addFabAnim();
+                addFabAnim();
                 AddSpendingHistoryDialog addSpendingHistoryDialog = new AddSpendingHistoryDialog(this, spendingLists);
 
                 addSpendingHistoryDialog.setAddSpendingHistoryDialogListener(new AddSpendingHistoryDialog.AddSpendingHistoryDialogListener() {
@@ -160,7 +160,7 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
                 addSpendingHistoryDialog.show();
                 break;
             case R.id.add_contents_fab_income:
-                //addFabAnim();
+                addFabAnim();
                 AddIncomeHistoryDialog addIncomeHistoryDialog = new AddIncomeHistoryDialog(this, incomeLists);
 
                 addIncomeHistoryDialog.setAddIncomeHistoryDialogListener(new AddIncomeHistoryDialog.AddIncomeHistoryDialogListener() {
