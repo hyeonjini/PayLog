@@ -17,7 +17,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.kumoh.paylog2.R;
 
 import java.io.File;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
@@ -30,11 +33,13 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
 
     // 아이템 뷰를 저장하는 뷰홀더 클래스.
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView textView1 ;
+        TextView file_name;
+        TextView file_last_modified_time;
 
         ViewHolder(View itemView) {
-            super(itemView) ;
-            textView1 = itemView.findViewById(R.id.file_location) ;
+            super(itemView);
+            file_name = itemView.findViewById(R.id.file_name);
+            file_last_modified_time = itemView.findViewById(R.id.file_last_modified_time);
         }
     }
 
@@ -66,7 +71,14 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
     public void onBindViewHolder(FileAdapter.ViewHolder holder, int position) {
         File file = mData.get(position);
 
-        holder.textView1.setText(file.getAbsolutePath());
+        //holder.file.setText(file.getAbsolutePath());
+
+        holder.file_name.setText(file.getName());
+
+        Date lastModifiedTime = new Date(file.lastModified());
+        Format format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        holder.file_last_modified_time.setText(format.format(lastModifiedTime));
 
         // onClick 리스너
         if(clickListener != null) {

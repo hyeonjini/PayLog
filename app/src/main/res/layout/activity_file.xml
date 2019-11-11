@@ -7,11 +7,10 @@
     android:layout_height="match_parent"
     tools:context="activity.FileActivity">
 
-    <Button
-        android:id="@+id/file_convert_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="파일 변환하기"/>
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:id="@+id/tool_bar_file"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/file_recyclerview"

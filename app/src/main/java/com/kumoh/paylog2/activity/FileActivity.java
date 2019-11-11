@@ -1,7 +1,9 @@
 package com.kumoh.paylog2.activity;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,8 +14,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.kumoh.paylog2.R;
 import com.kumoh.paylog2.adapter.FileAdapter;
@@ -24,20 +29,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileActivity extends AppCompatActivity
-        implements View.OnClickListener, FileAdapter.FileListRecyclerOnClickListener, FileAdapter.FileListRecyclerLongClickListener{
+        implements FileAdapter.FileListRecyclerOnClickListener, FileAdapter.FileListRecyclerLongClickListener {
 
     private RecyclerView recyclerView;
     private FileAdapter adapter;
     List<File> fileList = new ArrayList<>();
-
-    private Button fileConvertButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file);
 
-        fileConvertButton = findViewById(R.id.file_convert_btn);
+        // Toolbar 설정
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar_file);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.main_icon_arrow_back_24dp);
 
         // 리사이클러뷰에 LayoutManager 객체 지정.
         recyclerView = findViewById(R.id.file_recyclerview) ;
@@ -53,7 +60,6 @@ public class FileActivity extends AppCompatActivity
         // 리스너 등록
         adapter.setOnClickListener(this);
         adapter.setLongClickListener(this);
-        fileConvertButton.setOnClickListener(this);
     }
 
     @Override
@@ -153,16 +159,13 @@ public class FileActivity extends AppCompatActivity
     }
 
     @Override
-    public void onClick(View view) {
-        switch(view.getId()) {
-            case R.id.file_convert_btn:
-                Intent intent = new Intent(getApplicationContext(), FileSaveActivity.class);
-                startActivityForResult(intent, 3000);
-                break;
-        }
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.item_file_app_bar_menu, menu);
+
+        return true;
     }
 
-    // Recycler View item click
+    // Recycler View item click event
     @Override
     public void onItemClicked(int position) {
         if (position != RecyclerView.NO_POSITION) {
@@ -172,12 +175,34 @@ public class FileActivity extends AppCompatActivity
         }
     }
 
-    // Recycler View item longClick
+    // Recycler View item longClick event
     @Override
     public void onItemLongClicked(int position) {
         // 오랫동안 눌렀을 때 이벤트가 발생됨
         File file = adapter.getItem(position);
 
         fileDeleteDialog(file);
+    }
+
+    // Toolbar home icon action 설정 (뒤로가기)
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+            case R.id.excel_convert_item:
+                Intent intent = new Intent(getApplicationContext(), FileSaveActivity.class);
+                startActivityForResult(intent, 3000);
+                break;
+            case R.id.pdf_convert_item:
+                Toast.makeText(this, "기능 구현중", Toast.LENGTH_SHORT).show();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

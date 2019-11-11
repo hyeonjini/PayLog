@@ -1,8 +1,10 @@
 package com.kumoh.paylog2.adapter;
 
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -35,6 +37,12 @@ public class AccountListRecyclerAdapter extends RecyclerView.Adapter<AccountList
     public void onBindViewHolder(@NonNull AccountListViewHolder holder, int position) {
         DecimalFormat dc = new DecimalFormat("###,###,###,###");
         AccountInfo account = data.get(position);
+
+        // Main Group 의 색깔 변경
+        if(position == 0) {
+            holder.coloredLayout.setBackgroundColor(holder.coloredLayout.getContext().getResources().getColor(R.color.spending_Color));
+        }
+
         holder.accountName.setText(account.getName());
         holder.budget.setText(dc.format(account.getBudget()));
         holder.income.setText(dc.format(account.getIncome()));
@@ -69,13 +77,14 @@ public class AccountListRecyclerAdapter extends RecyclerView.Adapter<AccountList
     }
 
     public static class AccountListViewHolder extends RecyclerView.ViewHolder{
-
+        LinearLayout coloredLayout;
         TextView accountName;
         TextView budget;
         TextView used;
         TextView income;
         public AccountListViewHolder(@NonNull View itemView) {
             super(itemView);
+            coloredLayout = itemView.findViewById(R.id.account_list_colored_layout);
             accountName = itemView.findViewById(R.id.account_list_item_name);
             budget = itemView.findViewById(R.id.account_list_item_budget);
             used = itemView.findViewById(R.id.account_list_item_used);
@@ -87,7 +96,26 @@ public class AccountListRecyclerAdapter extends RecyclerView.Adapter<AccountList
     }
     //데이터가 새로 들어옴
     public void setData(List<AccountInfo> accounts){
-       data = accounts;
+
+        // main group 을 찾는다.
+        int mainIndex = 0;
+        for(int i = 0; i < accounts.size(); i++) {
+            if(accounts.get(i).isMain() == true) {
+                mainIndex = i;
+                break;
+            }
+        }
+
+        // 첫 번째 group 과 main group 의 위치를 바꾼다.
+        // 만약, 첫 번째 group 이 main group 이라면 pass
+        if(mainIndex != 0) {
+            AccountInfo temp = accounts.get(0);
+            accounts.set(0, accounts.get(mainIndex));
+            accounts.set(mainIndex, temp);
+        }
+
+        data = accounts;
+
         notifyDataSetChanged();
     }
 

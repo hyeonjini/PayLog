@@ -2,12 +2,15 @@ package com.kumoh.paylog2.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,6 +28,7 @@ import com.kumoh.paylog2.db.HistoryDao;
 import com.kumoh.paylog2.db.LocalDatabase;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class FileSaveActivity extends AppCompatActivity implements View.OnClickListener {
@@ -74,6 +78,12 @@ public class FileSaveActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_save);
+
+        // Toolbar 설정
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar_file_save);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.main_icon_arrow_back_24dp);
 
         fromDateBtn = findViewById(R.id.save_file_select_fromDate_button);
         fromDateTextView = findViewById(R.id.save_file_fromDate_text_view);
@@ -128,17 +138,32 @@ public class FileSaveActivity extends AppCompatActivity implements View.OnClickL
                 break;
             }
             case R.id.save_file_select_fromDate_button:
-                DatePickerDialog fromDatePickerDialog = new DatePickerDialog(this, fromPickerCallBack, 2019, 9, 04);
+                Calendar c1 = Calendar.getInstance();
+                DatePickerDialog fromDatePickerDialog = new DatePickerDialog(this, fromPickerCallBack, c1.get(Calendar.YEAR), c1.get(Calendar.MONTH), c1.get(Calendar.DAY_OF_MONTH));
                 fromDatePickerDialog.show();
                 break;
 
             case R.id.save_file_select_toDate_button:
-                DatePickerDialog toDatePickerDialog = new DatePickerDialog(this, toPickerCallBack, 2019, 9, 04);
+                Calendar c2 = Calendar.getInstance();
+                DatePickerDialog toDatePickerDialog = new DatePickerDialog(this, toPickerCallBack, c2.get(Calendar.YEAR), c2.get(Calendar.MONTH), c2.get(Calendar.DAY_OF_MONTH));
                 toDatePickerDialog.show();
                 break;
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 
     private DatePickerDialog.OnDateSetListener fromPickerCallBack = new DatePickerDialog.OnDateSetListener() {
         @Override

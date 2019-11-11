@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="mainColor">#2b90d9</color>
+    <color name="mainGroupColor">#F16B6F</color>
     <color name="textBlack">#111111</color>
     <color name="darkBlack">#000000</color>
     <color name="calendarHeader">#73efefef</color>
