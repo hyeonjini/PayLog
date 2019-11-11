@@ -134,7 +134,7 @@ public class ContentsStatisticsFragment extends Fragment {
             }
         }else{
             list = new ArrayList<>();
-            list.add(new ContentsStatisticsCategoryItem(0,0, 1));
+            list.add(new ContentsStatisticsCategoryItem(0,-1, 1));
         }
     }
 

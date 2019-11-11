@@ -94,6 +94,10 @@ public class ContentsStatisticsRecyclerAdapter
             if(id == c.getId())
                 category = c.getCategory();
         }
+        if(id == 0)
+            category = "기타";
+        if(category == null)
+            category = "항목 없음";
         return category;
     }
 
