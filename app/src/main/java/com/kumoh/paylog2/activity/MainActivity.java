@@ -13,11 +13,14 @@ import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.kumoh.paylog2.R;
 import com.kumoh.paylog2.adapter.MainFragmentAdapter;
 import com.kumoh.paylog2.db.Account;
@@ -26,13 +29,18 @@ import com.kumoh.paylog2.db.LocalDatabase;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    private FirebaseUser user;
     private LocalDatabase db;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+    private View headerView;
+    private TextView idView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        user =  FirebaseAuth.getInstance().getCurrentUser();
 
         //화면 최대 크기
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -49,6 +57,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout = findViewById(R.id.main_drawer);
 
         navigationView = findViewById(R.id.main_nav);
+        headerView = navigationView.getHeaderView(0);
+        idView = headerView.findViewById(R.id.header_nav_user_id);
+        idView.setText(user.getEmail());
+
         navigationView.setNavigationItemSelectedListener(this);
 
         //DB 초기화
