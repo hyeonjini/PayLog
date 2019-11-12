@@ -2,13 +2,13 @@ package com.kumoh.paylog2.dto;
 
 public class HistoryVO {
     private String description;
-    private int amount;
+    private String amount;
 
     public String getDescription() {
         return description;
     }
 
-    public int getAmount() {
+    public String getAmount() {
         return amount;
     }
 
@@ -16,7 +16,7 @@ public class HistoryVO {
         this.description = description;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(String amount) {
         this.amount = amount;
     }
 

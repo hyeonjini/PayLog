@@ -4,8 +4,10 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,12 +32,15 @@ import com.kumoh.paylog2.dto.ContentsListItem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContentsListFragment extends Fragment implements ContentsListRecyclerAdapter.ContentsListRecyclerLongClickListener {
+public class ContentsListFragment extends Fragment implements ContentsListRecyclerAdapter.ContentsListRecyclerLongClickListener, View.OnTouchListener {
     final static int SPENDING_VIEW = -1;
     final static int INCOME_VIEW = 1;
 
     LocalDatabase db;
     private int accountId;
+
+    private LinearLayout layout;
+
     private ContentsListRecyclerAdapter adapter;
     private ArrayList<ContentsListItem> listItem;
     private ArrayList<ContentsCategoryItem> categoryItems;
@@ -51,6 +56,10 @@ public class ContentsListFragment extends Fragment implements ContentsListRecycl
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_contentslist, container, false);
+
+        layout = rootView.findViewById(R.id.contents_list_layout);
+        layout.setOnTouchListener(this);
+
         RecyclerView recyclerView = rootView.findViewById(R.id.contents_list_item_recycler_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
@@ -183,6 +192,20 @@ public class ContentsListFragment extends Fragment implements ContentsListRecycl
             });
             controlSpendingHistoryDialog.show();
         }
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        switch(motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                Toast.makeText(getContext(), "하이", Toast.LENGTH_SHORT).show();
+                break;
+            case MotionEvent.ACTION_UP:
+                Toast.makeText(getContext(), "바이", Toast.LENGTH_SHORT).show();
+                break;
+        }
+
+        return false;
     }
 
     // 카테고리 초기화

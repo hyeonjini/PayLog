@@ -30,6 +30,16 @@
         </androidx.viewpager.widget.ViewPager>
     </LinearLayout>
 
+    <ProgressBar
+        android:id="@+id/image_processing_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        style="@android:style/Widget.Holo.ProgressBar.Large"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_contents_fab"
         android:layout_width="wrap_content"

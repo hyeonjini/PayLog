@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 
 import com.kumoh.paylog2.R;
 import com.kumoh.paylog2.dto.ContentsCategoryItem;
+import com.kumoh.paylog2.dto.HistoryVO;
 import com.kumoh.paylog2.util.MyException;
 
 import java.util.Calendar;
@@ -30,9 +31,16 @@ public class AddSpendingHistoryDialog extends Dialog implements View.OnClickList
     List<ContentsCategoryItem> lists;
     AddSpendingHistoryDialogListener addSpendingHistoryDialogListener;
 
+    HistoryVO imageProcessingResult;
+
     public AddSpendingHistoryDialog(@NonNull Context context, List<ContentsCategoryItem> lists){
         super(context);
         this.lists = lists;
+    }
+    public AddSpendingHistoryDialog(Context context, List<ContentsCategoryItem> lists, HistoryVO imageProcessingResult){
+        super(context);
+        this.lists = lists;
+        this.imageProcessingResult = imageProcessingResult;
     }
 
     @Override
@@ -52,6 +60,12 @@ public class AddSpendingHistoryDialog extends Dialog implements View.OnClickList
         addButton = (Button) findViewById(R.id.add_spending_ok_button);
         cancelButton = (Button) findViewById(R.id.add_spending_cancel_button);
         warningMessage = (TextView) findViewById(R.id.add_spending_warning_message);
+
+        // 이미지 처리를 하고 호출이 되었다면
+        if(imageProcessingResult != null) {
+            amountEdit.setText(imageProcessingResult.getAmount());
+            descriptionEdit.setText(imageProcessingResult.getDescription());
+        }
 
         // 리스너 등록
         dateSelectButton.setOnClickListener(this);
