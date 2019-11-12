@@ -65,8 +65,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //DB 초기화
         db = LocalDatabase.getInstance(this);
-        //만약 데이터가 아무것도 없으면 default  group 추가
-        new CreateDefaultAccountAsyncTask(db.accountDao()).execute();
 
         ViewPager pager = findViewById(R.id.main_view_pager);
         MainFragmentAdapter adapter = new MainFragmentAdapter(getSupportFragmentManager(), 0);
@@ -112,19 +110,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         protected Void doInBackground(Account... accounts) {
             dao.insertAccount(accounts[0]);
 
-            return null;
-        }
-    }
-    private static class CreateDefaultAccountAsyncTask extends AsyncTask<Void, Void, Void>{
-        AccountDao dao ;
-        public CreateDefaultAccountAsyncTask(AccountDao dao){
-            this.dao = dao;
-        }
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if(dao.getRowCount() == 0){
-                dao.insertAccount(new Account(0,"디폴트그룹","기본 생성",1));
-            }
             return null;
         }
     }

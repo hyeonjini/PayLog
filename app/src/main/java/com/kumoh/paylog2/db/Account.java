@@ -59,4 +59,8 @@ public class Account {
     public void setIsMain(int isMain) {
         this.isMain = isMain;
     }
+
+    public static Account populateDefaultGroup(){
+        return new Account(0,"디폴트그룹","기본 생성",1);
+    }
 }

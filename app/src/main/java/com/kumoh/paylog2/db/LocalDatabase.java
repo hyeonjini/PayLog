@@ -39,8 +39,10 @@ public abstract class LocalDatabase extends RoomDatabase {
                         Executors.newSingleThreadExecutor().execute(new Runnable() {
                             @Override
                             public void run() {
-                                Log.i("AddDeaultCategory","now");
+                                Log.i("Add Default Category","now");
                                 getInstance(context).categoryDao().insertAll(Category.populateData());
+                                Log.i("Add Default Group","now");
+                                getInstance(context).accountDao().insertAccount(Account.populateDefaultGroup());
                             }
                         });
                     }
