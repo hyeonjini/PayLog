@@ -70,7 +70,7 @@ public class AddIncomeHistoryDialog extends Dialog implements View.OnClickListen
             case R.id.add_income_select_date_button:
                 Calendar c = Calendar.getInstance();
                 int mYear = c.get(Calendar.YEAR); int mMonth = c.get(Calendar.MONTH); int mDay = c.get(Calendar.DAY_OF_MONTH);
-                DatePickerDialog dpd = new DatePickerDialog(getContext(), pickerCallBack, mYear,mMonth,mDay);
+                DatePickerDialog dpd = new DatePickerDialog(getContext(), R.style.DatePickerDialogTheme, pickerCallBack, mYear,mMonth,mDay);
                 dpd.show();
                 break;
             case R.id.add_income_select_category_button:

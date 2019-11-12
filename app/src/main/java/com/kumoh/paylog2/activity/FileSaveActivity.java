@@ -135,13 +135,13 @@ public class FileSaveActivity extends AppCompatActivity implements View.OnClickL
             }
             case R.id.save_file_select_fromDate_button:
                 Calendar c1 = Calendar.getInstance();
-                DatePickerDialog fromDatePickerDialog = new DatePickerDialog(this, fromPickerCallBack, c1.get(Calendar.YEAR), c1.get(Calendar.MONTH), c1.get(Calendar.DAY_OF_MONTH));
+                DatePickerDialog fromDatePickerDialog = new DatePickerDialog(this, R.style.DatePickerDialogTheme, fromPickerCallBack, c1.get(Calendar.YEAR), c1.get(Calendar.MONTH), c1.get(Calendar.DAY_OF_MONTH));
                 fromDatePickerDialog.show();
                 break;
 
             case R.id.save_file_select_toDate_button:
                 Calendar c2 = Calendar.getInstance();
-                DatePickerDialog toDatePickerDialog = new DatePickerDialog(this, toPickerCallBack, c2.get(Calendar.YEAR), c2.get(Calendar.MONTH), c2.get(Calendar.DAY_OF_MONTH));
+                DatePickerDialog toDatePickerDialog = new DatePickerDialog(this, R.style.DatePickerDialogTheme ,toPickerCallBack, c2.get(Calendar.YEAR), c2.get(Calendar.MONTH), c2.get(Calendar.DAY_OF_MONTH));
                 toDatePickerDialog.show();
                 break;
         }
