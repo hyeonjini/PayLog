@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -25,16 +26,19 @@ import android.view.DragEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.amitshekhar.model.Response;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 import com.kumoh.paylog2.R;
+import com.kumoh.paylog2.ResponseCallback;
 import com.kumoh.paylog2.dto.HistoryVO;
 import com.kumoh.paylog2.fragment.contents.ContentsListFragment;
 import com.kumoh.paylog2.fragment.contents.ContentsMonthFragment;
@@ -57,7 +61,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ContentsActivity extends AppCompatActivity implements View.OnClickListener,
+public class ContentsActivity extends AppCompatActivity implements View.OnClickListener, ResponseCallback,
         ContentsListFragment.RecyclerScrollStateChangedListener, ContentsMonthFragment.RecyclerScrollStateChangedListener {
     private LocalDatabase db;
     private int selectedAccountId;
@@ -68,6 +72,8 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
     private Animation fab_open, fab_close, all_fab_open, all_fab_close;
     private Boolean isAddFabVisible = false;
     private Boolean isAllFabVisible = true;
+
+
 
     // Progress Bar
     ProgressBar imageProcessingProgressBar;
@@ -195,21 +201,8 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
                                         rotatedBitmap = bitmap;
                                 }
 
-                                imageProcessingProgressBar.setVisibility(View.VISIBLE);
-                                SendImageAsyncTask sendImageAsyncTask = new SendImageAsyncTask(db.historyDao());
-
-                                HistoryVO resultHistory = sendImageAsyncTask.execute(rotatedBitmap).get();
-
-                                AddSpendingHistoryDialog addSpendingHistoryDialog = new AddSpendingHistoryDialog(this, spendingLists, resultHistory);
-
-                                addSpendingHistoryDialog.setAddSpendingHistoryDialogListener(new AddSpendingHistoryDialog.AddSpendingHistoryDialogListener() {
-                                    @Override
-                                    public void onAddButtonClicked(int kind, String date, int category, String description, int amount) {
-                                        History spending = new History(selectedAccountId,kind,date,category,description,amount);
-                                        new InsertHistory(db.historyDao()).execute(spending);
-                                    }
-                                });
-                                addSpendingHistoryDialog.show();
+                                //imageProcessingProgressBar.setVisibility(View.VISIBLE);
+                                new SendImageAsyncTask(db.historyDao(),this).execute(rotatedBitmap);
                             }
                         } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                             //Exception error = resultUri.getError();
@@ -224,6 +217,21 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
         } catch(Exception error) {
             error.printStackTrace();
         }
+    }
+
+    // callback method
+    @Override
+    public void showAddSpendingDialog(HistoryVO resultHistory) {
+        AddSpendingHistoryDialog addSpendingHistoryDialog = new AddSpendingHistoryDialog(this, spendingLists, resultHistory);
+
+        addSpendingHistoryDialog.setAddSpendingHistoryDialogListener(new AddSpendingHistoryDialog.AddSpendingHistoryDialogListener() {
+            @Override
+            public void onAddButtonClicked(int kind, String date, int category, String description, int amount) {
+                History spending = new History(selectedAccountId,kind,date,category,description,amount);
+                new InsertHistory(db.historyDao()).execute(spending);
+            }
+        });
+        addSpendingHistoryDialog.show();
     }
 
     //-------------------------------------------
@@ -365,22 +373,30 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
     private class SendImageAsyncTask extends AsyncTask<Bitmap, Void, HistoryVO> {
         RequestHttpURLConnection conn;
         HistoryDao dao;
+        ResponseCallback callback;
+        private ProgressDialog progressDialog;
 
-        public SendImageAsyncTask(HistoryDao dao) {
+        public SendImageAsyncTask(HistoryDao dao, ResponseCallback callback) {
             this.dao = dao;
+            this.callback = callback;
         }
 
         @Override
         protected void onPreExecute() {
             conn = new RequestHttpURLConnection();
-            imageProcessingProgressBar.setVisibility(View.VISIBLE);
+            //imageProcessingProgressBar.setVisibility(View.VISIBLE);
+            progressDialog = new ProgressDialog(ContentsActivity.this);
+            progressDialog.setMessage("조금만 기다려 주세요..");
+            progressDialog.setTitle("영수증 처리중");
+            progressDialog.setIndeterminate(false);
+            progressDialog.setCancelable(false);
+            progressDialog.show();
         }
 
         @Override
         protected HistoryVO doInBackground(Bitmap... bitmaps) {
-            System.out.println("1111111");
 
-            JSONObject jsonObject = conn.requestImageProcessing("http://202.31.138.206:3000/image", bitmaps[0]);
+            JSONObject jsonObject = conn.requestImageProcessing("http://61.85.60.36:8080/image", bitmaps[0]);
 
             // Gson 이용해서 객체에 담기
             Gson gson = new Gson();
@@ -392,14 +408,14 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
 
         @Override
         protected void onPostExecute(HistoryVO historyVO) {
-            imageProcessingProgressBar.setVisibility(View.GONE);
-
+            callback.showAddSpendingDialog(historyVO);
+            progressDialog.dismiss();
         }
 
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            imageProcessingProgressBar.setVisibility(View.GONE);
+            progressDialog.dismiss();
         }
     }
 
