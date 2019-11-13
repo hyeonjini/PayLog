@@ -11,6 +11,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -202,7 +203,7 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
                                 }
 
                                 //imageProcessingProgressBar.setVisibility(View.VISIBLE);
-                                new SendImageAsyncTask(db.historyDao(),this).execute(rotatedBitmap);
+                                new SendImageAsyncTask(this, db.historyDao(),this).execute(rotatedBitmap);
                             }
                         } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                             //Exception error = resultUri.getError();
@@ -371,12 +372,13 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
     // 촬영한 사진을 server 로부터 이미지 처리를 하는 AsyncTask
 
     private class SendImageAsyncTask extends AsyncTask<Bitmap, Void, HistoryVO> {
+        Context context;
         RequestHttpURLConnection conn;
         HistoryDao dao;
         ResponseCallback callback;
         private ProgressDialog progressDialog;
 
-        public SendImageAsyncTask(HistoryDao dao, ResponseCallback callback) {
+        public SendImageAsyncTask(Context context, HistoryDao dao, ResponseCallback callback) {
             this.dao = dao;
             this.callback = callback;
         }
@@ -398,12 +400,16 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
 
             JSONObject jsonObject = conn.requestImageProcessing("http://61.85.60.36:8080/image", bitmaps[0]);
 
-            // Gson 이용해서 객체에 담기
-            Gson gson = new Gson();
+            if(jsonObject != null) {
+                // Gson 이용해서 객체에 담기
+                Gson gson = new Gson();
 
-            HistoryVO resultHistory = gson.fromJson(jsonObject.toString(), HistoryVO.class);
+                HistoryVO resultHistory = gson.fromJson(jsonObject.toString(), HistoryVO.class);
 
-            return resultHistory;
+                return resultHistory;
+            }
+
+            return null;
         }
 
         @Override
@@ -416,6 +422,7 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
         protected void onCancelled() {
             super.onCancelled();
             progressDialog.dismiss();
+            Toast.makeText(context, "서버와의 통신이 원활하지 않습니다.", Toast.LENGTH_LONG).show();
         }
     }
 
