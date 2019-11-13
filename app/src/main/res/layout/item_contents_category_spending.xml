@@ -14,7 +14,12 @@
         android:id="@+id/category_spending_text"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:textAlignment="center"
         android:layout_weight="1"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"/>
 
 </LinearLayout>

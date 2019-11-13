@@ -82,7 +82,7 @@ public class ContentsStatisticsFragment extends Fragment {
 
         pieChart.setUsePercentValues(true); // true로 하면 percent, false로 하면 rawData
         pieChart.setTouchEnabled(true); // 차트 터치 활성화
-        pieChart.setDragDecelerationEnabled(false); // 차트 회전 비활성화
+        pieChart.setRotationEnabled(false); // 차트 회전 비활성화
         pieChart.getDescription().setEnabled(false); // 설명 비활성화
         pieChart.setHoleRadius(0); // 차트 out->in 채울 비율
         pieChart.setTransparentCircleRadius(0); // 차트 중앙 원 비율
@@ -118,7 +118,7 @@ public class ContentsStatisticsFragment extends Fragment {
         data.setValueFormatter(new PercentFormatter()); // 수치 표기 text 포맷 설정
         data.setValueTextSize(10f); // 수치 표기 text 크기
 
-        pieChart.setEntryLabelColor(R.color.textBlack); // 카테고리 표기 text 색
+        pieChart.setEntryLabelColor(getResources().getColor(R.color.textBlack)); // 카테고리 표기 text 색
 
         pieChart.setData(data);
         pieChart.invalidate();

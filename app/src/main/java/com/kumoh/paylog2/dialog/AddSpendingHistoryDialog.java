@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -100,7 +101,6 @@ public class AddSpendingHistoryDialog extends Dialog implements View.OnClickList
                         categorySelectButton.setText(categoryItem.getCategory());
                     }
                 });
-                ssd.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
                 ssd.show();
                 break;
             case R.id.add_spending_ok_button:

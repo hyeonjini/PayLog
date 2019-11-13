@@ -130,7 +130,7 @@ public class ContentsCalendarAdapter extends RecyclerView.Adapter<RecyclerView.V
                 if(dataList != null){
                     for(ContentsCalendarItem c : dataList){
                         if(c.getDate().equals(date)){
-                            Log.i("데이터 있음", date);
+                            Log.i("데이터 있음", date + "일");
                             holder.incomeView.setText(formatMoney(c.getIncome()));
                             holder.spendingView.setText(formatMoney(c.getSpending()));
                             break;
