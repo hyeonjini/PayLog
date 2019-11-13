@@ -24,6 +24,9 @@ public abstract class LocalDatabase extends RoomDatabase {
     public static LocalDatabase getInstance(Context context){
         if(instance == null){
             instance = buildDatabase(context);
+            // 초기 데이터 생성을 위한 더미 쿼리
+            instance.query("select 1",null);
+            Log.i("Init LocalDB","now");
         }
         return instance;
     }
@@ -39,10 +42,10 @@ public abstract class LocalDatabase extends RoomDatabase {
                         Executors.newSingleThreadExecutor().execute(new Runnable() {
                             @Override
                             public void run() {
-                                Log.i("Add Default Category","now");
                                 getInstance(context).categoryDao().insertAll(Category.populateData());
-                                Log.i("Add Default Group","now");
+                                Log.i("Add Default Category","now");
                                 getInstance(context).accountDao().insertAccount(Account.populateDefaultGroup());
+                                Log.i("Add Default Group","now");
                             }
                         });
                     }
