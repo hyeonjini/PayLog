@@ -160,7 +160,7 @@ public class ContentsListFragment extends Fragment implements ContentsListRecycl
 
     @Override
     public void onItemLongClicked(int pos) {
-        Toast.makeText(getContext(), "길게 눌림", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(), "길게 눌림", Toast.LENGTH_SHORT).show();
         if(listItem.get(pos).getViewType() == INCOME_VIEW){
             ControlIncomeHistoryDialog controlIncomeHistoryDialog = new ControlIncomeHistoryDialog(getContext(), incomeCategories, (ContentsListBody) listItem.get(pos));
             controlIncomeHistoryDialog.setControlIncomeHistoryDialogListener(new ControlIncomeHistoryDialog.ControlIncomeHistoryDialogListener() {
@@ -198,10 +198,10 @@ public class ContentsListFragment extends Fragment implements ContentsListRecycl
     public boolean onTouch(View view, MotionEvent motionEvent) {
         switch(motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                Toast.makeText(getContext(), "하이", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "하이", Toast.LENGTH_SHORT).show();
                 break;
             case MotionEvent.ACTION_UP:
-                Toast.makeText(getContext(), "바이", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "바이", Toast.LENGTH_SHORT).show();
                 break;
         }
 
