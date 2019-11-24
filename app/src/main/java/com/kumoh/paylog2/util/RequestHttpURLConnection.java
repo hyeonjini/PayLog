@@ -101,6 +101,70 @@ public class RequestHttpURLConnection {
         return null;
     }
 
+    public boolean sendBackupJson(String _url, JSONObject userJson) {
+        // HttpURLConnection 참조 변수.
+        HttpURLConnection conn = null;
+
+        /**
+         * 2. HttpURLConnection을 통해 web의 데이터를 가져온다.
+         * */
+        try{
+            URL url = new URL(_url);
+            conn = (HttpURLConnection) url.openConnection();
+
+            // [2-1]. conn 옵션 설정.
+
+            // URL 요청에 대한 메소드 설정 : POST.
+            conn.setRequestMethod("POST");
+            // Content type 설정. Request Body 전달시 json 으로 서버에 전달
+            conn.setRequestProperty("Content-Type", "application/json");
+            // Accept type 설정. Response Data 를 json 으로 서버로 받음
+            conn.setRequestProperty("Accept", "application/json");
+            // 컨트롤 캐쉬 설정(캐쉬를 유지할 필요가 없으므로 no-cache)
+            conn.setRequestProperty("Cache-Control","no-cache");
+
+            // OutputStream 으로 데이터를 넘겨주고,
+            conn.setDoOutput(true);
+            // InputStream 으로 데이터를 받겠다는 옵션
+            conn.setDoInput(true);
+
+            // body 에 보낼 json 객체 생성 및 초기화
+            JSONObject job = userJson;
+
+            // 혹시나 BufferedWriter랑 섞어서 사용하는거랑 OutputStream 그 자체로 사용하는거랑 속도 비교를 해봤는데
+            // OutputStream만 쓴 경우가 더 빨랐다 왜지?? (좀더 공부 해봐야할듯)
+
+            // [2-2]. parameter 전달 및 데이터 읽어오기.
+            OutputStream os = conn.getOutputStream();
+            os.write(job.toString().getBytes()); // 출력 스트림에 출력.
+            os.flush(); // 출력 스트림을 플러시(비운다)하고 버퍼링 된 모든 출력 바이트를 강제 실행.
+            os.close(); // 출력 스트림을 닫고 모든 시스템 자원을 해제.
+
+            // [2-3]. 연결 요청 확인.
+            // 실패 시 null을 리턴하고 메서드를 종료.
+            if (conn.getResponseCode() != HttpURLConnection.HTTP_OK)
+                return false;
+
+            // [2-4]. 읽어온 결과물 리턴.
+            // 요청한 URL의 출력물을 BufferedReader로 받는다.
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+
+            return true;
+
+        } catch (MalformedURLException e) { // for URL.
+            e.printStackTrace();
+        } catch (IOException e) { // for openConnection().
+            e.printStackTrace();
+        } catch(Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (conn != null)
+                conn.disconnect();
+        }
+
+        return false;
+    }
+
     public String getBase64String(Bitmap bitmap)
     {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();

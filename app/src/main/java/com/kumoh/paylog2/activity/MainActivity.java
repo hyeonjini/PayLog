@@ -131,6 +131,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Intent intent = new Intent(getApplicationContext(), FileActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.nav_data_up:
+                Intent intent1 = new Intent(getApplicationContext(), DataActivity.class);
+                startActivity(intent1);
+                break;
+            case R.id.nav_data_down:
+
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_drawer);

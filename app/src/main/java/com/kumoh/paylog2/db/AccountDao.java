@@ -44,4 +44,8 @@ public abstract class AccountDao {
     public abstract void wipeOutMainAccount();
     @Query("UPDATE Account SET isMain = 1 WHERE accountId = :accountId")
     public abstract void appointMainAccountById(int accountId);
+
+    //전체 Account 불러오기(데이터 백업용)
+    @Query("SELECT * FROM Account")
+    public abstract List<Account> getAllAccounts();
 }

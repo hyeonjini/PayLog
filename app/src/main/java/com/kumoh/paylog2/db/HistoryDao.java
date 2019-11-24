@@ -45,4 +45,8 @@ public interface HistoryDao {
 
     @Query("DELETE FROM History WHERE historyId = :historyId")
     void deleteHistory(int historyId);
+
+    //전체 History 불러오기(데이터 백업용)
+    @Query("SELECT * FROM History")
+    List<History> getAllHistories();
 }

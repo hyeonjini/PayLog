@@ -27,4 +27,8 @@ public interface CategoryDao {
 
     @Insert
     void insertCategory(Category category);
+
+    //전체 History 불러오기(데이터 백업용)
+    @Query("SELECT * FROM Category")
+    List<Category> getAllCategories();
 }
