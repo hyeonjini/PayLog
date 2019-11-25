@@ -47,6 +47,13 @@ public class ControlIncomeHistoryDialog extends Dialog implements View.OnClickLi
 
         setContentView(R.layout.dialog_add_income);
 
+        String categoryName = null;
+        for (ContentsCategoryItem c : lists) {
+            if (item.getCategoryId() == c.getId())
+                categoryName = c.getCategory();
+        }
+        categoryItem = new ContentsCategoryItem(item.getCategoryId(), categoryName,item.getKind());
+
         dateSelectButton = (Button) findViewById(R.id.add_income_select_date_button);
         categorySelectButton = (Button) findViewById(R.id.add_income_select_category_button);
         amount = (EditText) findViewById(R.id.add_income_amount_text);

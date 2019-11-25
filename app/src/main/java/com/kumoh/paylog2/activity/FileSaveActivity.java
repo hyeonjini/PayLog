@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.kumoh.paylog2.db.AccountDao;
 import com.kumoh.paylog2.util.FileConversion;
 import com.kumoh.paylog2.R;
 import com.kumoh.paylog2.db.Account;
@@ -117,13 +118,14 @@ public class FileSaveActivity extends AppCompatActivity implements View.OnClickL
             case R.id.save_file_btn: {
                 // 사용자가 설정한 값 가져오기
                 AccountSpinnerData accountInfo = (AccountSpinnerData) accountNameSpinner.getSelectedItem();
+                int accountId = accountInfo.getId();
                 String fromDate = fromDateBtn.getText().toString();
                 String toDate = toDateBtn.getText().toString();
 
                 // 저장할 파일의 이름
                 String fileName = fileNameEdit.getText().toString() + ".xls";
 
-                new SaveFileAsyncTask(this, db.historyDao(), fileName, accountInfo.getId(), fromDate, toDate).execute();
+                new SaveFileAsyncTask(this, db.historyDao(), db.accountDao(), fileName, accountId, fromDate, toDate).execute();
 
                 Intent resultIntent = new Intent();
 
@@ -201,18 +203,21 @@ public class FileSaveActivity extends AppCompatActivity implements View.OnClickL
         private Context context;
 
         private HistoryDao hDao;
+        private AccountDao aDao;
 
         private String fileName;
         private int accountId;
+        private String accountName;
         private String fromDate;
         private String toDate;
         private List<History> hList;
 
         private FileConversion fConv;
 
-        public SaveFileAsyncTask(Context context, HistoryDao hDao, String fileName, int accountId, String fromData, String toDate) {
+        public SaveFileAsyncTask(Context context, HistoryDao hDao, AccountDao aDao, String fileName, int accountId, String fromData, String toDate) {
             this.context = context;
             this.hDao = hDao;
+            this.aDao = aDao;
             this.fileName = fileName;
             this.accountId = accountId;
             this.fromDate = fromData;
@@ -232,7 +237,9 @@ public class FileSaveActivity extends AppCompatActivity implements View.OnClickL
 
             hList = hDao.getAllFromToByAccountId(accountId, fromDate, toDate);
 
-            fConv.saveExcelFile(context, hList, fileName);
+            accountName = aDao.getAccountById(accountId).getName();
+
+            fConv.saveExcelFile(context, accountName, hList, fileName);
 
             return null;
         }

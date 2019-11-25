@@ -40,6 +40,8 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 import com.kumoh.paylog2.R;
 import com.kumoh.paylog2.ResponseCallback;
+import com.kumoh.paylog2.db.Image;
+import com.kumoh.paylog2.db.ImageDao;
 import com.kumoh.paylog2.dto.HistoryVO;
 import com.kumoh.paylog2.fragment.contents.ContentsListFragment;
 import com.kumoh.paylog2.fragment.contents.ContentsMonthFragment;
@@ -209,8 +211,8 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
                             //Exception error = resultUri.getError();
                         }
                         // 원본 이미지 삭제
-                        originalFile = new File(mCurrentPhotoPath);
-                        originalFile.delete();
+//                        originalFile = new File(mCurrentPhotoPath);
+//                        originalFile.delete();
                     }
                     break;
                 }
@@ -229,7 +231,11 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onAddButtonClicked(int kind, String date, int category, String description, int amount) {
                 History spending = new History(selectedAccountId,kind,date,category,description,amount);
-                new InsertHistory(db.historyDao()).execute(spending);
+                //new InsertHistory(db.historyDao()).execute(spending);
+
+                new InsertHistoryAndImage(db.historyDao(), db.imageDao()).execute(spending);
+
+                // 사진경로 db에 추가하는 부분
             }
         });
         addSpendingHistoryDialog.show();
@@ -423,6 +429,50 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
             super.onCancelled();
             progressDialog.dismiss();
             Toast.makeText(context, "서버와의 통신이 원활하지 않습니다.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private class InsertHistoryAndImage extends AsyncTask<History, Void, Integer> {
+
+        private HistoryDao hDao;
+        private ImageDao iDao;
+        private History history;
+
+        public InsertHistoryAndImage(HistoryDao hDao, ImageDao iDao) {
+            this.hDao = hDao;
+            this.iDao = iDao;
+        }
+
+        @Override
+        protected Integer doInBackground(History... histories) {
+            history = histories[0];
+            return hDao.insertHistoryAndGetId(history);
+        }
+
+        @Override
+        protected void onPostExecute(Integer historyId) {
+            new InsertImage(iDao, history.getAccountId(), historyId).execute();
+        }
+    }
+
+    private class InsertImage extends AsyncTask<Integer, Void, Void> {
+
+        private ImageDao iDao;
+        private int accountId;
+        private int historyId;
+
+        public InsertImage(ImageDao iDao, int accountId, int historyId) {
+            this.iDao = iDao;
+            this.accountId = accountId;
+            this.historyId = historyId;
+        }
+
+        @Override
+        protected Void doInBackground(Integer... integers) {
+
+            iDao.insertImage(new Image(accountId, historyId, mCurrentPhotoPath));
+
+            return null;
         }
     }
 

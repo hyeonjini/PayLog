@@ -12,12 +12,13 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import java.util.concurrent.Executors;
 
 
-@Database(version = 1, entities = {Account.class, History.class, Category.class})
+@Database(version = 1, entities = {Account.class, History.class, Category.class, Image.class})
 public abstract class LocalDatabase extends RoomDatabase {
 
     public abstract AccountDao accountDao();
     public abstract HistoryDao historyDao();
     public abstract CategoryDao categoryDao();
+    public abstract ImageDao imageDao();
 
     private static LocalDatabase instance = null;
 
