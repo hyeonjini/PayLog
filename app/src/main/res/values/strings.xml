@@ -14,4 +14,26 @@
 
     <!-- crop activity customizing -->
     <string name="crop_image_menu_crop" translatable="false">SEND</string>
+
+    <!-- 데이터 관련 텍스트-->
+    <string name="data_out_dialog">Sending Data</string>
+    <string name="data_in_dialog">Downloading Data</string>
+    <string name="data_wait">Wait for seconds...</string>
+    <string name="data_out_title">- Export Data</string>
+    <string name="data_out_explain_1">
+        ※ If you reinstall within 14 days of a history backup, you can restore it when you log in to the same Google account.
+    </string>
+    <string name="data_out_explain_2">
+        ※ The data backed up can be reinstalled using the data import function.
+    </string>
+    <string name="data_in_title">- Import Data</string>
+    <string name="data_in_explain_1">
+        ※ Importing data is a feature that helps preserve user data when replacing a device.
+    </string>
+    <string name="data_in_explain_2">
+        ※ Please import data before using the service because the existing data will be deleted when you import the data.
+    </string>
+    <string name="data_out_btn">Start Backup</string>
+    <string name="data_in_btn">Start Import</string>
+
 </resources>

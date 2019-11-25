@@ -14,4 +14,26 @@
     <string name="item_main_account">대표 그룹으로 등록</string>
 
     <string name="crop_image_menu_crop">보내기</string>
+
+    <!-- 데이터 관련 텍스트-->
+    <string name="data_out_dialog">데이터 보내는 중</string>
+    <string name="data_in_dialog">데이터 가져오는 중</string>
+    <string name="data_wait">잠시만 기다려주세요...</string>
+    <string name="data_out_title">- 데이터 내보내기 도움말</string>
+    <string name="data_out_explain_1">
+        ※ 내역 백업 후 14일 이내에 재 설치하는 경우 동일한 구글 계정으로 로그인 시 복원할 수 있습니다.
+    </string>
+    <string name="data_out_explain_2">
+        ※ 백업 된 데이터는 데이터 가져오기 기능을 통해 다시 불러올 수 있습니다.
+    </string>
+    <string name="data_in_title">- 데이터 가져오기 도움말</string>
+    <string name="data_in_explain_1">
+        ※ 데이터 가져오기는 기기 교체 시 사용자 데이터의 보존을 돕기 위한 기능입니다.
+    </string>
+    <string name="data_in_explain_2">
+        ※ 데이터를 가져오면 기존의 데이터가 삭제되므로 서비스 이용 전 데이터를 가져와주세요.
+    </string>
+    <string name="data_out_btn">백업 하기</string>
+    <string name="data_in_btn">데이터 불러오기</string>
+
 </resources>
