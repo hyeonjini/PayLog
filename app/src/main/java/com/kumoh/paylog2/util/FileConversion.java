@@ -160,7 +160,7 @@ public class FileConversion {
             }
 
             else {
-                kind = "알 수 없는 종류";
+                //kind = "알 수 없는 종류";
             }
 
             cell.setCellValue(kind);

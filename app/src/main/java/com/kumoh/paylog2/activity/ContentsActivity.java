@@ -40,6 +40,8 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 import com.kumoh.paylog2.R;
 import com.kumoh.paylog2.ResponseCallback;
+import com.kumoh.paylog2.db.Image;
+import com.kumoh.paylog2.db.ImageDao;
 import com.kumoh.paylog2.dto.HistoryVO;
 import com.kumoh.paylog2.fragment.contents.ContentsListFragment;
 import com.kumoh.paylog2.fragment.contents.ContentsMonthFragment;
@@ -231,12 +233,9 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
                 History spending = new History(selectedAccountId,kind,date,category,description,amount);
                 //new InsertHistory(db.historyDao()).execute(spending);
 
-                new InsertHistoryAndImage(db.historyDao()).execute(spending);
-
-
+                new InsertHistoryAndImage(db.historyDao(), db.imageDao()).execute(spending);
 
                 // 사진경로 db에 추가하는 부분
-
             }
         });
         addSpendingHistoryDialog.show();
@@ -436,11 +435,12 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
     private class InsertHistoryAndImage extends AsyncTask<History, Void, Integer> {
 
         private HistoryDao hDao;
-        private
+        private ImageDao iDao;
         private History history;
 
-        public InsertHistoryAndImage(HistoryDao hDao) {
+        public InsertHistoryAndImage(HistoryDao hDao, ImageDao iDao) {
             this.hDao = hDao;
+            this.iDao = iDao;
         }
 
         @Override
@@ -451,22 +451,26 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
 
         @Override
         protected void onPostExecute(Integer historyId) {
-            new InsertImage(history.getAccountId(), historyId).execute();
+            new InsertImage(iDao, history.getAccountId(), historyId).execute();
         }
     }
 
     private class InsertImage extends AsyncTask<Integer, Void, Void> {
 
+        private ImageDao iDao;
         private int accountId;
         private int historyId;
 
-        public InsertImage(int accountId, int historyId) {
+        public InsertImage(ImageDao iDao, int accountId, int historyId) {
+            this.iDao = iDao;
             this.accountId = accountId;
             this.historyId = historyId;
         }
 
         @Override
         protected Void doInBackground(Integer... integers) {
+
+            iDao.insertImage(new Image(accountId, historyId, mCurrentPhotoPath));
 
             return null;
         }

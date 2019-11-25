@@ -38,7 +38,7 @@ public abstract class HistoryDao {
     public abstract LiveData<List<History>> getAllByAccountIdFromTo(int accountId, String fromDate, String toDate);
 
     // 해당 accountId의 카테고리 별 amount 내림차순 정렬
-    @Query("SELECT amount, categoryId, kind From History WHERE accountId = :accountId GROUP BY categoryId ORDER BY amount asc")
+    @Query("SELECT SUM(amount) as amount, categoryId, kind From History WHERE accountId = :accountId GROUP BY categoryId ORDER BY amount asc")
     public abstract LiveData<List<ContentsStatisticsCategoryItem>> getGroupedListByCategory(int accountId);
 
     @Update
@@ -51,7 +51,7 @@ public abstract class HistoryDao {
     @Query("SELECT * FROM History")
     public abstract List<History> getAllHistories();
 
-    @Query("SELECT IDENT_CURRENT('History')")
+    @Query("SELECT last_insert_rowid()")
     public abstract int getLastId();
 
     @Transaction
