@@ -19,6 +19,7 @@ public class History {
     private String description;
     private int amount;
 
+
     public History(int accountId, int kind, String date, int categoryId, String description, int amount) {
         this.accountId = accountId;
         this.kind = kind;

@@ -1,6 +1,7 @@
 package com.kumoh.paylog2.fragment.contents;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kumoh.paylog2.R;
+import com.kumoh.paylog2.activity.ImageViewActivity;
 import com.kumoh.paylog2.adapter.contents.ContentsFragmentAdapter;
 import com.kumoh.paylog2.adapter.contents.ContentsListRecyclerAdapter;
 import com.kumoh.paylog2.db.Category;
@@ -32,7 +34,8 @@ import com.kumoh.paylog2.dto.ContentsListItem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContentsListFragment extends Fragment implements ContentsListRecyclerAdapter.ContentsListRecyclerLongClickListener, View.OnTouchListener {
+public class ContentsListFragment extends Fragment implements ContentsListRecyclerAdapter.ContentsListRecyclerLongClickListener, View.OnTouchListener
+, ContentsListRecyclerAdapter.ContentsListOnClickListener {
     final static int SPENDING_VIEW = -1;
     final static int INCOME_VIEW = 1;
 
@@ -66,6 +69,7 @@ public class ContentsListFragment extends Fragment implements ContentsListRecycl
 
         adapter = new ContentsListRecyclerAdapter(new ArrayList<ContentsListItem>(), new ArrayList<ContentsCategoryItem>());
         adapter.setLongClickListener(this);
+        adapter.setOnClickListener(this);
 
         recyclerView.addOnScrollListener(onScrollListener);
 
@@ -92,27 +96,7 @@ public class ContentsListFragment extends Fragment implements ContentsListRecycl
     private void makeListHeader(List<History> newData){
         listItem = null;
         listItem = new ArrayList<ContentsListItem>();
-        /*int flag = 0;
-        for(int i = 0; i < newData.size(); i ++){
-            listItem.add(new ContentsListHeader(newData.get(i).getDate())); //헤더추가
-            int spend = 0;
-            int income = 0;
-            for(int j = i; j < newData.size()-1; j++){
-                if(newData.get(j).getKind() == 1){
-                    income += newData.get(j).getAmount();
-                }else if (newData.get(j).getKind() == -1){
-                    spend += newData.get(j).getAmount();
-                }
-                listItem.add(new ContentsListBody(newData.get(j).getKind(),newData.get(j).getDate(), newData.get(j).getCategoryId(),
-                        newData.get(j).getDescription(), newData.get(j).getAmount(), newData.get(j).getHistoryId()));
 
-                if(newData.get(j).getDate().equals(newData.get(j+1).getDate())){ //끝내기전 헤더 데이터 변경
-                    listItem.get(i).setSpending(spend);
-                    listItem.get(i).setIncome(income);
-                    i = j+1;
-                }
-            }
-        }*/
         int flag = 0;
         int spending =0, income = 0;
         listItem.add(new ContentsListHeader(newData.get(0).getDate()));
@@ -227,6 +211,18 @@ public class ContentsListFragment extends Fragment implements ContentsListRecycl
 
         this.spendingCategories =  spendingCategories;
         this.incomeCategories = incomeCategories;
+    }
+
+    @Override
+    public void onItemClicked(int pos) {
+
+        int hId = ((ContentsListBody)listItem.get(pos)).getHistoryId();
+        int accountId = this.accountId;
+        String ImagePath = Integer.toString(accountId) + "-" + Integer.toString(hId)+".jpg"; //이미지 패스 accountId + historyId
+        Intent intent = new Intent(getContext(), ImageViewActivity.class);
+        intent.putExtra("imagePath",ImagePath);
+        startActivity(intent);
+
     }
 
     private static class UpdateHistory extends AsyncTask<History, Void, Void> {

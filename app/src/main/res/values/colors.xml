@@ -15,4 +15,5 @@
     <color name="fab40_mainColor">#662b90d9</color>
     <color name="income_Color">#60c5ba</color>
     <color name="spending_Color">#ee2560</color>
+    <color name="white">#ffffff</color>
 </resources>

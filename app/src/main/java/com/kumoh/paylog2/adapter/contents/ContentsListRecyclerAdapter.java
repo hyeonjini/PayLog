@@ -23,11 +23,15 @@ public class ContentsListRecyclerAdapter
     private List<ContentsListItem> data;
     private List<ContentsCategoryItem> categoryItems;
     private ContentsListRecyclerLongClickListener longClickListener;
+    private ContentsListOnClickListener onClickListener;
     private DecimalFormat dc = new DecimalFormat("###,###,###,###,###");
     private static final int VIEW_TYPE_HEADER = 0;
     final static int SPENDING_VIEW = -1;
     final static int INCOME_VIEW = 1;
 
+    public ContentsListItem getItem(int pos){
+        return data.get(pos);
+    }
     public ContentsListRecyclerAdapter(ArrayList<ContentsListItem> data, ArrayList<ContentsCategoryItem> categoryItems){
         this.data = data;
         this.categoryItems = categoryItems;
@@ -81,6 +85,15 @@ public class ContentsListRecyclerAdapter
                     public boolean onLongClick(View v){
                         longClickListener.onItemLongClicked(pos);
                         return false;
+                    }
+                });
+            }
+            if(onClickListener != null){
+                final int pos = position;
+                holder.itemView.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View view) {
+                        onClickListener.onItemClicked(pos);
                     }
                 });
             }
@@ -163,4 +176,12 @@ public class ContentsListRecyclerAdapter
     public void setLongClickListener(ContentsListRecyclerLongClickListener longClickListener){
         this.longClickListener = longClickListener;
     }
+
+    public interface ContentsListOnClickListener{
+        void onItemClicked(int pos);
+    }
+    public void setOnClickListener(ContentsListOnClickListener onClickListener){
+        this.onClickListener = onClickListener;
+    }
+
 }
