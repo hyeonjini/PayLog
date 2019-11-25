@@ -6,8 +6,15 @@
     android:paddingStart="30dp"
     android:paddingEnd="30dp"
     android:background="#ffffff"
-    android:layout_height="600dp">
-
+    android:layout_height="500dp">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="수입"
+        android:textAlignment="center"
+        android:textSize="32sp"
+        android:background="#ffffff"
+        />
     <LinearLayout
         android:background="#ffffff"
         android:layout_width="match_parent"
@@ -21,6 +28,7 @@
             android:layout_weight="0.5"
             android:layout_height="match_parent"
             android:text="날짜"
+            android:background="#ffffff"
             android:textSize="18sp"/>
         <Button
             android:layout_width="0dp"
@@ -28,6 +36,7 @@
             android:layout_height="match_parent"
             android:text="날짜 선택"
             android:background="#ffffff"
+            android:shadowColor="#ffffff"
             android:id="@+id/add_income_select_date_button"/>
     </LinearLayout>
     <LinearLayout
@@ -50,6 +59,7 @@
             android:layout_height="match_parent"
             android:text="분류 선택"
             android:background="#ffffff"
+            android:shadowColor="#ffffff"
             android:id="@+id/add_income_select_category_button"/>
     </LinearLayout>
     <LinearLayout
@@ -134,7 +144,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        android:layout_weight="0.5">
+        android:layout_weight="0.3">
 
         <TextView
             android:id="@+id/add_income_warning_message"
