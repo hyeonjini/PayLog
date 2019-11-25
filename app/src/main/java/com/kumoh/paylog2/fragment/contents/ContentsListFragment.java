@@ -218,9 +218,11 @@ public class ContentsListFragment extends Fragment implements ContentsListRecycl
 
         int hId = ((ContentsListBody)listItem.get(pos)).getHistoryId();
         int accountId = this.accountId;
-        String ImagePath = Integer.toString(accountId) + "-" + Integer.toString(hId)+".jpg"; //이미지 패스 accountId + historyId
+        String imageAccountId = Integer.toString(accountId) ; //이미지 패스 accountId + historyId
+        String imageHistoryId = Integer.toString(hId);
         Intent intent = new Intent(getContext(), ImageViewActivity.class);
-        intent.putExtra("imagePath",ImagePath);
+        intent.putExtra("account",imageAccountId);
+        intent.putExtra("history",imageHistoryId);
         startActivity(intent);
 
     }

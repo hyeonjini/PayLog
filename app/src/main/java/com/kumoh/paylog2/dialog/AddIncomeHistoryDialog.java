@@ -15,7 +15,9 @@ import com.kumoh.paylog2.R;
 import com.kumoh.paylog2.dto.ContentsCategoryItem;
 import com.kumoh.paylog2.util.MyException;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class AddIncomeHistoryDialog extends Dialog implements View.OnClickListener {
@@ -49,7 +51,10 @@ public class AddIncomeHistoryDialog extends Dialog implements View.OnClickListen
         addButton = (Button) findViewById(R.id.add_income_ok_button);
         cancelButton = (Button) findViewById(R.id.add_income_cancel_button);
         warningMessage = (TextView) findViewById(R.id.add_income_warning_message);
-
+        SimpleDateFormat format = new SimpleDateFormat( "yyyy-MM-dd");
+        Date time = new Date();
+        String date = format.format(time);
+        dateSelectButton.setText(date);
         // 리스너 등록
         dateSelectButton.setOnClickListener(this);
         categorySelectButton.setOnClickListener(this);

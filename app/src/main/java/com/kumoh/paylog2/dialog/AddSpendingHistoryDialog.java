@@ -19,7 +19,9 @@ import com.kumoh.paylog2.dto.ContentsCategoryItem;
 import com.kumoh.paylog2.dto.HistoryVO;
 import com.kumoh.paylog2.util.MyException;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class AddSpendingHistoryDialog extends Dialog implements View.OnClickListener{
@@ -61,7 +63,10 @@ public class AddSpendingHistoryDialog extends Dialog implements View.OnClickList
         addButton = (Button) findViewById(R.id.add_spending_ok_button);
         cancelButton = (Button) findViewById(R.id.add_spending_cancel_button);
         warningMessage = (TextView) findViewById(R.id.add_spending_warning_message);
-
+        SimpleDateFormat format = new SimpleDateFormat( "yyyy-MM-dd");
+        Date time = new Date();
+        String date = format.format(time);
+        dateSelectButton.setText(date);
         // 이미지 처리를 하고 호출이 되었다면
         if(imageProcessingResult != null) {
             amountEdit.setText(imageProcessingResult.getAmount());

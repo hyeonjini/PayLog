@@ -58,6 +58,7 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -203,7 +204,13 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
                                     default:
                                         rotatedBitmap = bitmap;
                                 }
+                                FileOutputStream out = new FileOutputStream(mCurrentPhotoPath);
 
+                                // compress 함수를 사용해 스트림에 비트맵을 저장합니다.
+                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+
+                                // 스트림 사용후 닫아줍니다.
+                                out.close();
                                 //imageProcessingProgressBar.setVisibility(View.VISIBLE);
                                 new SendImageAsyncTask(this, db.historyDao(),this).execute(rotatedBitmap);
                             }
@@ -446,6 +453,20 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
         @Override
         protected Integer doInBackground(History... histories) {
             history = histories[0];
+            //날짜 보정
+            String date = histories[0].getDate();
+            String split[] = date.split("-");
+            String year = split[0];
+            String month = split[1];
+            String day = split[2];
+            if(month.length() == 1){
+                month = "0"+month;
+            }
+            if(day.length() == 1){
+                day = "0"+day;
+            }
+            date = year+"-"+month+"-"+day;
+            histories[0].setDate(date);
             return hDao.insertHistoryAndGetId(history);
         }
 

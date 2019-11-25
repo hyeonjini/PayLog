@@ -157,8 +157,6 @@ public class AccountListFragment extends Fragment implements AccountListRecycler
     public void onItemClicked(int position) {
         AccountInfo account = null;
         account = adapter.getItem(position);
-
-        Toast.makeText(getContext(), "그룹id : "+account.getAccountId(), Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getActivity(), ContentsActivity.class);
         intent.putExtra("selectedGroupId",Integer.toString(account.getAccountId()));
         startActivity(intent);
