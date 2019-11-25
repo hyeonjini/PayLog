@@ -1,15 +1,20 @@
 package com.kumoh.paylog2.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.room.PrimaryKey;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.JsonReader;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -33,14 +38,38 @@ import java.util.List;
 
 public class DataActivity extends AppCompatActivity implements View.OnClickListener {
     private Button sendBtn;
+    private TextView title;
+    private TextView explain1;
+    private TextView explain2;
     private String userId;
+    private int activityType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_data);
 
+        Intent intent = getIntent();
+        activityType = intent.getExtras().getInt("type");
+
+        // Toolbar 설정
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar_data);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.main_icon_arrow_back_24dp);
+
         sendBtn = findViewById(R.id.btn_send);
+        title = findViewById(R.id.data_title);
+        explain1 = findViewById(R.id.data_exp_1);
+        explain2 = findViewById(R.id.data_exp_2);
+
+        if(activityType == 1){
+            sendBtn.setText(R.string.data_in_btn);
+            title.setText(R.string.data_in_title);
+            explain1.setText(R.string.data_in_explain_1);
+            explain2.setText(R.string.data_in_explain_2);
+        }
+
         sendBtn.setOnClickListener(this);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -55,6 +84,21 @@ public class DataActivity extends AppCompatActivity implements View.OnClickListe
                 new sendUserJson().execute(userId);
                 break;
         }
+    }
+
+    // Toolbar home icon action 설정 (뒤로가기)
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == android.R.id.home){
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 
     // 전송을 위한 Json 생성
@@ -125,8 +169,13 @@ public class DataActivity extends AppCompatActivity implements View.OnClickListe
             conn = new RequestHttpURLConnection();
             //imageProcessingProgressBar.setVisibility(View.VISIBLE);
             progressDialog = new ProgressDialog(DataActivity.this);
-            progressDialog.setMessage("조금만 기다려 주세요..");
-            progressDialog.setTitle("데이터 전송중");
+            progressDialog.setMessage(getResources().getString(R.string.data_wait));
+            if(activityType == 0){
+                progressDialog.setTitle(R.string.data_out_dialog);
+            }
+            else{
+                progressDialog.setTitle(R.string.data_in_dialog);
+            }
             progressDialog.setIndeterminate(false);
             progressDialog.setCancelable(false);
             progressDialog.show();
@@ -143,6 +192,14 @@ public class DataActivity extends AppCompatActivity implements View.OnClickListe
             categories = db.categoryDao().getAllCategories();
             Log.i("카테고리 수: ", "" + categories.size());
             createUserJson(userId, accounts, histories, categories);
+            try
+            {
+                Thread.sleep(1000);
+            }
+            catch(InterruptedException e)
+            {
+                e.printStackTrace();
+            }
             return null;
         }
 

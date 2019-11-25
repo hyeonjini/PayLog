@@ -133,10 +133,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_data_up:
                 Intent intent1 = new Intent(getApplicationContext(), DataActivity.class);
+                intent1.putExtra("type", 0);
                 startActivity(intent1);
                 break;
             case R.id.nav_data_down:
-
+                Intent intent2 = new Intent(getApplicationContext(), DataActivity.class);
+                intent2.putExtra("type", 1);
+                startActivity(intent2);
                 break;
         }
 
