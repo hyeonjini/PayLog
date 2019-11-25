@@ -36,12 +36,15 @@ public class FileConversion {
 
     private Map<Integer, String> titleMap = new HashMap<>();
 
+    private Map<Integer, String> spendingCategoryMap = new HashMap<>();
+    private Map<Integer, String> incomeCategoryMap = new HashMap<>();
+
     // LOGO : Paylog
     private final static int LOGO_START_ROW = 0;
 
     // Conversion Date
     private final static int CONVERSION_DATE_START_ROW = 3;
-    private final static int CONVERSION_DATE_START_COL = 4;
+    private final static int CONVERSION_DATE_START_COL = 3;
 
     // GROUP
     private final static int GROUP_START_ROW = 4;
@@ -74,6 +77,8 @@ public class FileConversion {
         titleMap.put(3, "수입");
         titleMap.put(4, "지출");
         titleMap.put(5, "비고");
+
+
     }
 
     // PayLog Logo 삽입
@@ -88,14 +93,14 @@ public class FileConversion {
     }
 
     // 그룹 이름 삽입
-    private void inputGroupName() {
+    private void inputGroupName(String accountName) {
         row = sheet.createRow(GROUP_START_ROW);
 
         // 셀 병합
         sheet.addMergedRegion(new CellRangeAddress(GROUP_START_ROW, GROUP_START_ROW, GROUP_START_COL, GROUP_START_COL+1));
 
         cell = row.createCell(GROUP_START_COL);
-        cell.setCellValue("그룹 이름 : ");
+        cell.setCellValue("그룹 이름 : " + accountName);
     }
 
     // 변환 날짜 삽입
@@ -108,7 +113,7 @@ public class FileConversion {
         row = sheet.createRow(CONVERSION_DATE_START_ROW);
 
         // 셀 병합
-        sheet.addMergedRegion(new CellRangeAddress(CONVERSION_DATE_START_ROW, CONVERSION_DATE_START_ROW, CONVERSION_DATE_START_COL, CONVERSION_DATE_START_COL+1));
+        sheet.addMergedRegion(new CellRangeAddress(CONVERSION_DATE_START_ROW, CONVERSION_DATE_START_ROW, CONVERSION_DATE_START_COL, CONVERSION_DATE_START_COL+2));
 
         cell = row.createCell(CONVERSION_DATE_START_COL);
         cell.setCellValue("파일 변환 날짜 : " + currentTime);
@@ -141,11 +146,23 @@ public class FileConversion {
             // (i, 1)위치의 셀에 mItems 의 유형(지출, 수입) 입력
             cell = row.createCell(1);
 
-            String kind;
-            int IKind = mItems.get(i).getKind();
-            if(IKind == 1) kind = "수입";
-            else if(IKind == -1) kind = "지출";
-            else kind = "알 수 없는 종류";
+            int kind = mItems.get(i).getKind();
+            int categoryId = mItems.get(i).getCategoryId();
+
+            // 수입
+            if(kind == 1) {
+
+            }
+
+            // 지출
+            else if(kind == 0) {
+
+            }
+
+            else {
+                kind = "알 수 없는 종류";
+            }
+
             cell.setCellValue(kind);
 
             // (i, 0)위치의 셀에 mItems 의 내용 입력
@@ -194,9 +211,9 @@ public class FileConversion {
         return file;
     }
 
-    public File saveExcelFile(Context context, List<History> mItems, String fileName) {
+    public File saveExcelFile(Context context, String accountName, List<History> mItems, String fileName) {
         inputLogo();
-        inputGroupName();
+        inputGroupName(accountName);
         inputConversionDate();
         typeTitles();
         typeContexts(mItems);
