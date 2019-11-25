@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.kumoh.paylog2.R;
@@ -120,18 +121,7 @@ public class FileActivity extends AppCompatActivity
         //Uri path = Uri.fromFile(item);
 
 
-        // 파일 공유하기
-//                        Uri uri = FileProvider.getUriForFile(context, "com.bignerdranch.android.test.fileprovider", item);
-//
-//                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-//                        shareIntent.setType("application/excel");
-//                        shareIntent.putExtra(Intent.EXTRA_STREAM,uri);
-//
-//                        Intent intent = Intent.createChooser(shareIntent, "엑셀 내보내기");
-//
-//                        context.startActivity(intent);
 
-        //출처: https://liveonthekeyboard.tistory.com/entry/안드로이드-엑셀-파일-생성-내보내기 [키위남]
     }
 
     // 삭제 Dialog
@@ -177,11 +167,42 @@ public class FileActivity extends AppCompatActivity
 
     // Recycler View item longClick event
     @Override
-    public void onItemLongClicked(int position) {
+    public void onItemLongClicked(View view, int position) {
         // 오랫동안 눌렀을 때 이벤트가 발생됨
-        File file = adapter.getItem(position);
 
-        fileDeleteDialog(file);
+
+        PopupMenu popup=new PopupMenu(this, view);
+        popup.getMenuInflater().inflate(R.menu.item_file_popup_menu,popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                File file = adapter.getItem(position);
+
+                switch(item.getItemId()){
+                    // 파일 공유
+                    case R.id.file_share_popup_item:
+                        // 파일 공유하기
+                        Uri uri = FileProvider.getUriForFile(getApplicationContext(), "com.kumoh.paylog2.fileprovider", file);
+
+                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                        shareIntent.setType("application/excel");
+                        shareIntent.putExtra(Intent.EXTRA_STREAM,uri);
+
+                        Intent intent = Intent.createChooser(shareIntent, "엑셀 내보내기");
+
+                        startActivity(intent);
+                        //출처: https://liveonthekeyboard.tistory.com/entry/안드로이드-엑셀-파일-생성-내보내기 [키위남]
+                        break;
+
+                    // 파일 삭제
+                    case R.id.file_delete_popup_item:
+                        fileDeleteDialog(file);
+                        break;
+                }
+                return false;
+            }
+        });
+        popup.show();
     }
 
     // Toolbar home icon action 설정 (뒤로가기)

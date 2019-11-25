@@ -100,7 +100,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    longClickListener.onItemLongClicked(position);
+                    longClickListener.onItemLongClicked(view, position);
                     return true;
                 }
             });
@@ -142,7 +142,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
 
     // onLongClick 리스너 인터페이스
     public interface FileListRecyclerLongClickListener {
-        void onItemLongClicked(int position);
+        void onItemLongClicked(View view, int position);
     }
     // set 리스너
     public void setLongClickListener(FileListRecyclerLongClickListener longClickListener) {

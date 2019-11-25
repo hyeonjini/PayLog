@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:title="파일 공유하기"
+        android:id="@+id/file_share_popup_item"/>
+    <item
+        android:title="파일 삭제하기"
+        android:id="@+id/file_delete_popup_item"/>
+</menu>
