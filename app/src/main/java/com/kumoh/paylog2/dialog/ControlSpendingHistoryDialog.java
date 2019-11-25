@@ -47,6 +47,13 @@ public class ControlSpendingHistoryDialog extends Dialog implements View.OnClick
 
         setContentView(R.layout.dialog_add_spending);
 
+        String categoryName = null;
+        for (ContentsCategoryItem c : lists) {
+            if (item.getCategoryId() == c.getId())
+                categoryName = c.getCategory();
+        }
+        categoryItem = new ContentsCategoryItem(item.getCategoryId(), categoryName,item.getKind());
+
         dateSelectButton = (Button) findViewById(R.id.add_spending_select_date_button);
         categorySelectButton = (Button) findViewById(R.id.add_spending_select_category_button);
         amount = (EditText) findViewById(R.id.add_spending_amount_text);
