@@ -21,8 +21,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -36,8 +38,8 @@ public class FileConversion {
 
     private Map<Integer, String> titleMap = new HashMap<>();
 
-    private Map<Integer, String> spendingCategoryMap = new HashMap<>();
-    private Map<Integer, String> incomeCategoryMap = new HashMap<>();
+    private List<String> spendingCategoryList;
+    private List<String> incomeCategoryList;
 
     // LOGO : Paylog
     private final static int LOGO_START_ROW = 0;
@@ -78,7 +80,14 @@ public class FileConversion {
         titleMap.put(4, "지출");
         titleMap.put(5, "비고");
 
-
+        spendingCategoryList = new ArrayList<>(
+                Arrays.asList("급여", "용돈", "금융수입", "기타수입")
+        );
+        incomeCategoryList = new ArrayList<>(
+                Arrays.asList("식비", "카페/간식", "술/유흥", "생활", "문화/여가",
+                        "패션/쇼핑", "교통", "자동차", "주거", "통신비", "의료/건강",
+                        "금융", "여행", "교육", "자녀", "경조사/선물")
+        );
     }
 
     // PayLog Logo 삽입
@@ -143,35 +152,46 @@ public class FileConversion {
             cell = row.createCell(0);
             cell.setCellValue(mItems.get(i).getDate());
 
-            // (i, 1)위치의 셀에 mItems 의 유형(지출, 수입) 입력
-            cell = row.createCell(1);
+            // (i, 2)위치의 셀에 mItems 의 내용 입력
+            cell = row.createCell(2);
+            cell.setCellValue(mItems.get(i).getDescription());
+
 
             int kind = mItems.get(i).getKind();
             int categoryId = mItems.get(i).getCategoryId();
+            int amount = mItems.get(i).getAmount();
+
+            if(kind == 1) amount = amount * (-1);
+            DecimalFormat dc = new DecimalFormat("###,###,###,###");
+            String formattedAmount = dc.format(amount);
 
             // 수입
             if(kind == 1) {
+                // (i, 1)위치의 셀에 mItems 의 유형(지출, 수입) 입력
+                cell = row.createCell(1);
+                categoryId = categoryId - 5;
+                cell.setCellValue(incomeCategoryList.get(categoryId));
 
+                // (i, 4)위치의 셀에 mItems 의 가격 입력
+                cell = row.createCell(4);
+                cell.setCellValue(formattedAmount);
             }
 
             // 지출
             else if(kind == 0) {
+                // (i, 1)위치의 셀에 mItems 의 유형(지출, 수입) 입력
+                cell = row.createCell(1);
+                categoryId = categoryId - 1;
+                cell.setCellValue(spendingCategoryList.get(categoryId));
 
+                // (i, 3)위치의 셀에 mItems 의 가격 입력
+                cell = row.createCell(3);
+                cell.setCellValue(formattedAmount);
             }
 
             else {
                 //kind = "알 수 없는 종류";
             }
-
-            cell.setCellValue(kind);
-
-            // (i, 0)위치의 셀에 mItems 의 내용 입력
-            cell = row.createCell(2);
-            cell.setCellValue(mItems.get(i).getDescription());
-
-            // (i, 3)위치의 셀에 mItems 의 가격 입력
-            cell = row.createCell(3);
-            cell.setCellValue(mItems.get(i).getAmount());
         }
     }
 
