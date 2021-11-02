@@ -411,7 +411,7 @@ public class ContentsActivity extends AppCompatActivity implements View.OnClickL
         @Override
         protected HistoryVO doInBackground(Bitmap... bitmaps) {
 
-            JSONObject jsonObject = conn.requestImageProcessing("http://61.85.60.36:8080/image", bitmaps[0]);
+            JSONObject jsonObject = conn.requestImageProcessing("URL", bitmaps[0]);
 
             if(jsonObject != null) {
                 // Gson 이용해서 객체에 담기
